@@ -10,7 +10,6 @@ import * as React from "react";
 import { getUserId, createUserSession } from "~/session.server";
 
 import { createUser, getUserByEmail } from "~/models/user.server";
-import { validateEmail } from "~/utils";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await getUserId(request);
@@ -30,13 +29,6 @@ export const action: ActionFunction = async ({ request }) => {
   const email = formData.get("email");
   const password = formData.get("password");
   const redirectTo = formData.get("redirectTo");
-
-  if (!validateEmail(email)) {
-    return json<ActionData>(
-      { errors: { email: "Email is invalid" } },
-      { status: 400 }
-    );
-  }
 
   if (typeof password !== "string") {
     return json<ActionData>(

@@ -4,14 +4,14 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function seed() {
-  const email = "rachel@remix.run";
+  const email = "chris";
 
   // cleanup the existing database
   await prisma.user.delete({ where: { email } }).catch(() => {
     // no worries if it doesn't exist yet
   });
 
-  const hashedPassword = await bcrypt.hash("racheliscool", 10);
+  const hashedPassword = await bcrypt.hash("test", 10);
 
   const user = await prisma.user.create({
     data: {
@@ -39,6 +39,32 @@ async function seed() {
       userId: user.id,
     },
   });
+
+  await prisma.player.create({
+    data: {
+      name: "Chris",
+      userId: user.id,
+    },
+  });
+
+  await prisma.player.create({
+    data: {
+      name: "Francesca",
+      userId: user.id,
+    },
+  });
+
+  // await prisma.game.create({
+  //   data: {
+  //     userId: user.id,
+  //     players: {
+  //       create: [
+  //         { name: "Chris", userId: user.id },
+  //         { name: "Francesca", userId: user.id },
+  //       ],
+  //     },
+  //   },
+  // });
 
   console.log(`Database has been seeded. 🌱`);
 }
