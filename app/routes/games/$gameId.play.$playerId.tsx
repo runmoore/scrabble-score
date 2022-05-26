@@ -50,7 +50,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       (total, current) => (total += current.points),
       0
     );
-    console.log(player);
     game.players[i] = player;
   }
 
@@ -72,10 +71,9 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (formData.get("action") === "score") {
     const score = parseInt(formData.get("score") as string) || 0;
 
-    if (score > 0) {
-      await addScore({ score, gameId, playerId });
-    }
+    const newScore = await addScore({ score, gameId, playerId });
 
+    game.scores.push(newScore);
     const nextPlayer = getNextPlayerToPlay(game);
 
     return redirect(`/games/${gameId}/play/${nextPlayer.id}`);
