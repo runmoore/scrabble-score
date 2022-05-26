@@ -16,6 +16,8 @@ model User {
 
   password Password?
   notes    Note[]
+  games    Game[]
+  players  Player[]
 }
 
 model Password {
@@ -35,4 +37,44 @@ model Note {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
+}
+
+model Player {
+  id   String @id @default(cuid())
+  name String
+
+  games  Game[]
+  scores Score[]
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+}
+
+model Game {
+  id String @id @default(cuid())
+
+  createdAt DateTime @default(now())
+
+  players Player[]
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+
+  completed Boolean? @default(false)
+
+  scores Score[]
+}
+
+model Score {
+  id String @id @default(cuid())
+
+  player   Player @relation(fields: [playerId], references: [id])
+  playerId String
+
+  game   Game   @relation(fields: [gameId], references: [id])
+  gameId String
+
+  scoredAt DateTime @default(now())
+
+  points Int
 }

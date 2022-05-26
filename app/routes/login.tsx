@@ -9,7 +9,6 @@ import * as React from "react";
 
 import { createUserSession, getUserId } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
-import { validateEmail } from "~/utils";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await getUserId(request);
@@ -31,9 +30,9 @@ export const action: ActionFunction = async ({ request }) => {
   const redirectTo = formData.get("redirectTo");
   const remember = formData.get("remember");
 
-  if (!validateEmail(email)) {
+  if (typeof email !== "string") {
     return json<ActionData>(
-      { errors: { email: "Email is invalid" } },
+      { errors: { email: "Email is required" } },
       { status: 400 }
     );
   }
@@ -41,13 +40,6 @@ export const action: ActionFunction = async ({ request }) => {
   if (typeof password !== "string") {
     return json<ActionData>(
       { errors: { password: "Password is required" } },
-      { status: 400 }
-    );
-  }
-
-  if (password.length < 8) {
-    return json<ActionData>(
-      { errors: { password: "Password is too short" } },
       { status: 400 }
     );
   }
@@ -65,7 +57,7 @@ export const action: ActionFunction = async ({ request }) => {
     request,
     userId: user.id,
     remember: remember === "on" ? true : false,
-    redirectTo: typeof redirectTo === "string" ? redirectTo : "/notes",
+    redirectTo: typeof redirectTo === "string" ? redirectTo : "/games",
   });
 };
 
@@ -77,7 +69,7 @@ export const meta: MetaFunction = () => {
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/notes";
+  const redirectTo = searchParams.get("redirectTo") || "/games";
   const actionData = useActionData() as ActionData;
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
@@ -108,7 +100,7 @@ export default function LoginPage() {
                 required
                 autoFocus={true}
                 name="email"
-                type="email"
+                type="text"
                 autoComplete="email"
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby="email-error"
