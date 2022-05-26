@@ -65,9 +65,14 @@ export default function GamesPage() {
                     className={({ isActive }) =>
                       `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
                     }
-                    to={game.completed ? game.id : `${game.id}/play/${getNextPlayerToPlay(game).id}`}
+                    to={
+                      game.completed
+                        ? game.id
+                        : `${game.id}/play/${getNextPlayerToPlay(game).id}`
+                    }
                   >
-                    {game.completed ? '🏆' : '🎯'} {format(new Date(game.createdAt), "PPP HH:mm")}
+                    {game.completed ? "🏆" : "🎯"}{" "}
+                    {format(new Date(game.createdAt), "PPP HH:mm")}
                   </NavLink>
                 </li>
               ))}

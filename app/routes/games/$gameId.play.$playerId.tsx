@@ -1,7 +1,7 @@
 import { Form, useLoaderData } from "@remix-run/react";
 import { redirect } from "@remix-run/server-runtime";
 import { addScore, getGame, completeGame } from "~/models/game.server";
-import { requireUserId } from "~/session.server";
+
 import invariant from "tiny-invariant";
 
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
@@ -19,7 +19,6 @@ type EnhancedGame = {
   scores: Score[];
   players: PlayerWithScores[];
 };
-
 
 type LoaderData = {
   game: EnhancedGame;

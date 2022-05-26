@@ -1,9 +1,7 @@
-
 import { prisma } from "~/db.server";
 
 import type { Prisma, Game, Player, Score, User } from "@prisma/client";
 export type { Game, Player, Score } from "@prisma/client";
-
 
 export function getGame({ id }: { id: Game["id"] }) {
   return prisma.game.findFirst({
@@ -36,7 +34,13 @@ export function createGame({
 export function getAllGames({ userId }: { userId: User["id"] }) {
   return prisma.game.findMany({
     where: { userId },
-    select: { id: true, players: true, createdAt: true, completed: true, scores: true },
+    select: {
+      id: true,
+      players: true,
+      createdAt: true,
+      completed: true,
+      scores: true,
+    },
     orderBy: { createdAt: "desc" },
   });
 }
@@ -83,7 +87,7 @@ export function addScore({
 
 export function completeGame(id: Game["id"]) {
   return prisma.game.update({
-    data: { completed: true},
+    data: { completed: true },
     where: { id },
-  })
+  });
 }

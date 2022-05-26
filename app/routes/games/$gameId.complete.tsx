@@ -1,4 +1,3 @@
-
-export default function() {
+export default function () {
   return "Game completed 🎉";
 }
