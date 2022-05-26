@@ -3,14 +3,19 @@ import { redirect } from "@remix-run/server-runtime";
 import { addScore, getGame } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 
-export const loader: LoaderFunction = async ({ request, params }: {request: Request, params: Parameters}) => {
+export const loader: LoaderFunction = async ({
+  request,
+  params,
+}: {
+  request: Request;
+  params: Parameters;
+}) => {
   const userId = await requireUserId(request);
   const { gameId, playerId } = params;
   const game = await getGame({ id: gameId });
 
   for (let i = 0; i < game.players.length; i++) {
     const player = game.players[i];
-    console.log(game);
 
     player.scores = game.scores
       .filter((score) => score.playerId === player.id)
