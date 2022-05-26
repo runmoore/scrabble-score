@@ -10,7 +10,7 @@ import { json } from "@remix-run/node";
 import { getNextPlayerToPlay } from "~/game-utils";
 
 interface PlayerWithScores extends Player {
-  scores: number[];
+  scores: Score[];
   totalScore: number;
 }
 
@@ -44,15 +44,16 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
     player.scores = game.scores
       .filter((score) => score.playerId === player.id)
-      .map((score) => score.points);
+      .map((score) => score);
 
     player.totalScore = player.scores.reduce(
-      (total, current) => (total += current),
+      (total, current) => (total += current.points),
       0
     );
-
+    console.log(player);
     game.players[i] = player;
   }
+
   return json<LoaderData>({ game, playerId: params.playerId });
 };
 
@@ -97,47 +98,46 @@ export default function Play() {
 
   return (
     <>
-      <h1>It's {player.name}'s turn</h1>
-      <table>
-        <thead>
-          <tr>
-            {game.players.map((player) => (
-              <th key={player.name}>{player.name}</th>
+      <div className="mb-8 flex flex-row justify-evenly text-center">
+        {game.players.map((player) => (
+          <div key={player.name} className="flex flex-col">
+            <span className="font-bold">{player.name}</span>
+            {player.scores.map((score) => (
+              <span key={score.id}>{score.points}</span>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            {game.players.map((player) => (
-              <td key={player.name}>{player.totalScore}</td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
+            <span className="min-w-100 border-t-4 border-b-4 font-bold">
+              {player.totalScore}
+            </span>
+          </div>
+        ))}
+      </div>
+      <h1 className="mb-4">
+        It's <span className="font-bold">{player.name}'s</span> turn
+      </h1>
       <Form method="post" action="" key={playerId}>
         <input
           className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
           type="text"
           name="score"
         />
-        <button
-          type="submit"
-          className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
-          name="action"
-          value="score"
-        >
-          Submit score
-        </button>
-      </Form>
-      <Form method="post" action="">
-        <button
-          type="submit"
-          className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
-          name="action"
-          value="complete"
-        >
-          Complete game
-        </button>
+        <div className="m-4 flex flex-row justify-evenly">
+          <button
+            type="submit"
+            className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+            name="action"
+            value="score"
+          >
+            Submit score
+          </button>
+          <button
+            type="submit"
+            className="rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-blue-400"
+            name="action"
+            value="complete"
+          >
+            Complete game
+          </button>
+        </div>
       </Form>
     </>
   );
