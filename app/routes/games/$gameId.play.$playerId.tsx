@@ -23,6 +23,7 @@ type EnhancedGame = {
 type LoaderData = {
   game: EnhancedGame;
   playerId: Player["id"];
+  topScore: number;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -53,7 +54,12 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     game.players[i] = player;
   }
 
-  return json<LoaderData>({ game, playerId: params.playerId });
+  const topScore = game.players.reduce(
+    (max, current) => (current.totalScore > max ? current.totalScore : max),
+    0
+  );
+
+  return json<LoaderData>({ game, playerId: params.playerId, topScore });
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -86,7 +92,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function Play() {
-  const { game, playerId } = useLoaderData() as LoaderData;
+  const { game, playerId, topScore } = useLoaderData() as LoaderData;
 
   const player = game.players.find((p) => p.id === playerId);
 
@@ -99,13 +105,15 @@ export default function Play() {
       <div className="mb-8 flex flex-row justify-evenly text-center">
         {game.players.map((player) => (
           <div key={player.name} className="flex flex-col">
-            <span className="font-bold">{player.name}</span>
+            <span className="font-bold">
+              {player.name} {player.totalScore === topScore && player.totalScore > 0 ? "⭐️" : ""}
+            </span>
             {player.scores.map((score) => (
               <span key={score.id}>{score.points}</span>
             ))}
-            <span className="min-w-100 border-t-4 border-b-4 font-bold">
+            <div className="min-w-[100px] border-t-4 border-b-4 font-bold">
               {player.totalScore}
-            </span>
+            </div>
           </div>
         ))}
       </div>
