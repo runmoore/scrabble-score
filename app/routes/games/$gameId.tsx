@@ -16,7 +16,7 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   invariant(params.gameId, "gameId not found");
-  const game  = await getGame({ id: params.gameId });
+  const game = await getGame({ id: params.gameId });
 
   if (!game) {
     throw new Response("Not Found", { status: 404 });

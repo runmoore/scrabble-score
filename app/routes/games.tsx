@@ -1,4 +1,4 @@
-import { Form, Link, useLoaderData} from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import { useUser } from "~/utils";
 import { Outlet } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/server-runtime";
@@ -6,18 +6,24 @@ import { json } from "@remix-run/server-runtime";
 import { requireUserId } from "~/session.server";
 import { getAllGames } from "~/models/game.server";
 import { NavLink } from "@remix-run/react";
-import type { Game, Player } from '../models/game.server';
+import type { Game, Player, Score } from "../models/game.server";
+import { format } from "date-fns";
+import { getNextPlayerToPlay } from "~/game-utils";
 
 type LoaderData = {
   games: {
     id: Game["id"];
-    players: Player[]
+    players: Player[];
+    scores: Score[];
+    createdAt: Game["createdAt"];
+    completed: Game["completed"];
   }[];
-}
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
   const games = await getAllGames({ userId });
+
   return json<LoaderData>({ games });
 };
 
@@ -59,9 +65,9 @@ export default function GamesPage() {
                     className={({ isActive }) =>
                       `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
                     }
-                    to={game.id}
+                    to={game.completed ? game.id : `${game.id}/play/${getNextPlayerToPlay(game).id}`}
                   >
-                    🎯 {game.players.map((p) => p.name).join(" ")}
+                    {game.completed ? '🏆' : '🎯'} {format(new Date(game.createdAt), "PPP HH:mm")}
                   </NavLink>
                 </li>
               ))}
