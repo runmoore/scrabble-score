@@ -5,6 +5,12 @@ import * as React from "react";
 
 import { createGame, getAllPlayers } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
+import type { Player } from "~/models/game.server";
+
+type LoaderData = {
+  id: Player["id"];
+  name: Player["name"];
+}[];
 
 type ActionData = {
   errors?: {
@@ -17,7 +23,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
   const players = await getAllPlayers({ userId });
 
-  return { players };
+  return json<LoaderData>(players);
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -25,7 +31,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   const formData = await request.formData();
 
-  const players = formData.getAll("players");
+  const players = formData.getAll("players") as string[];
+
   const game = await createGame({ userId, players });
 
   return redirect(`/games/${game.id}/play/${players[0]}`);
@@ -33,7 +40,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function NewGamePage() {
   const actionData = useActionData() as ActionData;
-  const { players } = useLoaderData();
+  const players: LoaderData = useLoaderData();
 
   return (
     <Form
