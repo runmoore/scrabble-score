@@ -1,20 +1,29 @@
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData} from "@remix-run/react";
 import { useUser } from "~/utils";
 import { Outlet } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/server-runtime";
+import { json } from "@remix-run/server-runtime";
 import { requireUserId } from "~/session.server";
 import { getAllGames } from "~/models/game.server";
 import { NavLink } from "@remix-run/react";
+import type { Game, Player } from '../models/game.server';
+
+type LoaderData = {
+  games: {
+    id: Game["id"];
+    players: Player[]
+  }[];
+}
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
   const games = await getAllGames({ userId });
-  return { games };
+  return json<LoaderData>({ games });
 };
 
 export default function GamesPage() {
   const user = useUser();
-  const data = useLoaderData();
+  const { games }: LoaderData = useLoaderData();
 
   return (
     <div className="flex h-full min-h-screen flex-col">
@@ -40,11 +49,11 @@ export default function GamesPage() {
 
           <hr />
 
-          {data.games.length === 0 ? (
+          {games.length === 0 ? (
             <p className="p-4">No games yet</p>
           ) : (
             <ol>
-              {data.games.map((game) => (
+              {games.map((game) => (
                 <li key={game.id}>
                   <NavLink
                     className={({ isActive }) =>

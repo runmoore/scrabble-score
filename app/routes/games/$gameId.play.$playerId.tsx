@@ -2,20 +2,43 @@ import { Form, useLoaderData } from "@remix-run/react";
 import { redirect } from "@remix-run/server-runtime";
 import { addScore, getGame } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
+import invariant from "tiny-invariant";
+
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type { Player, Game, Score } from "~/models/game.server";
+import {json} from  "@remix-run/node";
+
+interface PlayerWithScores extends Player {
+  scores: number[];
+  totalScore: number;
+}
+
+type EnhancedGame = {
+  id: Game["id"],
+  scores: Score[],
+  players: PlayerWithScores[],
+}
+
+type LoaderData = {
+  game:EnhancedGame,
+  playerId: Player["id"],
+}
 
 export const loader: LoaderFunction = async ({
   request,
   params,
-}: {
-  request: Request;
-  params: Parameters;
 }) => {
-  const userId = await requireUserId(request);
-  const { gameId, playerId } = params;
-  const game = await getGame({ id: gameId });
+  invariant(params.gameId, "gameId not found");
+  invariant(params.playerId, "playerId not found");
+
+  const game = await getGame({ id: params.gameId }) as EnhancedGame;
+
+  if (!game) {
+    throw new Response("Not Found", { status: 404 });
+  }
 
   for (let i = 0; i < game.players.length; i++) {
-    const player = game.players[i];
+    const player: PlayerWithScores = { ...game.players[i], scores: [], totalScore: 0};
 
     player.scores = game.scores
       .filter((score) => score.playerId === player.id)
@@ -25,17 +48,26 @@ export const loader: LoaderFunction = async ({
       (total, current) => (total += current),
       0
     );
+
+    game.players[i] = player;
   }
-  return { game, playerId };
+  return json<LoaderData>({ game, playerId: params.playerId });
 };
 
-export async function action({ request, params }) {
+export const action: ActionFunction = async ({ request, params }) => {
+
+  invariant(params.gameId, "gameId not found");
+  invariant(params.playerId, "playerId not found");
   const { gameId, playerId } = params;
-  const game = await getGame({ id: gameId });
+
+  const game = await getGame({ id: params.gameId });
+  if (!game) {
+    throw new Response("Not Found", { status: 404 });
+  }
 
   const formData = await request.formData();
 
-  const score = parseInt(formData.get("score")) || 0;
+  const score = parseInt(formData.get("score") as string) || 0;
 
   if (score > 0) {
     await addScore({ score, gameId, playerId });
@@ -48,9 +80,13 @@ export async function action({ request, params }) {
 }
 
 export default function Play() {
-  const { game, playerId } = useLoaderData();
+  const { game, playerId } = useLoaderData() as LoaderData;
 
   const player = game.players.find((p) => p.id === playerId);
+
+  if (!player) {
+    return "oops, bad player id supplied";
+  }
 
   return (
     <>

@@ -26,7 +26,7 @@ interface ActionData {
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const email = formData.get("email");
+  const email = formData.get("email") as string;
   const password = formData.get("password");
   const redirectTo = formData.get("redirectTo");
 

@@ -1,8 +1,10 @@
 import { prisma } from "~/db.server";
 
-export type { Game } from "@prisma/client";
+import type { Game, Player, Score, User } from "@prisma/client";
+export type { Game, Player, Score } from "@prisma/client";
 
-export function getGame({ id }) {
+
+export function getGame({ id }: { id: Game["id"]}) {
   return prisma.game.findFirst({
     where: { id },
     select: { id: true, players: true, scores: true },
@@ -45,14 +47,14 @@ export function getAllPlayers({ userId }: { userId: User["id"] }) {
   });
 }
 
-export function getPlayer({ id }) {
+export function getPlayer({ id }: { id: Player["id"]}) {
   return prisma.player.findFirst({
     where: { id },
     select: { name: true },
   });
 }
 
-export function addScore({ score, gameId, playerId }) {
+export function addScore({ score, gameId, playerId }: { score: number, gameId: string, playerId: string}) {
   return prisma.score.create({
     data: {
       points: score,
