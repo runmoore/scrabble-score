@@ -37,13 +37,6 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  if (password.length < 8) {
-    return json<ActionData>(
-      { errors: { password: "Password is too short" } },
-      { status: 400 }
-    );
-  }
-
   const existingUser = await getUserByEmail(email);
   if (existingUser) {
     return json<ActionData>(
@@ -101,7 +94,7 @@ export default function Join() {
                 required
                 autoFocus={true}
                 name="email"
-                type="email"
+                type="text"
                 autoComplete="email"
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby="email-error"
