@@ -59,6 +59,25 @@ export function getPlayer({ id }: { id: Player["id"] }) {
   });
 }
 
+export function addPlayer({
+  userId,
+  name,
+}: {
+  userId: User["id"];
+  name: string;
+}) {
+  return prisma.player.create({
+    data: {
+      name,
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+    },
+  });
+}
+
 export function addScore({
   score,
   gameId,

@@ -106,7 +106,10 @@ export default function Play() {
         {game.players.map((player) => (
           <div key={player.name} className="flex flex-col">
             <span className="font-bold">
-              {player.name} {player.totalScore === topScore && player.totalScore > 0 ? "⭐️" : ""}
+              {player.name}{" "}
+              {player.totalScore === topScore && player.totalScore > 0
+                ? "⭐️"
+                : ""}
             </span>
             {player.scores.map((score) => (
               <span key={score.id}>{score.points}</span>
