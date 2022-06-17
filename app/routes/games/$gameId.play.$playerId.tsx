@@ -20,7 +20,7 @@ type EnhancedGame = {
   players: PlayerWithScores[];
 };
 
-type LoaderData = {
+export type LoaderData = {
   game: EnhancedGame;
   playerId: Player["id"];
   topScore: number;

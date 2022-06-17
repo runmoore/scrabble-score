@@ -1,6 +1,6 @@
 import { prisma } from "~/db.server";
 
-import type { Prisma, Game, Player, Score, User } from "@prisma/client";
+import type { Game, Player, User } from "@prisma/client";
 export type { Game, Player, Score } from "@prisma/client";
 
 export function getGame({ id }: { id: Game["id"] }) {
