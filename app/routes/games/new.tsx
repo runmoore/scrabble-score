@@ -7,7 +7,7 @@ import { addPlayer, createGame, getAllPlayers } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 import type { Player } from "~/models/game.server";
 
-type LoaderData = {
+export type LoaderData = {
   id: Player["id"];
   name: Player["name"];
 }[];
