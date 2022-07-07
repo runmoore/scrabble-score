@@ -13,7 +13,7 @@ describe("loader function", () => {
 
   beforeEach(async () => {
     loaderResponse = await loader({
-      request: new Request(""),
+      request: new Request("https://url"),
       params: { gameId: "1" },
       context: {},
     });

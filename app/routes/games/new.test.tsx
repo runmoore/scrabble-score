@@ -13,8 +13,8 @@ vi.mock("~/session.server", () => {
 
 vi.mock("~/models/game.server", () => {
   return {
-    getAllPlayers: vi.fn().mockResolvedValue([{ name: 'Eric' }]),
-    createGame: vi.fn().mockResolvedValue({ id: '736', players: [1]})
+    getAllPlayers: vi.fn().mockResolvedValue([{ name: "Eric" }]),
+    createGame: vi.fn().mockResolvedValue({ id: "736", players: [1] }),
   };
 });
 
@@ -24,7 +24,7 @@ describe("new lodaer function", () => {
 
   beforeEach(async () => {
     loaderResponse = await loader({
-      request: new Request(""),
+      request: new Request("https://url"),
       params: {},
       context: {},
     });
@@ -39,7 +39,7 @@ describe("new lodaer function", () => {
   test("returns all players for that user", () => {
     expect(data.length).toEqual(1);
 
-    expect(data[0].name).toEqual('Eric');
+    expect(data[0].name).toEqual("Eric");
   });
 });
 
@@ -49,12 +49,12 @@ describe("start new game function", () => {
   beforeEach(async () => {
     const body = new URLSearchParams();
 
-    body.set('action', 'start-new-game')
-    body.append('players', '1');
-    body.append('players', '2');
+    body.set("action", "start-new-game");
+    body.append("players", "1");
+    body.append("players", "2");
 
-   actionResponse = await action({
-      request: new Request("", {
+    actionResponse = await action({
+      request: new Request("https://url", {
         method: "POST",
         body,
       }),
@@ -63,11 +63,14 @@ describe("start new game function", () => {
     });
   });
 
-  test('starts a new game', () => {
-    expect(createGame).toHaveBeenCalledWith({ userId: 123, players: ['1', '2']});
-  })
+  test("starts a new game", () => {
+    expect(createGame).toHaveBeenCalledWith({
+      userId: 123,
+      players: ["1", "2"],
+    });
+  });
 
-  test('redirects to the play page after', () => {
-    expect(actionResponse).toEqual(redirect('/games/736/play/1'));
-  })
-})
+  test("redirects to the play page after", () => {
+    expect(actionResponse).toEqual(redirect("/games/736/play/1"));
+  });
+});

@@ -6,7 +6,7 @@ export type { Game, Player, Score } from "@prisma/client";
 export function getGame({ id }: { id: Game["id"] }) {
   return prisma.game.findFirst({
     where: { id },
-    select: { id: true, players: true, scores: true },
+    select: { id: true, completed: true, players: true, scores: true },
   });
 }
 

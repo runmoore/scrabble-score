@@ -25,7 +25,7 @@ describe("play loader function", () => {
 
   beforeEach(async () => {
     loaderResponse = await loader({
-      request: new Request(""),
+      request: new Request("https://url"),
       params: { gameId: "123", playerId: "987" },
       context: {},
     });

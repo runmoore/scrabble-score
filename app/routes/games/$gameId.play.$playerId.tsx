@@ -16,6 +16,7 @@ interface PlayerWithScores extends Player {
 
 type EnhancedGame = {
   id: Game["id"];
+  completed: Game["completed"];
   scores: Score[];
   players: PlayerWithScores[];
 };

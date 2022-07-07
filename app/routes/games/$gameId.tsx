@@ -9,6 +9,7 @@ import { getGame } from "~/models/game.server";
 type LoaderData = {
   game: {
     id: Game["id"];
+    completed: Game["completed"];
     players: Player[];
     scores: Score[];
   };
@@ -30,7 +31,8 @@ export default function GamePage() {
 
   return (
     <>
-      <h2>Players</h2>
+      <h2 className="text-3xl">Players</h2>
+      <h3>{game.completed ? "Completed" : "Still Running"}</h3>
       {game.players.map((p) => (
         <p key={p.id}>{p.name}</p>
       ))}
