@@ -5,21 +5,9 @@ import { addScore, getGame, completeGame } from "~/models/game.server";
 import invariant from "tiny-invariant";
 
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import type { Player, Game, Score } from "~/models/game.server";
+import type { Player, EnhancedGame } from "~/models/game.server";
 import { json } from "@remix-run/node";
 import { getNextPlayerToPlay } from "~/game-utils";
-
-interface PlayerWithScores extends Player {
-  scores: Score[];
-  totalScore: number;
-}
-
-type EnhancedGame = {
-  id: Game["id"];
-  completed: Game["completed"];
-  scores: Score[];
-  players: PlayerWithScores[];
-};
 
 export type LoaderData = {
   game: EnhancedGame;
@@ -35,24 +23,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   if (!game) {
     throw new Response("Not Found", { status: 404 });
-  }
-
-  for (let i = 0; i < game.players.length; i++) {
-    const player: PlayerWithScores = {
-      ...game.players[i],
-      scores: [],
-      totalScore: 0,
-    };
-
-    player.scores = game.scores
-      .filter((score) => score.playerId === player.id)
-      .map((score) => score);
-
-    player.totalScore = player.scores.reduce(
-      (total, current) => (total += current.points),
-      0
-    );
-    game.players[i] = player;
   }
 
   const topScore = game.players.reduce(
@@ -88,7 +58,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   if (formData.get("action") === "complete") {
     await completeGame(gameId);
-    return redirect(`/games/${gameId}/complete`);
+    return redirect(`/games/${gameId}`);
   }
 };
 

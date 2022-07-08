@@ -1,13 +1,59 @@
 import { prisma } from "~/db.server";
 
-import type { Game, Player, User } from "@prisma/client";
-export type { Game, Player, Score } from "@prisma/client";
+import type { Game, Player, User, Score } from "@prisma/client";
+export type { Game, Player, User, Score } from "@prisma/client";
+export type { EnhancedGame, PlayerWithScores };
 
-export function getGame({ id }: { id: Game["id"] }) {
-  return prisma.game.findFirst({
+interface PlayerWithScores extends Player {
+  scores: Score[];
+  totalScore: number;
+}
+
+interface PlayerWithScores extends Player {
+  scores: Score[];
+  totalScore: number;
+}
+
+type EnhancedGame = {
+  id: Game["id"];
+  completed: Game["completed"];
+  scores: Score[];
+  players: PlayerWithScores[];
+};
+
+export async function getGame({
+  id,
+}: {
+  id: Game["id"];
+}): Promise<EnhancedGame | null> {
+  const game = (await prisma.game.findFirst({
     where: { id },
     select: { id: true, completed: true, players: true, scores: true },
-  });
+  })) as EnhancedGame;
+
+  if (!game) {
+    return null;
+  }
+
+  for (let i = 0; i < game.players.length; i++) {
+    const player: PlayerWithScores = {
+      ...game.players[i],
+      scores: [],
+      totalScore: 0,
+    };
+
+    player.scores = game.scores
+      .filter((score) => score.playerId === player.id)
+      .map((score) => score);
+
+    player.totalScore = player.scores.reduce(
+      (total, current) => (total += current.points),
+      0
+    );
+    game.players[i] = player;
+  }
+
+  return game;
 }
 
 export function createGame({

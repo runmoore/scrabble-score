@@ -5,7 +5,9 @@ import type { AppData } from "@remix-run/server-runtime";
 
 vi.mock("~/models/game.server", () => {
   return {
-    getGame: vi.fn().mockResolvedValue({ id: 1, completed: false }),
+    getGame: vi
+      .fn()
+      .mockResolvedValue({ id: 1, completed: false, players: [], scores: [] }),
   };
 });
 describe("loader function", () => {
@@ -30,7 +32,9 @@ describe("loader function", () => {
   test("returns the returned game", async () => {
     const data = await loaderResponse.json();
 
-    expect(data).toEqual({ game: { id: 1, completed: false } });
+    expect(data).toEqual({
+      game: { id: 1, completed: false, players: [], scores: [] },
+    });
   });
 
   test("calls prisma to get the game", () => {

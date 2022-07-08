@@ -60,18 +60,19 @@ export default function NewGamePage() {
   return (
     <div className="flex justify-around">
       <Form className="flex flex-col" method="post">
-        <select name="players" multiple className="mb-8 border-4">
-          {players.map((p) => (
-            <option key={p.id} value={p.id}>
+        {players.map((p) => (
+          <div key={p.id} className="mb-2">
+            <input id={p.id} type="checkbox" name="players" value={p.id} />
+            <label htmlFor={p.id} className="cursor-pointer pl-8">
               {p.name}
-            </option>
-          ))}
-        </select>
+            </label>
+          </div>
+        ))}
         <button
           type="submit"
           name="action"
           value="start-new-game"
-          className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+          className="mt-4 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
         >
           Start new Game
         </button>

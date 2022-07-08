@@ -8,7 +8,10 @@ vi.mock("~/models/game.server", () => {
     getGame: vi.fn().mockResolvedValue({
       id: 1,
       completed: false,
-      players: [{ id: 1 }, { id: 2 }],
+      players: [
+        { id: 1, totalScore: 11 },
+        { id: 2, totalScore: 22 },
+      ],
       scores: [
         { playerId: 1, points: 1 },
         { playerId: 2, points: 2 },
@@ -43,11 +46,6 @@ describe("play loader function", () => {
 
   test("returns the game Id", async () => {
     expect(data.game.id).toEqual(1);
-  });
-
-  test("returns the total score for each player", async () => {
-    expect(data.game.players[0].totalScore).toEqual(11);
-    expect(data.game.players[1].totalScore).toEqual(22);
   });
 
   test("returns the top score of all players", async () => {
