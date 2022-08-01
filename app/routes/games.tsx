@@ -11,6 +11,7 @@ import { getNextPlayerToPlay } from "~/game-utils";
 import { useState } from "react";
 import type { LoaderArgs } from "@remix-run/node";
 
+import MenuIcon from "../icons/menu";
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
   const games = await getAllGames({ userId });
@@ -32,10 +33,14 @@ export default function GamesPage() {
         <p>{user.email}</p>
         <button
           type="button"
-          className="rounded bg-slate-600 py-2 px-4 text-blue-100 sm:hidden"
+          className={`rounded  py-2 px-4 text-blue-100 sm:hidden ${
+            showMobileMenu ? "bg-slate-500" : "bg-slate-600"
+          }`}
           onClick={() => setShowMobileMenu(!showMobileMenu)}
         >
-          =
+          <MenuIcon
+            className={`duration-500 ${showMobileMenu ? "-rotate-90" : ""}`}
+          />
         </button>
         <Form action="/logout" method="post" className="hidden sm:block">
           <button
