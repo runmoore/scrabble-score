@@ -9,6 +9,7 @@ import type { ActionFunction } from "@remix-run/node";
 import type { EnhancedGame } from "~/models/game.server";
 import { json } from "@remix-run/node";
 import { getNextPlayerToPlay } from "~/game-utils";
+import { useEffect, useState } from "react";
 
 export type LoaderData = typeof loader;
 
@@ -64,6 +65,12 @@ export default function Play() {
 
   const player = game.players.find((p) => p.id === playerId);
 
+  useEffect(() => {
+    setScore("");
+  }, [playerId]);
+
+  const [score, setScore] = useState("");
+
   if (!player) {
     return "oops, bad player id supplied";
   }
@@ -94,21 +101,25 @@ export default function Play() {
       <Form method="post" action="" key={playerId}>
         <input
           className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
-          type="text"
+          type="number"
           name="score"
+          value={score}
+          onChange={(e) => setScore(e.target.value)}
+          autoFocus
         />
         <div className="m-4 flex flex-row justify-evenly">
           <button
             type="submit"
-            className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+            className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
             name="action"
             value="score"
+            disabled={!score}
           >
             Submit score
           </button>
           <button
             type="submit"
-            className="rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-blue-400"
+            className="rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400"
             name="action"
             value="complete"
           >
