@@ -1,21 +1,18 @@
 import { Form, useLoaderData } from "@remix-run/react";
+import type { LoaderArgs } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 import { addScore, getGame, completeGame } from "~/models/game.server";
 
 import invariant from "tiny-invariant";
 
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import type { Player, EnhancedGame } from "~/models/game.server";
+import type { ActionFunction } from "@remix-run/node";
+import type { EnhancedGame } from "~/models/game.server";
 import { json } from "@remix-run/node";
 import { getNextPlayerToPlay } from "~/game-utils";
 
-export type LoaderData = {
-  game: EnhancedGame;
-  playerId: Player["id"];
-  topScore: number;
-};
+export type LoaderData = typeof loader;
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.gameId, "gameId not found");
   invariant(params.playerId, "playerId not found");
 
@@ -30,7 +27,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     0
   );
 
-  return json<LoaderData>({ game, playerId: params.playerId, topScore });
+  return json({ game, playerId: params.playerId, topScore });
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -63,7 +60,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function Play() {
-  const { game, playerId, topScore } = useLoaderData() as LoaderData;
+  const { game, playerId, topScore } = useLoaderData<typeof loader>();
 
   const player = game.players.find((p) => p.id === playerId);
 

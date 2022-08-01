@@ -1,21 +1,11 @@
-import type { LoaderFunction } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
-import type { Game, Score, PlayerWithScores } from "~/models/game.server";
 import { getGame } from "~/models/game.server";
 
-type LoaderData = {
-  game: {
-    id: Game["id"];
-    completed: Game["completed"];
-    players: PlayerWithScores[];
-    scores: Score[];
-  };
-};
-
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader = async ({ params }: LoaderArgs) => {
   invariant(params.gameId, "gameId not found");
   const game = await getGame({ id: params.gameId });
 
@@ -25,11 +15,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   game.players.sort((a, b) => (a.totalScore >= b.totalScore ? -1 : 1));
 
-  return json<LoaderData>({ game });
+  return json({ game });
 };
 
 export default function GamePage() {
-  const { game } = useLoaderData() as LoaderData;
+  const { game } = useLoaderData<typeof loader>();
 
   return (
     <>

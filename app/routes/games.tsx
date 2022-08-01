@@ -1,35 +1,27 @@
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import { useUser } from "~/utils";
 import { Outlet } from "@remix-run/react";
-import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { requireUserId } from "~/session.server";
+import type { Game } from "~/models/game.server";
 import { getAllGames } from "~/models/game.server";
 import { NavLink } from "@remix-run/react";
-import type { Game, Player, Score } from "../models/game.server";
 import { format } from "date-fns";
 import { getNextPlayerToPlay } from "~/game-utils";
+import { useState } from "react";
+import type { LoaderArgs } from "@remix-run/node";
 
-type LoaderData = {
-  games: {
-    id: Game["id"];
-    players: Player[];
-    scores: Score[];
-    createdAt: Game["createdAt"];
-    completed: Game["completed"];
-  }[];
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
   const games = await getAllGames({ userId });
 
-  return json<LoaderData>({ games });
-};
+  return json({ games });
+}
 
 export default function GamesPage() {
   const user = useUser();
-  const { games }: LoaderData = useLoaderData();
+  const { games } = useLoaderData<typeof loader>();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
     <div className="flex h-full min-h-screen flex-col">
@@ -38,7 +30,14 @@ export default function GamesPage() {
           <Link to=".">Games</Link>
         </h1>
         <p>{user.email}</p>
-        <Form action="/logout" method="post">
+        <button
+          type="button"
+          className="rounded bg-slate-600 py-2 px-4 text-blue-100 sm:hidden"
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+        >
+          =
+        </button>
+        <Form action="/logout" method="post" className="hidden sm:block">
           <button
             type="submit"
             className="rounded bg-slate-600 py-2 px-4 text-blue-100 hover:bg-blue-500 active:bg-blue-600"
@@ -47,43 +46,65 @@ export default function GamesPage() {
           </button>
         </Form>
       </header>
-      <main className="flex h-full bg-white">
-        <div className="h-full w-80 border-r bg-gray-50">
-          <Link to="new" className="block p-4 text-xl text-blue-500">
-            + New Game
-          </Link>
-
-          <hr />
-
-          {games.length === 0 ? (
-            <p className="p-4">No games yet</p>
-          ) : (
-            <ol>
-              {games.map((game) => (
-                <li key={game.id}>
-                  <NavLink
-                    className={({ isActive }) =>
-                      `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
-                    }
-                    to={
-                      game.completed
-                        ? game.id
-                        : `${game.id}/play/${getNextPlayerToPlay(game).id}`
-                    }
-                  >
-                    {game.completed ? "🏆" : "🎯"}{" "}
-                    {format(new Date(game.createdAt), "PPP HH:mm")}
-                  </NavLink>
-                </li>
-              ))}
-            </ol>
-          )}
-        </div>
-
+      <main className="h-full flex-col bg-white sm:flex sm:flex-row">
+        {showMobileMenu && (
+          <GamesList games={games} className="bg-gray-50 sm:hidden" />
+        )}
+        <GamesList
+          className="hidden h-full w-80 border-r bg-gray-50 sm:block"
+          games={games}
+        />
         <div className="flex-1 p-6">
           <Outlet />
         </div>
       </main>
+    </div>
+  );
+}
+
+function GamesList({
+  games,
+  className,
+}: {
+  games: {
+    id: Game["id"];
+    players: any[];
+    createdAt: string;
+    completed: Game["completed"];
+    scores: any[];
+  }[];
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <Link to="new" className="block p-4 text-xl text-blue-500">
+        + New Game
+      </Link>
+
+      <hr />
+      {games.length === 0 ? (
+        <p className="p-4">No games yet</p>
+      ) : (
+        <ol>
+          {games.map((game) => (
+            <li key={game.id}>
+              <NavLink
+                className={({ isActive }) =>
+                  `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
+                }
+                to={
+                  game.completed
+                    ? game.id
+                    : `${game.id}/play/${getNextPlayerToPlay(game).id}`
+                }
+              >
+                {game.completed ? "🏆" : "🎯"}{" "}
+                {format(new Date(game.createdAt), "PPP HH:mm")}
+              </NavLink>
+            </li>
+          ))}
+        </ol>
+      )}
     </div>
   );
 }

@@ -1,8 +1,6 @@
 import type { AppData } from "@remix-run/server-runtime";
 import { loader } from "./$gameId.play.$playerId";
 
-import type { LoaderData } from "./$gameId.play.$playerId";
-
 vi.mock("~/models/game.server", () => {
   return {
     getGame: vi.fn().mockResolvedValue({
@@ -24,7 +22,7 @@ vi.mock("~/models/game.server", () => {
 
 describe("play loader function", () => {
   let loaderResponse: AppData;
-  let data: LoaderData;
+  let data: any;
 
   beforeEach(async () => {
     loaderResponse = await loader({
