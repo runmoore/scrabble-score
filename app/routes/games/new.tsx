@@ -40,11 +40,11 @@ export const action = async ({ request }: ActionArgs) => {
     case "add-player": {
       const name = formData.get("name") as string;
       if (!name) {
-        return json<ActionData>({ errors: "empty name" });
+        return json({ errors: "empty name" });
       }
       await addPlayer({ userId, name });
 
-      return "";
+      return json({ errors: "" });
     }
 
     default: {
@@ -54,7 +54,7 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 export default function NewGamePage() {
-  const actionData = useActionData() as ActionData;
+  const actionData = useActionData<typeof action>();
   const players = useLoaderData<typeof loader>();
 
   return (

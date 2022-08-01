@@ -21,7 +21,7 @@ export const links: LinksFunction = () => {
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Remix Notes",
+  title: "Scrabble score",
   viewport: "width=device-width,initial-scale=1",
   "apple-mobile-web-app-capable": "yes",
 });

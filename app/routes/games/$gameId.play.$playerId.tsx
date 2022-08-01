@@ -1,5 +1,5 @@
 import { Form, useLoaderData } from "@remix-run/react";
-import type { LoaderArgs } from "@remix-run/server-runtime";
+import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 import { addScore, getGame, completeGame } from "~/models/game.server";
 
@@ -31,7 +31,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   return json({ game, playerId: params.playerId, topScore });
 };
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action = async ({ request, params }: ActionArgs) => {
   invariant(params.gameId, "gameId not found");
   invariant(params.playerId, "playerId not found");
   const { gameId, playerId } = params;
