@@ -63,13 +63,18 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function Play() {
   const { game, playerId, topScore } = useLoaderData<typeof loader>();
 
+  const [score, setScore] = useState("");
+  const [hasMounted, setHasMounted] = useState(false);
+
   const player = game.players.find((p) => p.id === playerId);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   useEffect(() => {
     setScore("");
   }, [playerId]);
-
-  const [score, setScore] = useState("");
 
   if (!player) {
     return "oops, bad player id supplied";
@@ -113,7 +118,7 @@ export default function Play() {
             className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
             name="action"
             value="score"
-            disabled={!score}
+            disabled={hasMounted && !score}
           >
             Submit score
           </button>
