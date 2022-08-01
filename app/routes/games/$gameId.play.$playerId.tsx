@@ -5,7 +5,6 @@ import { addScore, getGame, completeGame } from "~/models/game.server";
 
 import invariant from "tiny-invariant";
 
-import type { ActionFunction } from "@remix-run/node";
 import type { EnhancedGame } from "~/models/game.server";
 import { json } from "@remix-run/node";
 import { getNextPlayerToPlay } from "~/game-utils";

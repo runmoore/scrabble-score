@@ -1,7 +1,6 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
-import * as React from "react";
 
 import { addPlayer, createGame, getAllPlayers } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
@@ -11,10 +10,6 @@ export type LoaderData = {
   id: Player["id"];
   name: Player["name"];
 }[];
-
-type ActionData = {
-  errors: string;
-};
 
 export const loader = async ({ request }: LoaderArgs) => {
   const userId = await requireUserId(request);
