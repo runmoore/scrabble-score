@@ -48,9 +48,13 @@ export default function GamesPage() {
       </header>
       <main className="h-full flex-col bg-white sm:flex sm:flex-row">
         {showMobileMenu && (
-          <GamesList games={games} className="bg-gray-50 sm:hidden" />
+          <GamesMenu
+            games={games}
+            className="bg-gray-50 sm:hidden"
+            onLinkClick={() => setShowMobileMenu(false)}
+          />
         )}
-        <GamesList
+        <GamesMenu
           className="hidden h-full w-80 border-r bg-gray-50 sm:block"
           games={games}
         />
@@ -62,9 +66,10 @@ export default function GamesPage() {
   );
 }
 
-function GamesList({
+function GamesMenu({
   games,
   className,
+  onLinkClick = () => {},
 }: {
   games: {
     id: Game["id"];
@@ -74,10 +79,15 @@ function GamesList({
     scores: any[];
   }[];
   className?: string;
+  onLinkClick?: () => void;
 }) {
   return (
     <div className={className}>
-      <Link to="new" className="block p-4 text-xl text-blue-500">
+      <Link
+        to="new"
+        className="block p-4 text-xl text-blue-500"
+        onClick={() => onLinkClick()}
+      >
         + New Game
       </Link>
 
@@ -92,6 +102,7 @@ function GamesList({
                 className={({ isActive }) =>
                   `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
                 }
+                onClick={() => onLinkClick()}
                 to={
                   game.completed
                     ? game.id

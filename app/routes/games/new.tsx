@@ -1,4 +1,4 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import * as React from "react";
@@ -16,14 +16,14 @@ type ActionData = {
   errors: string;
 };
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader = async ({ request }: LoaderArgs) => {
   const userId = await requireUserId(request);
   const players = await getAllPlayers({ userId });
 
-  return json<LoaderData>(players);
+  return json(players);
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: ActionArgs) => {
   const userId = await requireUserId(request);
   const formData = await request.formData();
   const action = formData.get("action");
@@ -55,7 +55,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function NewGamePage() {
   const actionData = useActionData() as ActionData;
-  const players: LoaderData = useLoaderData();
+  const players = useLoaderData<typeof loader>();
 
   return (
     <div className="flex justify-around">
