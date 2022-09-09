@@ -1,4 +1,4 @@
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData, useTransition } from "@remix-run/react";
 import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 import { addScore, getGame, completeGame } from "~/models/game.server";
@@ -60,6 +60,9 @@ export const action = async ({ request, params }: ActionArgs) => {
 };
 
 export default function Play() {
+  const transition = useTransition();
+  const isSumbmitting = Boolean(transition.submission);
+
   const { game, playerId, topScore } = useLoaderData<typeof loader>();
 
   const [score, setScore] = useState("");
@@ -120,7 +123,7 @@ export default function Play() {
             className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
             name="action"
             value="score"
-            disabled={hasMounted && !score}
+            disabled={(hasMounted && !score) || isSumbmitting}
           >
             Submit score
           </button>
