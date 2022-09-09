@@ -79,6 +79,8 @@ export default function Play() {
     return "oops, bad player id supplied";
   }
 
+  const maxNumberOfTurns = game.players.reduce((max, {scores}) =>  Math.max(max, scores.length), 0);
+
   return (
     <>
       <div className="mb-8 flex flex-row justify-evenly text-center">
@@ -93,6 +95,7 @@ export default function Play() {
             {player.scores.map((score) => (
               <span key={score.id}>{score.points}</span>
             ))}
+            {new Array(maxNumberOfTurns - player.scores.length).fill(null).map((_, i) => <br key={i} />)}
             <div className="min-w-[100px] border-t-4 border-b-4 font-bold">
               {player.totalScore}
             </div>
