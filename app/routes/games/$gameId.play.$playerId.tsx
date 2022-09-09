@@ -122,8 +122,8 @@ export default function Play() {
           onChange={(e) => setScore(e.target.value)}
           autoFocus
         />
-        <div className="m-4 flex flex-row justify-evenly">
-          <button
+        <div className="mt-4 m flex flex-row justify-between">
+          {!game.completed && <button
             type="submit"
             className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
             name="action"
@@ -131,7 +131,7 @@ export default function Play() {
             disabled={(hasMounted && !score) || isSumbmitting}
           >
             Submit score
-          </button>
+          </button>}
           {!game.completed && <button
             type="submit"
             className="rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
@@ -148,6 +148,12 @@ export default function Play() {
           >
             Re-open game
           </button>}
+          {!game.completed && game.players.filter(p => p.id !== playerId ).map((p) => <button
+            key={p.id}
+            className="rounded bg-purple-500 py-2 px-4 text-white hover:bg-purple-600 focus:bg-purple-400"
+          >
+            <Link to={`/games/${game.id}/play/${p.id}`}>Switch to {p.name}'s turn</Link>
+          </button>)}
         </div>
       </Form>
     </>
