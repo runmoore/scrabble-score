@@ -1,7 +1,12 @@
 import { Form, useLoaderData, useTransition, Link } from "@remix-run/react";
 import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
-import { addScore, getGame, completeGame, reopenGame } from "~/models/game.server";
+import {
+  addScore,
+  getGame,
+  completeGame,
+  reopenGame,
+} from "~/models/game.server";
 
 import invariant from "tiny-invariant";
 
@@ -87,7 +92,10 @@ export default function Play() {
     return "oops, bad player id supplied";
   }
 
-  const maxNumberOfTurns = game.players.reduce((max, {scores}) =>  Math.max(max, scores.length), 0);
+  const maxNumberOfTurns = game.players.reduce(
+    (max, { scores }) => Math.max(max, scores.length),
+    0
+  );
 
   return (
     <>
@@ -103,7 +111,11 @@ export default function Play() {
             {player.scores.map((score) => (
               <span key={score.id}>{score.points}</span>
             ))}
-            {new Array(maxNumberOfTurns - player.scores.length).fill(null).map((_, i) => <br key={i} />)}
+            {new Array(maxNumberOfTurns - player.scores.length)
+              .fill(null)
+              .map((_, i) => (
+                <br key={i} />
+              ))}
             <div className="min-w-[100px] border-t-4 border-b-4 font-bold">
               {player.totalScore}
             </div>
@@ -122,38 +134,51 @@ export default function Play() {
           onChange={(e) => setScore(e.target.value)}
           autoFocus
         />
-        <div className="mt-4 m flex flex-row justify-between">
-          {!game.completed && <button
-            type="submit"
-            className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
-            name="action"
-            value="score"
-            disabled={(hasMounted && !score) || isSumbmitting}
-          >
-            Submit score
-          </button>}
-          {!game.completed && <button
-            type="submit"
-            className="rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
-            name="action"
-            value="complete"
-          >
-            Complete game
-          </button>}
-          {game.completed && <button
-            type="submit"
-            className="rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
-            name="action"
-            value="reopen"
-          >
-            Re-open game
-          </button>}
-          {!game.completed && game.players.filter(p => p.id !== playerId ).map((p) => <button
-            key={p.id}
-            className="rounded bg-purple-500 py-2 px-4 text-white hover:bg-purple-600 focus:bg-purple-400"
-          >
-            <Link to={`/games/${game.id}/play/${p.id}`}>Switch to {p.name}'s turn</Link>
-          </button>)}
+        <div className="m mt-4 flex flex-row justify-between">
+          {!game.completed && (
+            <button
+              type="submit"
+              className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
+              name="action"
+              value="score"
+              disabled={(hasMounted && !score) || isSumbmitting}
+            >
+              Submit score
+            </button>
+          )}
+          {!game.completed && (
+            <button
+              type="submit"
+              className="rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
+              name="action"
+              value="complete"
+            >
+              Complete game
+            </button>
+          )}
+          {game.completed && (
+            <button
+              type="submit"
+              className="rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
+              name="action"
+              value="reopen"
+            >
+              Re-open game
+            </button>
+          )}
+          {!game.completed &&
+            game.players
+              .filter((p) => p.id !== playerId)
+              .map((p) => (
+                <button
+                  key={p.id}
+                  className="rounded bg-purple-500 py-2 px-4 text-white hover:bg-purple-600 focus:bg-purple-400"
+                >
+                  <Link to={`/games/${game.id}/play/${p.id}`}>
+                    Switch to {p.name}'s turn
+                  </Link>
+                </button>
+              ))}
         </div>
       </Form>
     </>

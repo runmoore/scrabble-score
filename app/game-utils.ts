@@ -1,11 +1,22 @@
-import type { Player } from "./models/game.server";
+import type { Player, Score } from "./models/game.server";
 
 export function getNextPlayerToPlay({
   scores,
   players,
 }: {
-  scores: any[];
-  players: any[];
+  scores: Score[];
+  players: Player[];
 }): Player {
-  return players[scores.length % players.length];
+  if (scores.length === 0) {
+    return players[0];
+  }
+
+  const lastPersonToPlay = scores.at(-1)?.playerId;
+  const indexOfLastPersonToPlay = players.findIndex(
+    (p) => p.id === lastPersonToPlay
+  );
+
+  return indexOfLastPersonToPlay + 1 === players.length
+    ? players[0]
+    : players[indexOfLastPersonToPlay + 1];
 }
