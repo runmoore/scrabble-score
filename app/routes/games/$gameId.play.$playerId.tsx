@@ -171,6 +171,7 @@ export default function Play() {
               .filter((p) => p.id !== playerId)
               .map((p) => (
                 <button
+                  type='button'
                   key={p.id}
                   className="rounded bg-purple-500 py-2 px-4 text-white hover:bg-purple-600 focus:bg-purple-400"
                 >
