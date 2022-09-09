@@ -1,7 +1,7 @@
-import { Form, useLoaderData, useTransition } from "@remix-run/react";
+import { Form, useLoaderData, useTransition, Link } from "@remix-run/react";
 import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
-import { addScore, getGame, completeGame } from "~/models/game.server";
+import { addScore, getGame, completeGame, reopenGame } from "~/models/game.server";
 
 import invariant from "tiny-invariant";
 
@@ -56,6 +56,11 @@ export const action = async ({ request, params }: ActionArgs) => {
   if (formData.get("action") === "complete") {
     await completeGame(gameId);
     return redirect(`/games/${gameId}`);
+  }
+
+  if (formData.get("action") === "reopen") {
+    await reopenGame(gameId);
+    return null;
   }
 };
 
@@ -127,14 +132,22 @@ export default function Play() {
           >
             Submit score
           </button>
-          <button
+          {!game.completed && <button
             type="submit"
-            className="rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400"
+            className="rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
             name="action"
             value="complete"
           >
             Complete game
-          </button>
+          </button>}
+          {game.completed && <button
+            type="submit"
+            className="rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
+            name="action"
+            value="reopen"
+          >
+            Re-open game
+          </button>}
         </div>
       </Form>
     </>

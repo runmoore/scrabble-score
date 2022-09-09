@@ -156,3 +156,10 @@ export function completeGame(id: Game["id"]) {
     where: { id },
   });
 }
+
+export function reopenGame(id: Game["id"]) {
+  return prisma.game.update({
+    data: { completed: false },
+    where: { id },
+  });
+}
