@@ -134,11 +134,11 @@ export default function Play() {
           onChange={(e) => setScore(e.target.value)}
           autoFocus
         />
-        <div className="m mt-4 flex flex-row justify-between">
+        <div className="m mt-4 flex flex-col lg:flex-row lg:justify-around">
           {!game.completed && (
             <button
               type="submit"
-              className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
+              className="mb-4 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
               name="action"
               value="score"
               disabled={(hasMounted && !score) || isSumbmitting}
@@ -149,7 +149,7 @@ export default function Play() {
           {!game.completed && (
             <button
               type="submit"
-              className="rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
+              className="mb-4 rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
               name="action"
               value="complete"
             >
@@ -159,7 +159,7 @@ export default function Play() {
           {game.completed && (
             <button
               type="submit"
-              className="rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
+              className="mb-4 rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
               name="action"
               value="reopen"
             >
@@ -171,9 +171,9 @@ export default function Play() {
               .filter((p) => p.id !== playerId)
               .map((p) => (
                 <button
-                  type='button'
+                  type="button"
                   key={p.id}
-                  className="rounded bg-purple-500 py-2 px-4 text-white hover:bg-purple-600 focus:bg-purple-400"
+                  className="mb-4 rounded bg-purple-500 py-2 px-4 text-white hover:bg-purple-600 focus:bg-purple-400"
                 >
                   <Link to={`/games/${game.id}/play/${p.id}`}>
                     Switch to {p.name}'s turn
