@@ -116,7 +116,7 @@ export default function Play() {
               .map((_, i) => (
                 <br key={i} />
               ))}
-            <div className="min-w-[100px] border-t-4 border-b-4 font-bold">
+            <div className="min-w-[20px] border-t-4 border-b-4 font-bold">
               {player.totalScore}
             </div>
           </div>
