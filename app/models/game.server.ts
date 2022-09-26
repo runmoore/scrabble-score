@@ -79,7 +79,14 @@ export function createGame({
 
 export function getAllGames({ userId }: { userId: User["id"] }) {
   return prisma.game.findMany({
-    where: { userId },
+    where: {
+      userId,
+      // only return games with players
+      // https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#filter-on-presence-of-related-records
+      players: {
+        some: {},
+      },
+    },
     select: {
       id: true,
       players: true,
