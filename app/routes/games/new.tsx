@@ -5,6 +5,7 @@ import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { addPlayer, createGame, getAllPlayers } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 import type { Player } from "~/models/game.server";
+import { useState } from "react";
 
 export type LoaderData = {
   id: Player["id"];
@@ -26,6 +27,10 @@ export const action = async ({ request }: ActionArgs) => {
   switch (action) {
     case "start-new-game": {
       const players = formData.getAll("players") as string[];
+
+      if (players.length < 2) {
+        throw new Error(`You must select at least 2 players to play`);
+      }
 
       const game = await createGame({ userId, players });
 
@@ -52,12 +57,37 @@ export default function NewGamePage() {
   const actionData = useActionData<typeof action>();
   const players = useLoaderData<typeof loader>();
 
+  const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
+
+  const onPlayerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setSelectedPlayers((prev) => {
+        return [...prev, event.target.id];
+      });
+    } else {
+      setSelectedPlayers((prev) => {
+        return [...prev.filter((x) => x !== event.target.id)];
+      });
+    }
+  };
+
   return (
-    <div className="flex justify-around">
+    <div className="flex flex-col justify-around lg:flex-row">
       <Form className="flex flex-col" method="post">
+        <p className="mb-2">
+          {players.length > 1
+            ? "Please select at least 2 players to play:"
+            : "Please add more players:"}
+        </p>
         {players.map((p) => (
           <div key={p.id} className="mb-2">
-            <input id={p.id} type="checkbox" name="players" value={p.id} />
+            <input
+              id={p.id}
+              type="checkbox"
+              name="players"
+              value={p.id}
+              onChange={onPlayerChange}
+            />
             <label htmlFor={p.id} className="cursor-pointer pl-8">
               {p.name}
             </label>
@@ -67,13 +97,14 @@ export default function NewGamePage() {
           type="submit"
           name="action"
           value="start-new-game"
-          className="mt-4 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+          className="my-4 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
+          disabled={selectedPlayers.length < 2}
         >
           Start new Game
         </button>
       </Form>
       <Form className="flex flex-col" method="post" key={players.length}>
-        <input name="name" className="mb-8 border-4" />
+        <input name="name" className="mt-8 mb-4 border-4" />
         <span className="text-red-500">{actionData?.errors}</span>
         <button
           type="submit"
