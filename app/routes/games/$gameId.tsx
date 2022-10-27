@@ -33,6 +33,7 @@ export const action = async ({ request, params }: ActionArgs) => {
 
   if (formData.get("action") === "reopen") {
     await reopenGame(gameId);
+
     const nextPlayer = getNextPlayerToPlay(game);
 
     return redirect(`/games/${gameId}/play/${nextPlayer.id}`);
