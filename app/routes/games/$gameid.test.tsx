@@ -3,6 +3,7 @@ import { getGame } from "~/models/game.server";
 
 import type { AppData } from "@remix-run/server-runtime";
 
+vi.mock("~/session.server");
 vi.mock("~/models/game.server", () => {
   return {
     getGame: vi.fn().mockResolvedValue({
