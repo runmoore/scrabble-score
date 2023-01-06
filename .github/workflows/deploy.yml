@@ -70,7 +70,7 @@ jobs:
       - name: ⚡ Run vitest
         run: npm run test -- --coverage
         env:
-          SESSION_STORAGE: test
+          SESSION_SECRET: test
 
   cypress:
     name: ⚫️ Cypress
