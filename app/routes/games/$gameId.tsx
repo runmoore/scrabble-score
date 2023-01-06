@@ -4,8 +4,9 @@ import { Form, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
-import { getGame, reopenGame } from "~/models/game.server";
+import { createGame, getGame, reopenGame } from "~/models/game.server";
 import { getNextPlayerToPlay } from "~/game-utils";
+import { requireUserId } from "~/session.server";
 
 const english_ordinal_rules = new Intl.PluralRules("en", { type: "ordinal" });
 const suffixes = {
@@ -68,6 +69,16 @@ export const action = async ({ request, params }: ActionArgs) => {
 
     return redirect(`/games/${gameId}/play/${nextPlayer.id}`);
   }
+
+  if (formData.get("action") === "rematch") {
+    const userId = await requireUserId(request);
+
+    const players = game.players.map((player) => player.id);
+
+    const newGame = await createGame({ userId, players });
+
+    return redirect(`/games/${newGame.id}/play/${players[0]}`);
+  }
 };
 
 export default function GamePage() {
@@ -109,14 +120,24 @@ export default function GamePage() {
       </div>
       {game.completed && (
         <Form method="post" action="">
-          <button
-            type="submit"
-            className="rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
-            name="action"
-            value="reopen"
-          >
-            Re-open game
-          </button>
+          <div className="m mt-4 flex flex-col lg:flex-row lg:justify-around">
+            <button
+              type="submit"
+              className="mb-4 rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
+              name="action"
+              value="reopen"
+            >
+              Re-open game
+            </button>
+            <button
+              type="submit"
+              className="mb-4 rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400"
+              name="action"
+              value="rematch"
+            >
+              Rematch!
+            </button>
+          </div>
         </Form>
       )}
     </>
