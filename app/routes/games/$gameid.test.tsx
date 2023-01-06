@@ -5,9 +5,15 @@ import type { AppData } from "@remix-run/server-runtime";
 
 vi.mock("~/models/game.server", () => {
   return {
-    getGame: vi
-      .fn()
-      .mockResolvedValue({ id: 1, completed: false, players: [], scores: [] }),
+    getGame: vi.fn().mockResolvedValue({
+      id: 1,
+      completed: false,
+      players: [
+        { name: "alice", totalScore: 5 },
+        { name: "nina", totalScore: 2 },
+      ],
+      scores: [],
+    }),
   };
 });
 describe("loader function", () => {
@@ -32,9 +38,28 @@ describe("loader function", () => {
   test("returns the returned game", async () => {
     const data = await loaderResponse.json();
 
-    expect(data).toEqual({
-      game: { id: 1, completed: false, players: [], scores: [] },
+    expect(data.game).toEqual({
+      id: 1,
+      completed: false,
+      players: [
+        { name: "alice", totalScore: 5, place: 1 },
+        { name: "nina", totalScore: 2, place: 2 },
+      ],
+      scores: [],
     });
+  });
+
+  test("returns the 1 winner", async () => {
+    const data = await loaderResponse.json();
+
+    expect(data.winners.length).toEqual(1);
+    expect(data.winners).toEqual([{ name: "alice", totalScore: 5, place: 1 }]);
+  });
+
+  test("returns the top score", async () => {
+    const data = await loaderResponse.json();
+
+    expect(data.topScore).toEqual(5);
   });
 
   test("calls prisma to get the game", () => {

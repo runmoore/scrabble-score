@@ -12,6 +12,7 @@ interface PlayerWithScores extends Player {
 interface PlayerWithScores extends Player {
   scores: Score[];
   totalScore: number;
+  place: number;
 }
 
 type EnhancedGame = {

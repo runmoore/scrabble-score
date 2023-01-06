@@ -7,6 +7,22 @@ import invariant from "tiny-invariant";
 import { getGame, reopenGame } from "~/models/game.server";
 import { getNextPlayerToPlay } from "~/game-utils";
 
+const english_ordinal_rules = new Intl.PluralRules("en", { type: "ordinal" });
+const suffixes = {
+  zero: "",
+  one: "st",
+  two: "nd",
+  few: "rd",
+  many: "",
+  other: "th",
+};
+
+function getNumberWithOrdinal(n: number) {
+  const category = english_ordinal_rules.select(n);
+  const suffix = suffixes[category];
+  return n + suffix;
+}
+
 export const loader = async ({ params }: LoaderArgs) => {
   invariant(params.gameId, "gameId not found");
   const game = await getGame({ id: params.gameId });
@@ -17,7 +33,21 @@ export const loader = async ({ params }: LoaderArgs) => {
 
   game.players.sort((a, b) => (a.totalScore >= b.totalScore ? -1 : 1));
 
-  return json({ game });
+  for (const [i, player] of game.players.entries()) {
+    if (i === 0) {
+      player.place = 1;
+    } else if (player.totalScore === game.players[i - 1].totalScore) {
+      player.place = game.players[i - 1].place;
+    } else {
+      player.place = i + 1;
+    }
+  }
+
+  const topScore = game.players[0].totalScore;
+  const winners = game.players.filter(
+    ({ totalScore }) => totalScore === topScore
+  );
+  return json({ game, winners, topScore });
 };
 
 export const action = async ({ request, params }: ActionArgs) => {
@@ -41,23 +71,42 @@ export const action = async ({ request, params }: ActionArgs) => {
 };
 
 export default function GamePage() {
-  const { game } = useLoaderData<typeof loader>();
+  const { game, winners, topScore } = useLoaderData<typeof loader>();
+  let title = "Still Playing";
+
+  if (game.completed) {
+    if (winners.length === 1) {
+      title = `${game.players[0].name} has won with a score of ${topScore}`;
+    } else if (winners.length < game.players.length) {
+      const listOfWinners = winners.map(({ name }) => name).join(" and ");
+      title = `It's a draw! ${listOfWinners} have won with a score of ${topScore}`;
+    } else {
+      title = `It's a draw! Everyone has a score of ${topScore}`;
+    }
+  }
 
   return (
     <>
-      {game.completed ? (
-        <h2 className="text-3xl">
-          {game.players[0].name} has won with a score of{" "}
-          {game.players[0].totalScore}
-        </h2>
-      ) : (
-        <h2 className="text-3xl">Still Playing</h2>
-      )}
-      {game.players.map((p) => (
-        <p key={p.id}>
-          {p.name} {p.totalScore}
-        </p>
-      ))}
+      <h2 className="text-3xl">{title}</h2>
+      <div className="my-8 flex justify-around">
+        <div>
+          {game.players.map((p) => (
+            <p key={p.id}>
+              {getNumberWithOrdinal(p.place)} {p.place === 1 && "🏆"}
+            </p>
+          ))}
+        </div>
+        <div>
+          {game.players.map((p) => (
+            <p key={p.id}>{p.name}</p>
+          ))}
+        </div>
+        <div>
+          {game.players.map((p) => (
+            <p key={p.id}>{p.totalScore}</p>
+          ))}
+        </div>
+      </div>
       {game.completed && (
         <Form method="post" action="">
           <button
