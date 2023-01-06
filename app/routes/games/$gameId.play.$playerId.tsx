@@ -128,7 +128,6 @@ export default function Play() {
       <Form method="post" action="" key={playerId}>
         <input
           className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
-          type="number"
           name="score"
           value={score}
           onChange={(e) => setScore(e.target.value)}
