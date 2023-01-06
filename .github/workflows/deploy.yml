@@ -71,6 +71,7 @@ jobs:
         run: npm run test -- --coverage
         env:
           SESSION_SECRET: test
+          DATABASE_URL: test
 
   cypress:
     name: ⚫️ Cypress
