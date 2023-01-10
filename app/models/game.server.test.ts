@@ -36,7 +36,7 @@ describe("game.server getGame", () => {
     vi.clearAllMocks();
   });
 
-  test("", () => {
+  test("calls prisma findFirst", () => {
     expect(prisma.game.findFirst).toHaveBeenCalledWith({
       where: { id: "123" },
       select: {
