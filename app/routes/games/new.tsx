@@ -104,7 +104,7 @@ export default function NewGamePage() {
         </button>
       </Form>
       <Form className="flex flex-col" method="post" key={players.length}>
-        <input name="name" className="mt-8 mb-4 border-4" />
+        <input name="name" aria-label="name" className="mt-8 mb-4 border-4" />
         <span className="text-red-500">{actionData?.errors}</span>
         <button
           type="submit"

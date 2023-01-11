@@ -129,6 +129,7 @@ export default function Play() {
         <input
           className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
           name="score"
+          aria-label="score"
           value={score}
           onChange={(e) => setScore(e.target.value)}
           autoFocus

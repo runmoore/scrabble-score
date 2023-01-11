@@ -48,4 +48,40 @@ describe("smoke tests", () => {
 
     cy.findByText("No notes yet");
   });
+
+  it('should allow you to add new players, start a new game, and start playing', () => {
+    cy.login();
+    cy.visitAndCheck("/");
+
+    cy.findByRole("link", { name: /games/i }).click();
+    cy.findByRole("link", { name: /\+ new game/i }).click();
+
+    cy.findByRole("textbox", { name: /name/i }).type('Zelda');
+    cy.findByRole("button", { name: /\+ Add new player/i }).click();
+    cy.wait(500);
+
+    cy.findByRole("textbox", { name: /name/i }).type('Link');
+    cy.findByRole("button", { name: /\+ add new player/i }).click();
+    cy.wait(500);
+
+    cy.findByRole("checkbox", { name: /zelda/i }).check();
+    cy.findByRole("checkbox", { name: /link/i }).check();
+
+    cy.findByRole("button", { name: /start new game/i }).click();
+
+    cy.url().should('include', /play/);
+
+    cy.findByRole("textbox", { name: /score/i }).type('5');
+    cy.findByRole("button", { name: /submit score/i }).click();
+
+    cy.wait(500);
+
+    cy.findByRole("textbox", { name: /score/i }).type('11');
+    cy.findByRole("button", { name: /submit score/i }).click();
+    cy.wait(500);
+
+    cy.findByRole("button", { name: /complete game/i }).click();
+    cy.wait(500);
+    cy.findByText("Link has won with a score of 11");
+  });
 });

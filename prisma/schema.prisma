@@ -71,7 +71,7 @@ model Score {
   player   Player @relation(fields: [playerId], references: [id])
   playerId String
 
-  game   Game   @relation(fields: [gameId], references: [id])
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
   gameId String
 
   scoredAt DateTime @default(now())
