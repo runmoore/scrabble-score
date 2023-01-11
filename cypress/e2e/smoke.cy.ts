@@ -50,22 +50,25 @@ describe("smoke tests", () => {
   });
 
   it('should allow you to add new players, start a new game, and start playing', () => {
+    const player1 = faker.name.firstName();
+    const player2 = faker.name.firstName();
+
     cy.login();
     cy.visitAndCheck("/");
 
     cy.findByRole("link", { name: /games/i }).click();
     cy.findByRole("link", { name: /\+ new game/i }).click();
 
-    cy.findByRole("textbox", { name: /name/i }).type('Zelda');
+    cy.findByRole("textbox", { name: /name/i }).type(player1);
     cy.findByRole("button", { name: /\+ Add new player/i }).click();
     cy.wait(500);
 
-    cy.findByRole("textbox", { name: /name/i }).type('Link');
+    cy.findByRole("textbox", { name: /name/i }).type(player2);
     cy.findByRole("button", { name: /\+ add new player/i }).click();
     cy.wait(500);
 
-    cy.findByRole("checkbox", { name: /zelda/i }).check();
-    cy.findByRole("checkbox", { name: /link/i }).check();
+    cy.findByRole("checkbox", { name: player1 }).check();
+    cy.findByRole("checkbox", { name: player2 }).check();
 
     cy.findByRole("button", { name: /start new game/i }).click();
 
@@ -82,6 +85,6 @@ describe("smoke tests", () => {
 
     cy.findByRole("button", { name: /complete game/i }).click();
     cy.wait(500);
-    cy.findByText("Link has won with a score of 11");
+    cy.findByText(`${player2} has won with a score of 11`);
   });
 });
