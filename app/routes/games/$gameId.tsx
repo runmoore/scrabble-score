@@ -123,7 +123,7 @@ export default function GamePage() {
           <div className="m mt-4 flex flex-col lg:flex-row lg:justify-around">
             <button
               type="submit"
-              className="mb-4 rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
+              className="mb-4 rounded bg-green-primary py-2 px-4 text-white hover:bg-green-secondary focus:bg-green-secondary"
               name="action"
               value="reopen"
             >
@@ -131,7 +131,7 @@ export default function GamePage() {
             </button>
             <button
               type="submit"
-              className="mb-4 rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400"
+              className="mb-4 rounded bg-red-primary py-2 px-4 text-white hover:bg-red-secondary focus:bg-red-secondary"
               name="action"
               value="rematch"
             >

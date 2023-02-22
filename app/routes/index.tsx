@@ -11,7 +11,7 @@ export default function Index() {
           <div className="relative shadow-xl sm:overflow-hidden sm:rounded-2xl">
             <div className="lg:pb-18 relative px-4 pt-16 pb-8 sm:px-6 sm:pt-24 sm:pb-14 lg:px-8 lg:pt-32">
               <h1 className="text-center text-6xl font-extrabold tracking-tight sm:text-8xl lg:text-9xl">
-                <span className="block uppercase text-yellow-500 drop-shadow-md">
+                <span className="block uppercase text-yellow-primary drop-shadow-md">
                   Scrabble Scorer
                 </span>
               </h1>
@@ -20,13 +20,13 @@ export default function Index() {
                   <>
                     <Link
                       to="/games"
-                      className="mr-4 flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-yellow-700 shadow-sm hover:bg-yellow-50 sm:px-8"
+                      className="border-transparent mr-4 flex items-center justify-center rounded-md border bg-white px-4 py-3 text-base font-medium text-yellow-700 shadow-sm hover:bg-yellow-50 sm:px-8"
                     >
                       View Games for {user.email}
                     </Link>
                     <Link
                       to="/notes"
-                      className="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-yellow-700 shadow-sm hover:bg-yellow-50 sm:px-8"
+                      className="border-transparent flex items-center justify-center rounded-md border bg-white px-4 py-3 text-base font-medium text-yellow-700 shadow-sm hover:bg-yellow-50 sm:px-8"
                     >
                       View Notes for {user.email}
                     </Link>
@@ -35,13 +35,13 @@ export default function Index() {
                   <div className="space-y-4 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5 sm:space-y-0">
                     <Link
                       to="/join"
-                      className="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-yellow-700 shadow-sm hover:bg-yellow-50 sm:px-8"
+                      className="border-transparent flex items-center justify-center rounded-md border bg-white px-4 py-3 text-base font-medium text-yellow-primary shadow-sm hover:bg-yellow-secondary sm:px-8"
                     >
                       Sign up
                     </Link>
                     <Link
                       to="/login"
-                      className="flex items-center justify-center rounded-md bg-yellow-500 px-4 py-3 font-medium text-white hover:bg-yellow-600  "
+                      className="flex items-center justify-center rounded-md bg-yellow-primary px-4 py-3 font-medium text-white hover:bg-yellow-secondary hover:text-yellow-primary"
                     >
                       Log In
                     </Link>
