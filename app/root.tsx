@@ -9,12 +9,12 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 
-import tailwindStylesheetUrl from "./styles/tailwind.css";
 import { getUser } from "./session.server";
+import stylesheet from "~/tailwind.css";
 
 export const links: LinksFunction = () => {
   return [
-    { rel: "stylesheet", href: tailwindStylesheetUrl },
+    { rel: "stylesheet", href: stylesheet },
     { rel: "apple-touch-icon", href: "icon.png" },
   ];
 };
