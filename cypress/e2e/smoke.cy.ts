@@ -49,7 +49,7 @@ describe("smoke tests", () => {
     cy.findByText("No notes yet");
   });
 
-  it('should allow you to add new players, start a new game, and start playing', () => {
+  it("should allow you to add new players, start a new game, and start playing", () => {
     const player1 = faker.name.firstName();
     const player2 = faker.name.firstName();
 
@@ -72,14 +72,14 @@ describe("smoke tests", () => {
 
     cy.findByRole("button", { name: /start new game/i }).click();
 
-    cy.url().should('include', /play/);
+    cy.url().should("include", /play/);
 
-    cy.findByRole("textbox", { name: /score/i }).type('5');
+    cy.findByRole("textbox", { name: /score/i }).type("5");
     cy.findByRole("button", { name: /submit score/i }).click();
 
     cy.wait(500);
 
-    cy.findByRole("textbox", { name: /score/i }).type('11');
+    cy.findByRole("textbox", { name: /score/i }).type("11");
     cy.findByRole("button", { name: /submit score/i }).click();
     cy.wait(500);
 
