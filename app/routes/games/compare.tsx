@@ -1,7 +1,7 @@
-import type { LoaderArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 import { getAllPlayers } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
@@ -13,15 +13,25 @@ export const loader = async ({ request }: LoaderArgs) => {
   return json(players);
 };
 
+export const action = async ({ request, params }: ActionArgs) => {
+  const formData = await request.formData();
+  const playerOne = formData.get("playerOne");
+  const playerTwo = formData.get("playerTwo");
+
+  return redirect(`/games/compare/${playerOne}/${playerTwo}`);
+};
+
 function SelectPlayer({
   players,
   onChange,
+  name,
 }: {
   players: Array<{ id: string; name: string }>;
-  onChange: any;
+  onChange: React.ChangeEventHandler<HTMLSelectElement>;
+  name: string;
 }) {
   return (
-    <select onChange={onChange} className="mb-4 border-2">
+    <select name={name} onChange={onChange} className="mb-4 border-2">
       {players.map((p) => (
         <option key={p.id} value={p.id}>
           {p.name}
@@ -40,10 +50,12 @@ export default function ComparePage() {
     <Form className="flex flex-col" method="post">
       <p className="mb-2">Please select 2 players to compare</p>
       <SelectPlayer
+        name="playerOne"
         players={players}
         onChange={(e) => setPlayerOne(e.target.value)}
       />
       <SelectPlayer
+        name="playerTwo"
         players={players}
         onChange={(e) => setPlayerTwo(e.target.value)}
       />

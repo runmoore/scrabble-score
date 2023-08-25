@@ -108,6 +108,7 @@ export function getAllPlayers({ userId }: { userId: User["id"] }) {
 
 export function getPlayer({ id }: { id: Player["id"] }) {
   return prisma.player.findFirst({
+    // TODO: add userId
     where: { id },
     select: { name: true },
   });
