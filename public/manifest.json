@@ -1,0 +1,6 @@
+{
+  "short_name": "SS",
+  "name": "Scrabble Score",
+  "start_url": "https://scrabble-score-e630.fly.dev/",
+  "display": "standalone"
+}

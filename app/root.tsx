@@ -15,7 +15,8 @@ import stylesheet from "~/tailwind.css";
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: stylesheet },
-    { rel: "apple-touch-icon", href: "icon.png" },
+    { rel: "apple-touch-icon", href: "/icon.png" },
+    { rel: "manifest", href: "/manifest.json" },
   ];
 };
 
