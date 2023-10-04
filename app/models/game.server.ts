@@ -2,7 +2,6 @@ import { prisma } from "~/db.server";
 
 import type { Game, Player, User, Score } from "@prisma/client";
 export type { Game, Player, User, Score } from "@prisma/client";
-export type { EnhancedGame, PlayerWithScores };
 
 interface PlayerWithScores extends Player {
   scores: Score[];
@@ -179,3 +178,5 @@ export function reopenGame(id: Game["id"]) {
     where: { id },
   });
 }
+
+export type { EnhancedGame, PlayerWithScores };

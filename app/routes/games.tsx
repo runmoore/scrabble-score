@@ -1,11 +1,9 @@
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData, Outlet, NavLink } from "@remix-run/react";
 import { useUser } from "~/utils";
-import { Outlet } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 import { requireUserId } from "~/session.server";
 import type { Game } from "~/models/game.server";
 import { getAllGames } from "~/models/game.server";
-import { NavLink } from "@remix-run/react";
 import { format } from "date-fns";
 import { getNextPlayerToPlay } from "~/game-utils";
 import { useState } from "react";

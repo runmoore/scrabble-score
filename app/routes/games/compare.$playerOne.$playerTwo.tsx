@@ -67,7 +67,9 @@ const getWinnersNames = (game: {
     0
   );
 
-  return game.players.filter((player) => player.totalScore === topScore).map((player) => player.name);
+  return game.players
+    .filter((player) => player.totalScore === topScore)
+    .map((player) => player.name);
 };
 
 const isDraw = (game: {
