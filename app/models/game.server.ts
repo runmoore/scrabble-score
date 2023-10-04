@@ -20,6 +20,7 @@ type EnhancedGame = {
   completed: Game["completed"];
   scores: Score[];
   players: PlayerWithScores[];
+  createdAt: Game["createdAt"];
 };
 
 export async function getGame({
@@ -29,7 +30,13 @@ export async function getGame({
 }): Promise<EnhancedGame | null> {
   const game = (await prisma.game.findFirst({
     where: { id },
-    select: { id: true, completed: true, players: true, scores: true },
+    select: {
+      id: true,
+      completed: true,
+      players: true,
+      scores: true,
+      createdAt: true,
+    },
   })) as EnhancedGame;
 
   if (!game) {

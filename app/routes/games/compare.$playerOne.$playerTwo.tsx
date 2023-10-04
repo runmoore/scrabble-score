@@ -1,7 +1,8 @@
 import { useLoaderData } from "@remix-run/react";
 import { json, type LoaderArgs } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
-import { getAllGames, getGame } from "~/models/game.server";
+import type { PlayerWithScores } from "~/models/game.server";
+import { getAllGames, getGame, getPlayer } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 
 export const loader = async ({ request, params }: LoaderArgs) => {
@@ -10,31 +11,34 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   const userId = await requireUserId(request);
 
-  const [allGames] = await Promise.all([await getAllGames({ userId })]);
+  const [playerOneName, playerTwoName, allGames] = await Promise.all([
+    (await getPlayer({ id: params.playerOne }))?.name,
+    (await getPlayer({ id: params.playerTwo }))?.name,
+    await getAllGames({ userId }),
+  ]);
 
-  const relevantGames = await Promise.all(
-    allGames
-      .filter(
-        (game) =>
-          game.players.length === 2 &&
-          game.players.find((player) => player.id === params.playerOne) &&
-          game.players.find((player) => player.id === params.playerTwo)
-      )
-      .map((game) => getGame({ id: game.id }))
-  );
+  const relevantGames = (
+    await Promise.all(
+      allGames
+        .filter(
+          (game) =>
+            game.players.length === 2 &&
+            game.players.find((player) => player.id === params.playerOne) &&
+            game.players.find((player) => player.id === params.playerTwo)
+        )
+        .map((game) => getGame({ id: game.id }))
+      // flatMap to remove the nulls and be TS safe
+    )
+  ).flatMap((game) => (game ? [game] : []));
 
   const playerOne = {
     won: 0,
-    name: relevantGames[0]?.players.find(
-      (player) => player.id === params.playerOne
-    )?.name,
+    name: playerOneName,
   };
 
   const playerTwo = {
     won: 0,
-    name: relevantGames[0]?.players.find(
-      (player) => player.id === params.playerTwo
-    )?.name,
+    name: playerTwoName,
   };
 
   for (const game of relevantGames) {
@@ -52,14 +56,42 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     }
   }
 
-  return json({ playerOne, playerTwo });
+  return json({ playerOne, playerTwo, relevantGames });
+};
+
+const getWinners = (game: {
+  players: Array<Pick<PlayerWithScores, "totalScore" | "name">>;
+}) => {
+  const topScore = game.players.reduce(
+    (max, current) => (current.totalScore > max ? current.totalScore : max),
+    0
+  );
+
+  return game.players.filter((player) => player.totalScore === topScore);
+};
+
+const isDraw = (game: {
+  players: Array<Pick<PlayerWithScores, "totalScore" | "name">>;
+}) => {
+  return getWinners(game).length > 1;
 };
 
 export default function ComparePlayers() {
   const loaderData = useLoaderData<typeof loader>();
   return (
     <>
-      <h1 className="text-3xl font-bold">{`${loaderData.playerOne.name} ${loaderData.playerOne.won} vs ${loaderData.playerTwo.won} ${loaderData.playerTwo.name} `}</h1>
+      <h1 className="mb-8 text-3xl font-bold">{`${loaderData.playerOne.name} ${loaderData.playerOne.won} vs ${loaderData.playerTwo.won} ${loaderData.playerTwo.name} `}</h1>
+      {loaderData.relevantGames.map((game) => (
+        <div key={game?.id}>
+          <span>{game?.createdAt.slice(0, 10)}&nbsp;</span>
+          <span>
+            {isDraw(game) ? "Drawn" : `${getWinners(game)[0].name} won`}
+          </span>
+        </div>
+      ))}
+      {loaderData.relevantGames.length === 0 && (
+        <div>You haven't played any games</div>
+      )}
     </>
   );
 }
