@@ -59,7 +59,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   return json({ playerOne, playerTwo, relevantGames });
 };
 
-const getWinners = (game: {
+const getWinnersNames = (game: {
   players: Array<Pick<PlayerWithScores, "totalScore" | "name">>;
 }) => {
   const topScore = game.players.reduce(
@@ -67,13 +67,13 @@ const getWinners = (game: {
     0
   );
 
-  return game.players.filter((player) => player.totalScore === topScore);
+  return game.players.filter((player) => player.totalScore === topScore).map((player) => player.name);
 };
 
 const isDraw = (game: {
   players: Array<Pick<PlayerWithScores, "totalScore" | "name">>;
 }) => {
-  return getWinners(game).length > 1;
+  return getWinnersNames(game).length > 1;
 };
 
 export default function ComparePlayers() {
@@ -85,7 +85,7 @@ export default function ComparePlayers() {
         <div key={game?.id}>
           <span>{game?.createdAt.slice(0, 10)}&nbsp;</span>
           <span>
-            {isDraw(game) ? "Drawn" : `${getWinners(game)[0].name} won`}
+            {isDraw(game) ? "Drawn" : `${getWinnersNames(game)[0]} won`}
           </span>
         </div>
       ))}
