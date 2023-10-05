@@ -70,13 +70,17 @@ export const action = async ({ request, params }: ActionArgs) => {
 };
 
 export default function Play() {
-  const navigation = useNavigation();
-  const isSumbmitting = navigation.state === "submitting";
-
-  const { game, playerId, topScore } = useLoaderData<typeof loader>();
-
   const [score, setScore] = useState("");
   const [hasMounted, setHasMounted] = useState(false);
+
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+
+  if (isSubmitting && score) {
+    setScore('');
+  }
+
+  const { game, playerId, topScore } = useLoaderData<typeof loader>();
 
   const player = game.players.find((p) => p.id === playerId);
 
@@ -138,12 +142,12 @@ export default function Play() {
           {!game.completed && (
             <button
               type="submit"
-              className="mb-4 rounded bg-blue-primary py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
+              className="mb-4 rounded bg-blue-primary py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200 min-w-[128px]"
               name="action"
               value="score"
-              disabled={(hasMounted && !score) || isSumbmitting}
+              disabled={(hasMounted && !score) || isSubmitting}
             >
-              Submit score
+              {isSubmitting ?  "...": "Submit score"}
             </button>
           )}
           {!game.completed && (
