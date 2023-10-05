@@ -1,4 +1,4 @@
-import { Form, useLoaderData, useTransition, Link } from "@remix-run/react";
+import { Form, useLoaderData, Link, useNavigation } from "@remix-run/react";
 import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 import {
@@ -70,8 +70,8 @@ export const action = async ({ request, params }: ActionArgs) => {
 };
 
 export default function Play() {
-  const transition = useTransition();
-  const isSumbmitting = Boolean(transition.submission);
+  const navigation = useNavigation();
+  const isSumbmitting = navigation.state === "submitting";
 
   const { game, playerId, topScore } = useLoaderData<typeof loader>();
 
