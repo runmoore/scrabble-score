@@ -77,7 +77,7 @@ export default function Play() {
   const isSubmitting = navigation.state === "submitting";
 
   if (isSubmitting && score) {
-    setScore('');
+    setScore("");
   }
 
   const { game, playerId, topScore } = useLoaderData<typeof loader>();
@@ -142,12 +142,12 @@ export default function Play() {
           {!game.completed && (
             <button
               type="submit"
-              className="mb-4 rounded bg-blue-primary py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200 min-w-[128px]"
+              className="mb-4 min-w-[128px] rounded bg-blue-primary py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
               name="action"
               value="score"
               disabled={(hasMounted && !score) || isSubmitting}
             >
-              {isSubmitting ?  "...": "Submit score"}
+              {isSubmitting ? "..." : "Submit score"}
             </button>
           )}
           {!game.completed && (
