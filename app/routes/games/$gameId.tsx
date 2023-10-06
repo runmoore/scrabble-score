@@ -1,5 +1,11 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  isRouteErrorResponse,
+  useCatch,
+  useLoaderData,
+  useRouteError,
+} from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
@@ -140,5 +146,32 @@ export default function GamePage() {
         </Form>
       )}
     </>
+  );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    if (error.status === 404) {
+      return <div>Game not found</div>;
+    } else {
+      return (
+        <div>
+          <h1>Oops</h1>
+          <p>Status: {error.status}</p>
+          <p>{error.data.message}</p>
+        </div>
+      );
+    }
+  }
+
+  return (
+    <div>
+      <h1>Uh oh ...</h1>
+      <p>Something went wrong.</p>
+      {/* @ts-ignore */}
+      <pre>{error?.message}</pre>
+    </div>
   );
 }

@@ -1,6 +1,12 @@
 import type { ActionFunction, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useCatch, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  isRouteErrorResponse,
+  useCatch,
+  useLoaderData,
+  useRouteError,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { deleteNote, getNote } from "~/models/note.server";
@@ -46,18 +52,29 @@ export default function NoteDetailsPage() {
   );
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
+export function ErrorBoundary() {
+  const error = useRouteError();
 
-  return <div>An unexpected error occurred: {error.message}</div>;
-}
-
-export function CatchBoundary() {
-  const caught = useCatch();
-
-  if (caught.status === 404) {
-    return <div>Note not found</div>;
+  if (isRouteErrorResponse(error)) {
+    if (error.status === 404) {
+      return <div>Game not found</div>;
+    } else {
+      return (
+        <div>
+          <h1>Oops</h1>
+          <p>Status: {error.status}</p>
+          <p>{error.data.message}</p>
+        </div>
+      );
+    }
   }
 
-  throw new Error(`Unexpected caught response with status: ${caught.status}`);
+  return (
+    <div>
+      <h1>Uh oh ...</h1>
+      <p>Something went wrong.</p>
+      {/* @ts-ignore */}
+      <pre>{error?.message}</pre>
+    </div>
+  );
 }
