@@ -1,4 +1,9 @@
-import type { LinksFunction, LoaderArgs, MetaFunction } from "@remix-run/node";
+import type {
+  LinksFunction,
+  LoaderArgs,
+  MetaFunction,
+  V2_MetaFunction,
+} from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
   Links,
@@ -20,12 +25,11 @@ export const links: LinksFunction = () => {
   ];
 };
 
-export const meta: MetaFunction = () => ({
-  charset: "utf-8",
-  title: "Scrabble score",
-  viewport: "width=device-width,initial-scale=1",
-  "apple-mobile-web-app-capable": "yes",
-});
+export const meta: V2_MetaFunction = () => [
+  {
+    title: "Scrabble score",
+  },
+];
 
 export const loader = async ({ request }: LoaderArgs) => {
   return json({
@@ -37,6 +41,9 @@ export default function App() {
   return (
     <html lang="en" className="h-full">
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <Meta />
         <Links />
       </head>
