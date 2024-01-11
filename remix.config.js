@@ -6,7 +6,7 @@ const { createRoutesFromFolders } = require("@remix-run/v1-route-convention");
 module.exports = {
   cacheDirectory: "./node_modules/.cache/remix",
   ignoredRouteFiles: ["**/*"],
-  serverModuleFormat: 'cjs',
+  serverModuleFormat: "cjs",
   future: {
     unstable_tailwind: true,
     v2_errorBoundary: true,
