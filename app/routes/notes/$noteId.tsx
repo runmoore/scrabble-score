@@ -3,7 +3,6 @@ import { json, redirect } from "@remix-run/node";
 import {
   Form,
   isRouteErrorResponse,
-  useCatch,
   useLoaderData,
   useRouteError,
 } from "@remix-run/react";

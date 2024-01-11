@@ -1,7 +1,6 @@
 import type {
   ActionFunction,
   LoaderFunction,
-  MetaFunction,
   V2_MetaFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
