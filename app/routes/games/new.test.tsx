@@ -1,6 +1,5 @@
 import { loader, action } from "./new";
 import type { LoaderData } from "./new";
-import type { AppData } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 
 import { getAllPlayers, createGame } from "~/models/game.server";
@@ -19,7 +18,7 @@ vi.mock("~/models/game.server", () => {
 });
 
 describe("new lodaer function", () => {
-  let loaderResponse: AppData;
+  let loaderResponse: any;
   let data: LoaderData;
 
   beforeEach(async () => {
@@ -44,7 +43,7 @@ describe("new lodaer function", () => {
 });
 
 describe("start new game function", () => {
-  let actionResponse: AppData;
+  let actionResponse: any;
 
   beforeEach(async () => {
     const body = new URLSearchParams();

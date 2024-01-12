@@ -1,4 +1,3 @@
-import type { AppData } from "@remix-run/server-runtime";
 import { loader } from "./$gameId.play.$playerId";
 
 vi.mock("~/models/game.server", () => {
@@ -21,7 +20,7 @@ vi.mock("~/models/game.server", () => {
 });
 
 describe("play loader function", () => {
-  let loaderResponse: AppData;
+  let loaderResponse: any;
   let data: any;
 
   beforeEach(async () => {

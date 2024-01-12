@@ -1,11 +1,11 @@
 import { useLoaderData } from "@remix-run/react";
-import { json, type LoaderArgs } from "@remix-run/server-runtime";
+import { json, type LoaderFunctionArgs } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
 import type { PlayerWithScores } from "~/models/game.server";
 import { getAllGames, getGame, getPlayer } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.playerOne, "playerOne not found");
   invariant(params.playerTwo, "playerTwo not found");
 

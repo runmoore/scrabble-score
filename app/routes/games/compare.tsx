@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import React, { useState } from "react";
@@ -6,14 +6,14 @@ import React, { useState } from "react";
 import { getAllPlayers } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
   const players = await getAllPlayers({ userId });
 
   return json(players);
 };
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const playerOne = formData.get("playerOne");
   const playerTwo = formData.get("playerTwo");

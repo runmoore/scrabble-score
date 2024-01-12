@@ -1,7 +1,6 @@
 import { loader, action } from "./$gameId";
 import { getGame, reopenGame, createGame } from "~/models/game.server";
 
-import type { AppData } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 
 vi.mock("~/session.server", () => {
@@ -27,7 +26,7 @@ vi.mock("~/models/game.server", () => {
   };
 });
 describe("loader function", () => {
-  let loaderResponse: AppData;
+  let loaderResponse: any;
 
   beforeEach(async () => {
     loaderResponse = await loader({
@@ -80,7 +79,7 @@ describe("loader function", () => {
 });
 
 describe("action function for reopen game", () => {
-  let actionResponse: AppData;
+  let actionResponse: any;
 
   beforeEach(async () => {
     const formData = new FormData();
@@ -110,7 +109,7 @@ describe("action function for reopen game", () => {
 });
 
 describe("action function for rematch game", () => {
-  let actionResponse: AppData;
+  let actionResponse: any;
 
   beforeEach(async () => {
     const formData = new FormData();

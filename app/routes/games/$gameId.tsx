@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import {
   Form,
   isRouteErrorResponse,
@@ -28,7 +28,7 @@ function getNumberWithOrdinal(n: number) {
   return n + suffix;
 }
 
-export const loader = async ({ params }: LoaderArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.gameId, "gameId not found");
   const game = await getGame({ id: params.gameId });
 
@@ -55,7 +55,7 @@ export const loader = async ({ params }: LoaderArgs) => {
   return json({ game, winners, topScore });
 };
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   invariant(params.gameId, "gameId not found");
   const { gameId } = params;
 

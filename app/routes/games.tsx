@@ -7,10 +7,10 @@ import { getAllGames } from "~/models/game.server";
 import { format } from "date-fns";
 import { getNextPlayerToPlay } from "~/game-utils";
 import { useState } from "react";
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import MenuIcon from "../icons/menu";
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const userId = await requireUserId(request);
   const games = await getAllGames({ userId });
 

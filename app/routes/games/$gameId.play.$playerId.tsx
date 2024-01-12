@@ -1,5 +1,5 @@
 import { Form, useLoaderData, Link, useNavigation } from "@remix-run/react";
-import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 import {
   addScore,
@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 
 export type LoaderData = typeof loader;
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.gameId, "gameId not found");
   invariant(params.playerId, "playerId not found");
 
@@ -35,7 +35,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   return json({ game, playerId: params.playerId, topScore });
 };
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   invariant(params.gameId, "gameId not found");
   invariant(params.playerId, "playerId not found");
   const { gameId, playerId } = params;
