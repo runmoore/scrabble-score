@@ -27,10 +27,10 @@
   ],
   "dependencies": {
     "@prisma/client": "^3.11.1",
-    "@remix-run/node": "2.0.1",
-    "@remix-run/react": "2.0.1",
-    "@remix-run/serve": "2.0.1",
-    "@remix-run/server-runtime": "2.0.1",
+    "@remix-run/node": "2.2.0",
+    "@remix-run/react": "2.2.0",
+    "@remix-run/serve": "2.2.0",
+    "@remix-run/server-runtime": "2.2.0",
     "@remix-run/v1-route-convention": "^0.1.4",
     "bcryptjs": "^2.4.3",
     "date-fns": "^2.28.0",
@@ -41,8 +41,8 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.2.0",
-    "@remix-run/dev": "2.0.1",
-    "@remix-run/eslint-config": "2.0.1",
+    "@remix-run/dev": "2.2.0",
+    "@remix-run/eslint-config": "2.2.0",
     "@testing-library/cypress": "^8.0.3",
     "@testing-library/dom": "^8.16.0",
     "@testing-library/jest-dom": "^5.16.3",
@@ -53,8 +53,8 @@
     "@types/node": "^17.0.23",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.06",
-    "@vitejs/plugin-react": "^3.1.0",
-    "@vitest/coverage-c8": "^0.28.5",
+    "@vitejs/plugin-react": "^4.1.0",
+    "@vitest/coverage-v8": "^0.34.6",
     "autoprefixer": "^10.4.4",
     "binode": "^1.0.5",
     "c8": "^7.11.0",
@@ -74,9 +74,9 @@
     "ts-node": "^10.7.0",
     "tsconfig-paths": "^3.14.1",
     "typescript": "^5.3.3",
-    "vite": "^4.1.4",
-    "vite-tsconfig-paths": "^4.0.5",
-    "vitest": "^0.28.5"
+    "vite": "^4.5.0",
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^0.34.6"
   },
   "engines": {
     "node": ">=14"
