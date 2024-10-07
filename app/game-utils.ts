@@ -4,7 +4,8 @@ export function getNextPlayerToPlay({
   scores,
   players,
 }: {
-  scores: Score[];
+  // Omitting scoredAt because the Date object is not serializable and messes up TS checks
+  scores: Omit<Score, 'scoredAt'>[];
   players: Player[];
 }): Player {
   if (scores.length === 0) {
