@@ -1,0 +1,6 @@
+{
+  "short_name": "Anagram Circle",
+  "name": "Anagram Circle Generator",
+  "start_url": "https://scrabble-score-e630.fly.dev/anagram",
+  "display": "standalone"
+}

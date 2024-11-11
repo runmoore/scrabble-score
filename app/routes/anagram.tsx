@@ -1,4 +1,9 @@
 import { Form, useSearchParams } from "@remix-run/react";
+import type { LinksFunction } from "@remix-run/server-runtime";
+
+export const links: LinksFunction = () => {
+  return [{ rel: "manifest", href: "/anagram-manifest.json" }];
+};
 
 export default function Anagram() {
   const [searchParams] = useSearchParams();
@@ -10,7 +15,7 @@ export default function Anagram() {
   return (
     <>
       <div className="align-center mt-8 flex flex-wrap justify-center">
-        <h1 className="mb-4 basis-full items-center text-center text-xxl font-bold">
+        <h1 className="text-xxl mb-4 basis-full items-center text-center font-bold">
           Anagram circle generator
         </h1>
         <Form method="get">
