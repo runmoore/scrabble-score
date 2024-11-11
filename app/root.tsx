@@ -20,7 +20,6 @@ export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: stylesheet },
     { rel: "apple-touch-icon", href: "/icon.png" },
-    { rel: "manifest", href: "/manifest.json" },
   ];
 };
 
@@ -45,6 +44,7 @@ export default function App() {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <Meta />
         <Links />
+        <link rel="manifest" href="/manifest.json"></link>
       </head>
       <body className="h-full">
         <Outlet />
