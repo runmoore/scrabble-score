@@ -1,7 +1,7 @@
 import { NavLink, Link, useRouteLoaderData } from "@remix-run/react";
 import { getNextPlayerToPlay } from "~/game-utils";
 import { formatDistanceToNow } from "date-fns";
-import type { loader } from "~/routes/games"
+import type { loader } from "~/routes/games";
 
 export default function Games() {
   const { games } = useRouteLoaderData<typeof loader>("routes/games")!;
@@ -11,7 +11,7 @@ export default function Games() {
       {games.filter((g) => !g.completed).length > 0 && (
         <>
           <h2 className="text-xl">In progress games</h2>
-          <ol className="list-disc list-inside">
+          <ol className="list-inside list-disc">
             {games
               .filter((g) => !g.completed)
               .map((game) => (
@@ -19,7 +19,9 @@ export default function Games() {
                   <NavLink
                     to={`${game.id}/play/${getNextPlayerToPlay(game).id}`}
                   >
-                    {formatDistanceToNow(new Date(game.createdAt), { addSuffix: true})}
+                    {formatDistanceToNow(new Date(game.createdAt), {
+                      addSuffix: true,
+                    })}
                   </NavLink>
                 </li>
               ))}
