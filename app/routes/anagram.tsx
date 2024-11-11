@@ -18,19 +18,23 @@ function shuffleLetters(letters: string[]) {
   return array;
 }
 
+function queryToBoxes(query: string):string[]{
+  return query.split("").map(x => x.trim()).filter(Boolean);
+}
+
 export default function Anagram() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const searchQuery = (searchParams.get("word") || "").toLowerCase();
 
-  const [boxes, setBoxes] = useState<string[]>(searchQuery.split(""));
+  const [boxes, setBoxes] = useState<string[]>(queryToBoxes(searchQuery));
 
   // Allows the radius of the circle to scale with the number of boxes
   const radius = Math.max(100, 80 + boxes.length * 5);
 
   // Ensures we can submit new words without refreshing the page
   useEffect(() => {
-    setBoxes(searchQuery.split(""));
+    setBoxes(queryToBoxes(searchQuery));
   }, [searchQuery]);
 
   const clearWord = () => {
@@ -76,7 +80,8 @@ export default function Anagram() {
         {boxes.map((letter, i) => {
           const angle = (360 / boxes.length) * i;
 
-          const transform = `rotate(${angle}deg) translate(${radius}px) rotate(-${angle}deg)`;
+          // The first letter is at the top, subsequent letters are rotated clockwise via rotating, moving, then un-rotating to maintain the correct text orientation
+          const transform = `rotate(-90deg) rotate(${angle}deg) translate(${radius}px) rotate(-${angle}deg) rotate(90deg)`;
 
           return (
             <div
