@@ -1,16 +1,43 @@
 import { Form, useSearchParams } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/server-runtime";
+import { useEffect, useState } from "react";
 
 export const links: LinksFunction = () => {
   return [{ rel: "manifest", href: "/anagram-manifest.json" }];
 };
 
-export default function Anagram() {
-  const [searchParams] = useSearchParams();
+// Durstenfeld shuffle algorithm - https://stackoverflow.com/a/12646864/6806381
+function shuffleLetters(letters: string[]) {
+  const array = [...letters];
 
-  const searchQuery = searchParams.get("word");
-  const boxes = searchQuery ? searchQuery.split("") : [];
-  const distance = Math.max(100, 80 + boxes.length * 5);
+  for (let i = array.length - 1; i >= 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+
+  return array;
+}
+
+export default function Anagram() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const searchQuery = (searchParams.get("word") || "").toLowerCase();
+
+  const [boxes, setBoxes] = useState<string[]>(searchQuery.split(""));
+
+  // Allows the radius of the circle to scale with the number of boxes
+  const radius = Math.max(100, 80 + boxes.length * 5);
+
+  // Ensures we can submit new words without refreshing the page
+  useEffect(() => {
+    setBoxes(searchQuery.split(""));
+  }, [searchQuery]);
+
+  const clearWord = () => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete("word");
+    setSearchParams(newParams);
+  };
 
   return (
     <>
@@ -18,28 +45,38 @@ export default function Anagram() {
         <h1 className="text-xxl mb-4 basis-full items-center text-center font-bold">
           Anagram circle generator
         </h1>
-        <Form method="get">
+        <Form method="get" key={searchQuery}>
           <input
             className="border border-gray-300"
             type="text"
             id="word"
             name="word"
-            defaultValue={searchQuery || ""}
+            defaultValue={searchQuery}
           />
           <button type="submit" className="ml-4 rounded-md bg-blue-200 p-2">
             Generate
           </button>
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={clearWord}
+              className="absolute ml-4 rounded-md bg-red-200 p-2"
+            >
+              ❌
+            </button>
+          )}
         </Form>
       </div>
 
       <div
+        key={boxes.join("")}
         className="relative mt-8 flex items-center justify-center"
-        style={{ height: distance * 3 }}
+        style={{ height: radius * 3 }}
       >
         {boxes.map((letter, i) => {
           const angle = (360 / boxes.length) * i;
 
-          const transform = `rotate(${angle}deg) translate(${distance}px) rotate(-${angle}deg)`;
+          const transform = `rotate(${angle}deg) translate(${radius}px) rotate(-${angle}deg)`;
 
           return (
             <div
@@ -52,6 +89,16 @@ export default function Anagram() {
           );
         })}
       </div>
+      {searchQuery && (
+        <div className="align-center mt-8 flex flex-wrap justify-center">
+          <button
+            onClick={() => setBoxes(shuffleLetters(boxes))}
+            className="ml-4 rounded-md bg-purple-200 p-2"
+          >
+            Shuffle
+          </button>
+        </div>
+      )}
     </>
   );
 }
