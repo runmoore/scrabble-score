@@ -20,18 +20,45 @@ function shuffleLetters(letters: string[]) {
   return array;
 }
 
-function queryToLetters(query: string):string[]{
-  return query.split("").map(x => x.trim()).filter(Boolean);
+function queryToLetters(query: string): string[] {
+  return query
+    .split("")
+    .map((x) => x.trim())
+    .filter(Boolean);
 }
 
-  // Allows the radius of the circle to scale with the number of letters
+// Allows the radius of the circle to scale with the number of letters
 function generateRadius(count: number): number {
   if (count === 1) return 0;
 
   const desiredCircumfrence = count * SIZE_OF_LETTER;
   const radius = desiredCircumfrence / (2 * Math.PI);
   return radius;
+}
 
+function Letter({
+  radius,
+  angle,
+  letter,
+}: {
+  radius: number;
+  angle: number;
+  letter: string;
+}) {
+  const [dismissed, setDismissed] = useState(false);
+
+  // The first letter is at the top, subsequent letters are rotated clockwise via rotating, moving, then un-rotating to maintain the correct text orientation
+  const transform = `rotate(-90deg) rotate(${angle}deg) translate(${radius}px) rotate(-${angle}deg) rotate(90deg)`;
+  const dismissedStyle = dismissed ? "text-gray-300" : "";
+  return (
+    <div
+      className={`absolute m-4 flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold ${dismissedStyle}`}
+      style={{ transform }}
+      onClick={() => setDismissed(!dismissed)}
+    >
+      {letter}
+    </div>
+  );
 }
 
 export default function Anagram() {
@@ -62,7 +89,7 @@ export default function Anagram() {
         </h1>
         <Form method="get" key={searchQuery}>
           <input
-            className="border border-gray-300 w-36"
+            className="w-36 border border-gray-300"
             type="text"
             id="word"
             name="word"
@@ -86,22 +113,18 @@ export default function Anagram() {
       <div
         key={letters.join("")}
         className="relative mt-8 flex items-center justify-center bg-gray-100 "
-        style={{ height: (radius * 2) + SIZE_OF_LETTER }}
+        style={{ height: radius * 2 + SIZE_OF_LETTER }}
       >
         {letters.map((letter, i) => {
           const angle = (360 / letters.length) * i;
 
-          // The first letter is at the top, subsequent letters are rotated clockwise via rotating, moving, then un-rotating to maintain the correct text orientation
-          const transform = `rotate(-90deg) rotate(${angle}deg) translate(${radius}px) rotate(-${angle}deg) rotate(90deg)`;
-
           return (
-            <div
-              key={i}
-              className="absolute m-4 flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold"
-              style={{ transform }}
-            >
-              {letter}
-            </div>
+            <Letter
+              key={`${angle}${letter}`}
+              radius={radius}
+              angle={angle}
+              letter={letter}
+            />
           );
         })}
       </div>
