@@ -6,6 +6,8 @@ export const links: LinksFunction = () => {
   return [{ rel: "manifest", href: "/anagram-manifest.json" }];
 };
 
+const SIZE_OF_LETTER = 48;
+
 // Durstenfeld shuffle algorithm - https://stackoverflow.com/a/12646864/6806381
 function shuffleLetters(letters: string[]) {
   const array = [...letters];
@@ -18,8 +20,18 @@ function shuffleLetters(letters: string[]) {
   return array;
 }
 
-function queryToBoxes(query: string):string[]{
+function queryToLetters(query: string):string[]{
   return query.split("").map(x => x.trim()).filter(Boolean);
+}
+
+  // Allows the radius of the circle to scale with the number of letters
+function generateRadius(count: number): number {
+  if (count === 1) return 0;
+
+  const desiredCircumfrence = count * SIZE_OF_LETTER;
+  const radius = desiredCircumfrence / (2 * Math.PI);
+  return radius;
+
 }
 
 export default function Anagram() {
@@ -27,14 +39,13 @@ export default function Anagram() {
 
   const searchQuery = (searchParams.get("word") || "").toLowerCase();
 
-  const [boxes, setBoxes] = useState<string[]>(queryToBoxes(searchQuery));
+  const [letters, setLetters] = useState<string[]>(queryToLetters(searchQuery));
 
-  // Allows the radius of the circle to scale with the number of boxes
-  const radius = Math.max(100, 80 + boxes.length * 5);
+  const radius = generateRadius(letters.length);
 
   // Ensures we can submit new words without refreshing the page
   useEffect(() => {
-    setBoxes(queryToBoxes(searchQuery));
+    setLetters(queryToLetters(searchQuery));
   }, [searchQuery]);
 
   const clearWord = () => {
@@ -51,14 +62,14 @@ export default function Anagram() {
         </h1>
         <Form method="get" key={searchQuery}>
           <input
-            className="border border-gray-300"
+            className="border border-gray-300 w-36"
             type="text"
             id="word"
             name="word"
             defaultValue={searchQuery}
           />
           <button type="submit" className="ml-4 rounded-md bg-blue-200 p-2">
-            Generate
+            Go
           </button>
           {searchQuery && (
             <button
@@ -73,12 +84,12 @@ export default function Anagram() {
       </div>
 
       <div
-        key={boxes.join("")}
-        className="relative mt-8 flex items-center justify-center"
-        style={{ height: radius * 3 }}
+        key={letters.join("")}
+        className="relative mt-8 flex items-center justify-center bg-gray-100 "
+        style={{ height: (radius * 2) + SIZE_OF_LETTER }}
       >
-        {boxes.map((letter, i) => {
-          const angle = (360 / boxes.length) * i;
+        {letters.map((letter, i) => {
+          const angle = (360 / letters.length) * i;
 
           // The first letter is at the top, subsequent letters are rotated clockwise via rotating, moving, then un-rotating to maintain the correct text orientation
           const transform = `rotate(-90deg) rotate(${angle}deg) translate(${radius}px) rotate(-${angle}deg) rotate(90deg)`;
@@ -86,7 +97,7 @@ export default function Anagram() {
           return (
             <div
               key={i}
-              className="absolute m-4 flex h-12 w-12 items-center justify-center rounded-full border border-gray-300 bg-gray-100 text-lg font-bold"
+              className="absolute m-4 flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold"
               style={{ transform }}
             >
               {letter}
@@ -97,7 +108,7 @@ export default function Anagram() {
       {searchQuery && (
         <div className="align-center mt-8 flex flex-wrap justify-center">
           <button
-            onClick={() => setBoxes(shuffleLetters(boxes))}
+            onClick={() => setLetters(shuffleLetters(letters))}
             className="ml-4 rounded-md bg-purple-200 p-2"
           >
             Shuffle
