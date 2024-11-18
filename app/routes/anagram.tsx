@@ -40,10 +40,12 @@ function Letter({
   radius,
   angle,
   letter,
+  onClick = () => {},
 }: {
   radius: number;
   angle: number;
   letter: string;
+  onClick?: (dismissed: boolean) => void;
 }) {
   const [dismissed, setDismissed] = useState(false);
 
@@ -52,9 +54,12 @@ function Letter({
   const dismissedStyle = dismissed ? "text-gray-300" : "";
   return (
     <div
-      className={`absolute m-4 flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold ${dismissedStyle}`}
+      className={`absolute m-4 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-lg font-bold ${dismissedStyle}`}
       style={{ transform }}
-      onClick={() => setDismissed(!dismissed)}
+      onClick={() => {
+        setDismissed(!dismissed);
+        onClick(!dismissed);
+      }}
     >
       {letter}
     </div>
@@ -67,18 +72,25 @@ export default function Anagram() {
   const searchQuery = (searchParams.get("word") || "").toLowerCase();
 
   const [letters, setLetters] = useState<string[]>(queryToLetters(searchQuery));
+  const [newWord, setNewWord] = useState<string[]>([]);
 
   const radius = generateRadius(letters.length);
 
   // Ensures we can submit new words without refreshing the page
   useEffect(() => {
     setLetters(queryToLetters(searchQuery));
+    setNewWord([]);
   }, [searchQuery]);
 
   const clearWord = () => {
     const newParams = new URLSearchParams(searchParams);
     newParams.delete("word");
     setSearchParams(newParams);
+  };
+
+  const shuffle = () => {
+    setLetters(shuffleLetters(letters));
+    setNewWord([]);
   };
 
   return (
@@ -124,6 +136,20 @@ export default function Anagram() {
               radius={radius}
               angle={angle}
               letter={letter}
+              onClick={(dismissed) => {
+                if (dismissed) {
+                  setNewWord([...newWord, letter]);
+                } else {
+                  let found = false;
+                  setNewWord(newWord.filter((x) => {
+                    if (!found && x === letter) {
+                      found = true;
+                      return false;
+                    }
+                    return true;
+                  }));
+                }
+              }}
             />
           );
         })}
@@ -131,11 +157,26 @@ export default function Anagram() {
       {searchQuery && (
         <div className="align-center mt-8 flex flex-wrap justify-center">
           <button
-            onClick={() => setLetters(shuffleLetters(letters))}
+            onClick={shuffle}
             className="ml-4 rounded-md bg-purple-200 p-2"
           >
             Shuffle
           </button>
+        </div>
+      )}
+      {searchQuery && (
+        <div className="align-center mt-8 flex flex-wrap justify-center">
+          {[
+            ...newWord,
+            ...new Array(Math.max(0, searchQuery.length - newWord.length)),
+          ].map((letter, i) => (
+            <div
+              key={i}
+              className="m-2 flex h-4 w-4 items-center justify-center border border-white border-b-gray-500 pb-2"
+            >
+              {letter}
+            </div>
+          ))}
         </div>
       )}
     </>
