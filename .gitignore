@@ -6,6 +6,7 @@ node_modules
 .npmrc
 /coverage
 
+/cypress/downloads
 /cypress/screenshots
 /cypress/videos
 /prisma/data.db
