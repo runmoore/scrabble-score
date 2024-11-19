@@ -50,8 +50,8 @@ describe("smoke tests", () => {
   });
 
   it("should allow you to add new players, start a new game, and start playing", () => {
-    const player1 = faker.name.firstName();
-    const player2 = faker.name.firstName();
+    const player1 = faker.person.firstName();
+    const player2 = faker.person.firstName();
 
     cy.login();
     cy.visitAndCheck("/");

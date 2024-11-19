@@ -40,11 +40,13 @@ function Letter({
   radius,
   angle,
   letter,
+  id,
   onClick = () => {},
 }: {
   radius: number;
   angle: number;
   letter: string;
+  id: string;
   onClick?: (dismissed: boolean) => void;
 }) {
   const [dismissed, setDismissed] = useState(false);
@@ -54,7 +56,8 @@ function Letter({
   const dismissedStyle = dismissed ? "text-gray-300" : "";
   return (
     <div
-      className={`absolute m-4 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-lg font-bold ${dismissedStyle}`}
+      data-testid={id}
+      className={`letter absolute m-4 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-lg font-bold ${dismissedStyle}`}
       style={{ transform }}
       onClick={() => {
         setDismissed(!dismissed);
@@ -105,6 +108,7 @@ export default function Anagram() {
             type="text"
             id="word"
             name="word"
+            aria-label="word"
             defaultValue={searchQuery}
           />
           <button type="submit" className="ml-4 rounded-md bg-blue-200 p-2">
@@ -136,6 +140,7 @@ export default function Anagram() {
               radius={radius}
               angle={angle}
               letter={letter}
+              id={`letter${i}`}
               onClick={(dismissed) => {
                 if (dismissed) {
                   setNewWord([...newWord, letter]);
