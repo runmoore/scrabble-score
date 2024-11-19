@@ -31,8 +31,8 @@ function queryToLetters(query: string): string[] {
 function generateRadius(count: number): number {
   if (count === 1) return 0;
 
-  const desiredCircumfrence = count * SIZE_OF_LETTER;
-  const radius = desiredCircumfrence / (2 * Math.PI);
+  const desiredCircumference = count * SIZE_OF_LETTER;
+  const radius = desiredCircumference / (2 * Math.PI);
   return radius;
 }
 
@@ -69,31 +69,52 @@ function Letter({
   );
 }
 
+function findNextBlankLetter(word: string[], startIndex: number): number {
+  let count = 0;
+  let index = startIndex;
+  while (count < word.length) {
+    if (word[index] === "") {
+      return index;
+    } else {
+      index = (index + 1) % word.length;
+    }
+    count++;
+  }
+  return -1;
+}
+
 export default function Anagram() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const searchQuery = (searchParams.get("word") || "").toLowerCase();
 
   const [letters, setLetters] = useState<string[]>(queryToLetters(searchQuery));
-  const [newWord, setNewWord] = useState<string[]>([]);
+  const [newWord, setNewWord] = useState<string[]>(
+    new Array(searchQuery.length).fill("")
+  );
+
+  const [indexOfNewWord, setIndexOfNewWord] = useState(0);
 
   const radius = generateRadius(letters.length);
 
   // Ensures we can submit new words without refreshing the page
   useEffect(() => {
     setLetters(queryToLetters(searchQuery));
-    setNewWord([]);
+    setNewWord(new Array(searchQuery.length).fill(""));
+    setIndexOfNewWord(0);
   }, [searchQuery]);
 
   const clearWord = () => {
     const newParams = new URLSearchParams(searchParams);
     newParams.delete("word");
     setSearchParams(newParams);
+    setIndexOfNewWord(0);
   };
 
   const shuffle = () => {
     setLetters(shuffleLetters(letters));
-    setNewWord([]);
+    setNewWord(new Array(searchQuery.length).fill(""));
+    setIndexOfNewWord(0);
   };
 
   return (
@@ -143,13 +164,21 @@ export default function Anagram() {
               id={`letter${i}`}
               onClick={(dismissed) => {
                 if (dismissed) {
-                  setNewWord([...newWord, letter]);
+                  let updatedWord = [...newWord];
+                  updatedWord[indexOfNewWord] = letter;
+
+                  setNewWord(updatedWord);
+                  setIndexOfNewWord(
+                    findNextBlankLetter(updatedWord, indexOfNewWord)
+                  );
                 } else {
                   const index = newWord.lastIndexOf(letter);
                   if (index > -1) {
                     const updatedWord = [...newWord];
-                    updatedWord.splice(index, 1);
+                    updatedWord[index] = "";
                     setNewWord(updatedWord);
+
+                    setIndexOfNewWord(index);
                   }
                 }
               }}
@@ -169,13 +198,13 @@ export default function Anagram() {
       )}
       {searchQuery && (
         <div className="align-center mt-8 flex flex-wrap justify-center">
-          {[
-            ...newWord,
-            ...new Array(Math.max(0, searchQuery.length - newWord.length)),
-          ].map((letter, i) => (
+          {newWord.map((letter, i) => (
             <div
               key={i}
-              className="m-2 flex h-4 w-4 items-center justify-center border border-white border-b-gray-500 pb-2"
+              className={`m-2 flex h-4 w-4 items-center justify-center border-b-2 pl-2 pr-2 pb-2 leading-normal ${
+                indexOfNewWord === i ? "border-b-red-500" : "border-b-gray-500"
+              }`}
+              onClick={() => newWord[i] === "" && setIndexOfNewWord(i)}
             >
               {letter}
             </div>
