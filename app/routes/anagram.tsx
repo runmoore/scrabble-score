@@ -140,14 +140,12 @@ export default function Anagram() {
                 if (dismissed) {
                   setNewWord([...newWord, letter]);
                 } else {
-                  let found = false;
-                  setNewWord(newWord.filter((x) => {
-                    if (!found && x === letter) {
-                      found = true;
-                      return false;
-                    }
-                    return true;
-                  }));
+                  const index = newWord.lastIndexOf(letter);
+                  if (index > -1) {
+                    const updatedWord = [...newWord];
+                    updatedWord.splice(index, 1);
+                    setNewWord(updatedWord);
+                  }
                 }
               }}
             />
