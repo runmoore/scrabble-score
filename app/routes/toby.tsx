@@ -13,11 +13,9 @@ const errors = [
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const name = formData.get("name") || "";
-  // @ts-expect-error
-  const count = Number.parseInt(formData.get("count"));
+  const name = formData.get("name") as string;
+  const count = Number.parseInt(formData.get("count") as string);
 
-  // @ts-expect-error
   if (name.toLowerCase().replace(" ", "") === "yourname") {
     return redirect("/toby-1");
   } else if (name.toLowerCase() === "your name to continue") {
@@ -31,7 +29,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Toby() {
-  const actionData = useActionData();
+  const actionData = useActionData() as { errors?: { name: string} };
   const [count, setCount] = useState(-1);
 
   return (
