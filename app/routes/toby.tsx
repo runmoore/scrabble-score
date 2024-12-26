@@ -1,5 +1,6 @@
 import { Form, useActionData } from "@remix-run/react";
 import type { ActionFunction } from "@remix-run/server-runtime";
+import type { MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useState } from "react";
 
@@ -10,6 +11,8 @@ const errors = [
   "Wrong. 5th time lucky?",
   "I didn't expect you to be this bad",
 ];
+
+export const meta: MetaFunction = () => [{ title: "Merry Christmas" }];
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -29,12 +32,12 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Toby() {
-  const actionData = useActionData() as { errors?: { name: string} };
+  const actionData = useActionData() as { errors?: { name: string } };
   const [count, setCount] = useState(-1);
 
   return (
     <div className="align-center mt-8 flex flex-wrap justify-center">
-      <h1 className="mb-4 basis-full items-center text-center text-xl font-bold">
+      <h1 className="mb-4 basis-full items-center text-center text-3xl font-bold">
         Merry Christmas
       </h1>
       <Form method="post">
@@ -48,7 +51,13 @@ export default function Toby() {
             id="name"
             className="w-36 border border-gray-300"
           />
-          <input hidden type="text" name="count" id="count" value={count} />
+          <input
+            hidden
+            type="text"
+            name="count"
+            id="count"
+            defaultValue={count}
+          />
 
           <button
             type="submit"

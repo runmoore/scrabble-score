@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Link } from "@remix-run/react";
+import type { MetaFunction } from "@remix-run/node";
+
+export const meta: MetaFunction = () => [{ title: "Merry Christmas" }];
 
 const colours = [
   "yellow",
@@ -20,10 +23,10 @@ export default function Toby1() {
 
   return (
     <div className="align-center mt-8 flex flex-wrap justify-center">
-      <h1 className="mb-4 basis-full items-center text-center text-xl font-bold">
-        Hello, Toby - Part 1 is complete
+      <h1 className="mb-4 basis-full items-center text-center text-2xl font-bold">
+        Hello, Toby
       </h1>
-      <div style={{ height: "300px", width: "300px" }}>
+      <div style={{ height: "400px", width: "300px" }}>
         {count <= 5 && (
           <div className="mt-2 mb-2">Press the button to continue</div>
         )}
@@ -31,6 +34,7 @@ export default function Toby1() {
           <div className="mt-2 mb-2">Hurry up, what's stopping you?</div>
         )}
         {count >= 10 && <div className="mt-2 mb-2">Nearly there...</div>}
+
         <Link
           to="/toby-2"
           onClick={(e) => {
@@ -38,12 +42,12 @@ export default function Toby1() {
               e.preventDefault();
               setCount(count + 1);
             }
-            setX(Math.random() * 300);
+            setX(Math.random() * 200);
             setY(Math.random() * 300);
             setColour(colours[count % colours.length]);
             return;
           }}
-          style={{ top: `${x}px`, left: `${y}px` }}
+          style={{ top: `${y}px`, left: `${x}px` }}
           className={`relative rounded-md bg-${colour}-500 p-2`}
         >
           Button
