@@ -8,8 +8,13 @@ export const links: LinksFunction = () => {
 
 const SIZE_OF_LETTER = 48;
 
+type Letter = {
+  character: string;
+  isDismissed: boolean;
+};
+
 // Durstenfeld shuffle algorithm - https://stackoverflow.com/a/12646864/6806381
-function shuffleLetters(letters: string[]) {
+function shuffleLetters(letters: Array<Letter>): Array<Letter> {
   const array = [...letters];
 
   for (let i = array.length - 1; i >= 0; i--) {
@@ -20,11 +25,12 @@ function shuffleLetters(letters: string[]) {
   return array;
 }
 
-function queryToLetters(query: string): string[] {
+function queryToLetters(query: string): Array<Letter> {
   return query
     .split("")
     .map((x) => x.trim())
-    .filter(Boolean);
+    .filter(Boolean)
+    .map((character) => ({ character, isDismissed: false }));
 }
 
 // Allows the radius of the circle to scale with the number of letters
@@ -41,27 +47,26 @@ function Letter({
   angle,
   letter,
   id,
+  isDismissed,
   onClick = () => {},
 }: {
   radius: number;
   angle: number;
   letter: string;
   id: string;
+  isDismissed: boolean;
   onClick?: (dismissed: boolean) => void;
 }) {
-  const [dismissed, setDismissed] = useState(false);
-
   // The first letter is at the top, subsequent letters are rotated clockwise via rotating, moving, then un-rotating to maintain the correct text orientation
   const transform = `rotate(-90deg) rotate(${angle}deg) translate(${radius}px) rotate(-${angle}deg) rotate(90deg)`;
-  const dismissedStyle = dismissed ? "text-gray-300" : "";
+  const dismissedStyle = isDismissed ? "text-gray-300" : "";
   return (
     <div
       data-testid={id}
       className={`letter absolute m-4 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-lg font-bold ${dismissedStyle}`}
       style={{ transform }}
       onClick={() => {
-        setDismissed(!dismissed);
-        onClick(!dismissed);
+        onClick(!isDismissed);
       }}
     >
       {letter}
@@ -88,7 +93,9 @@ export default function Anagram() {
 
   const searchQuery = (searchParams.get("word") || "").toLowerCase();
 
-  const [letters, setLetters] = useState<string[]>(queryToLetters(searchQuery));
+  const [letters, setLetters] = useState<Array<Letter>>(
+    queryToLetters(searchQuery)
+  );
   const [newWord, setNewWord] = useState<string[]>(
     new Array(searchQuery.length).fill("")
   );
@@ -113,8 +120,6 @@ export default function Anagram() {
 
   const shuffle = () => {
     setLetters(shuffleLetters(letters));
-    setNewWord(new Array(searchQuery.length).fill(""));
-    setIndexOfNewWord(0);
   };
 
   return (
@@ -152,27 +157,33 @@ export default function Anagram() {
         className="relative mt-8 flex items-center justify-center bg-gray-100 "
         style={{ height: radius * 2 + SIZE_OF_LETTER }}
       >
-        {letters.map((letter, i) => {
+        {letters.map(({ character, isDismissed }, i) => {
           const angle = (360 / letters.length) * i;
 
           return (
             <Letter
-              key={`${angle}${letter}`}
+              key={`${angle}${character}`}
               radius={radius}
               angle={angle}
-              letter={letter}
+              letter={character}
               id={`letter${i}`}
-              onClick={(dismissed) => {
-                if (dismissed) {
+              isDismissed={isDismissed}
+              onClick={(isDismissed) => {
+                const updatedLetters = [...letters];
+                updatedLetters[i].isDismissed = isDismissed;
+                setLetters(updatedLetters);
+
+                if (isDismissed) {
                   let updatedWord = [...newWord];
-                  updatedWord[indexOfNewWord] = letter;
+                  updatedWord[indexOfNewWord] = character;
 
                   setNewWord(updatedWord);
                   setIndexOfNewWord(
                     findNextBlankLetter(updatedWord, indexOfNewWord)
                   );
                 } else {
-                  const index = newWord.lastIndexOf(letter);
+                  const index = newWord.lastIndexOf(character);
+
                   if (index > -1) {
                     const updatedWord = [...newWord];
                     updatedWord[index] = "";
@@ -204,7 +215,21 @@ export default function Anagram() {
               className={`m-2 flex h-4 w-4 items-center justify-center border-b-2 pl-2 pr-2 pb-2 leading-normal ${
                 indexOfNewWord === i ? "border-b-red-500" : "border-b-gray-500"
               }`}
-              onClick={() => newWord[i] === "" && setIndexOfNewWord(i)}
+              onClick={() => {
+                if (newWord[i] !== "") {
+                  // We've clicked on a letter that's already been placed, so we should remove it
+                  let updatedWord = [...newWord];
+                  updatedWord[i] = "";
+                  setNewWord(updatedWord);
+
+                  const updatedLetters = [...letters];
+                  const index = updatedLetters.findIndex(
+                    ({ character }) => character === newWord[i]
+                  );
+                  updatedLetters[index].isDismissed = false;
+                }
+                setIndexOfNewWord(i);
+              }}
             >
               {letter}
             </div>
