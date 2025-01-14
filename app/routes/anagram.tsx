@@ -212,7 +212,7 @@ export default function Anagram() {
           {newWord.map((letter, i) => (
             <div
               key={i}
-              className={`m-2 flex h-4 w-4 items-center justify-center border-b-2 pl-2 pr-2 pb-2 leading-normal ${
+              className={`cursor-pointer m-2 flex h-4 w-4 items-center justify-center border-b-2 pl-2 pr-2 pb-2 leading-normal ${
                 indexOfNewWord === i ? "border-b-red-500" : "border-b-gray-500"
               }`}
               onClick={() => {
