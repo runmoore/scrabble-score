@@ -224,7 +224,7 @@ export default function Anagram() {
 
                   const updatedLetters = [...letters];
                   const index = updatedLetters.findIndex(
-                    ({ character }) => character === newWord[i]
+                    ({ character, isDismissed }) => character === newWord[i] && isDismissed
                   );
                   updatedLetters[index].isDismissed = false;
                 }
