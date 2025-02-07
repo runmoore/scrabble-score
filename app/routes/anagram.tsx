@@ -25,11 +25,21 @@ function shuffleLetters(letters: Array<Letter>): Array<Letter> {
   return array;
 }
 
-function queryToLetters(query: string): Array<Letter> {
+function sanitiseQuery(query: string): string {
   return query
     .split("")
     .map((x) => x.trim())
     .filter(Boolean)
+    .join("");
+}
+
+function queryToBlankNewWord(query: string): string[] {
+  return new Array(sanitiseQuery(query).length).fill("")
+}
+
+function queryToLetters(query: string): Array<Letter> {
+  return sanitiseQuery(query)
+    .split("")
     .map((character) => ({ character, isDismissed: false }));
 }
 
@@ -97,7 +107,7 @@ export default function Anagram() {
     queryToLetters(searchQuery)
   );
   const [newWord, setNewWord] = useState<string[]>(
-    new Array(searchQuery.length).fill("")
+    queryToBlankNewWord(searchQuery)
   );
 
   const [indexOfNewWord, setIndexOfNewWord] = useState(0);
@@ -107,7 +117,7 @@ export default function Anagram() {
   // Ensures we can submit new words without refreshing the page
   useEffect(() => {
     setLetters(queryToLetters(searchQuery));
-    setNewWord(new Array(searchQuery.length).fill(""));
+    setNewWord(queryToBlankNewWord(searchQuery));
     setIndexOfNewWord(0);
   }, [searchQuery]);
 
