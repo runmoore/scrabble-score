@@ -133,6 +133,7 @@ export default function Anagram() {
   };
 
   const clearNewWord = () => {
+    setIndexOfNewWord(0);
     setNewWord(queryToBlankNewWord(searchQuery));
     setLetters((value) =>
       value.map((letter) => ({ ...letter, isDismissed: false }))
@@ -215,19 +216,24 @@ export default function Anagram() {
         })}
       </div>
       {searchQuery && (
-        <div className="align-center mt-8 flex flex-wrap justify-center">
-          <button
-            onClick={shuffle}
-            className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700"
-          >
-            Shuffle
-          </button>
-          <button
-            onClick={clearNewWord}
-            className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700"
-          >
-            Clear
-          </button>
+        <div>
+          <div className="align-center mt-8 flex flex-wrap justify-center">
+            ({newWord.length})
+          </div>
+          <div className="align-center mt-8 flex flex-wrap justify-center">
+            <button
+              onClick={shuffle}
+              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700"
+            >
+              Shuffle
+            </button>
+            <button
+              onClick={clearNewWord}
+              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700"
+            >
+              Clear
+            </button>
+          </div>
         </div>
       )}
       {searchQuery && (
