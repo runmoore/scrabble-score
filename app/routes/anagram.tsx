@@ -154,6 +154,10 @@ export default function Anagram() {
             name="word"
             aria-label="word"
             defaultValue={searchQuery}
+            autoCapitalize="none"
+            spellCheck="false"
+            autoCorrect="off"
+            autoComplete="off"
           />
           <button type="submit" className="ml-4 rounded-md bg-blue-200 p-2">
             Go
@@ -239,34 +243,30 @@ export default function Anagram() {
       {searchQuery && (
         <div className="align-center mt-8 flex flex-wrap justify-center">
           {newWord.map((letter, i) => (
-            <>
-              <div
-                key={i}
-                className={`m-2 flex h-4 w-4 cursor-pointer items-center justify-center border-b-2 pl-2 pr-2 pb-2 leading-normal ${
-                  indexOfNewWord === i
-                    ? "border-b-red-500"
-                    : "border-b-gray-500"
-                }`}
-                onClick={() => {
-                  if (newWord[i] !== "") {
-                    // We've clicked on a letter that's already been placed, so we should remove it
-                    let updatedWord = [...newWord];
-                    updatedWord[i] = "";
-                    setNewWord(updatedWord);
+            <div
+              key={i}
+              className={`m-2 flex h-4 w-4 cursor-pointer items-center justify-center border-b-2 pl-2 pr-2 pb-2 leading-normal ${
+                indexOfNewWord === i ? "border-b-red-500" : "border-b-gray-500"
+              }`}
+              onClick={() => {
+                if (newWord[i] !== "") {
+                  // We've clicked on a letter that's already been placed, so we should remove it
+                  let updatedWord = [...newWord];
+                  updatedWord[i] = "";
+                  setNewWord(updatedWord);
 
-                    const updatedLetters = [...letters];
-                    const index = updatedLetters.findIndex(
-                      ({ character, isDismissed }) =>
-                        character === newWord[i] && isDismissed
-                    );
-                    updatedLetters[index].isDismissed = false;
-                  }
-                  setIndexOfNewWord(i);
-                }}
-              >
-                {letter}
-              </div>
-            </>
+                  const updatedLetters = [...letters];
+                  const index = updatedLetters.findIndex(
+                    ({ character, isDismissed }) =>
+                      character === newWord[i] && isDismissed
+                  );
+                  updatedLetters[index].isDismissed = false;
+                }
+                setIndexOfNewWord(i);
+              }}
+            >
+              {letter}
+            </div>
           ))}
         </div>
       )}
