@@ -52,13 +52,17 @@ describe("smoke tests", () => {
     cy.url().should("include", /play/);
 
     cy.findByRole("textbox", { name: /score/i }).type("5");
-    cy.findByRole("button", { name: /submit score/i }).should("not.be.disabled");
+    cy.findByRole("button", { name: /submit score/i }).should(
+      "not.be.disabled"
+    );
     cy.findByRole("button", { name: /submit score/i }).click();
 
     cy.wait(500);
 
     cy.findByRole("textbox", { name: /score/i }).type("11");
-    cy.findByRole("button", { name: /submit score/i }).should("not.be.disabled");
+    cy.findByRole("button", { name: /submit score/i }).should(
+      "not.be.disabled"
+    );
     cy.findByRole("button", { name: /submit score/i }).click();
     cy.wait(500);
 

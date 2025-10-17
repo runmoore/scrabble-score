@@ -108,22 +108,35 @@ export default function Play() {
     <>
       <div className="mb-8 flex flex-row gap-2 text-center md:gap-4">
         {game.players.map((player) => (
-          <div key={player.name} className="flex flex-1 flex-col min-w-0">
-            <span className="font-bold truncate px-1" title={player.name}>
-              {player.name}{" "}
-              {player.totalScore === topScore && player.totalScore > 0
-                ? "⭐️"
-                : ""}
+          <div
+            key={player.name}
+            className={`flex min-w-0 flex-1 flex-col ${
+              player.totalScore === topScore && player.totalScore > 0
+                ? "rounded-md bg-yellow-100/80"
+                : ""
+            }`}
+          >
+            <span
+              className={`truncate font-bold ${
+                game.players.length > 4 ? "text-xs" : ""
+              }`}
+              title={player.name}
+            >
+              {player.name}
             </span>
             {player.scores.map((score) => (
-              <span key={score.id} className="leading-6">{score.points}</span>
+              <span key={score.id} className="leading-6">
+                {score.points}
+              </span>
             ))}
             {new Array(maxNumberOfTurns - player.scores.length)
               .fill(null)
               .map((_, i) => (
-                <span key={i} className="leading-6">&nbsp;</span>
+                <span key={i} className="leading-6">
+                  &nbsp;
+                </span>
               ))}
-            <div className="border-t-4 border-b-4 font-bold px-1">
+            <div className="border-t-4 border-b-4 px-1 font-bold">
               {player.totalScore}
             </div>
           </div>

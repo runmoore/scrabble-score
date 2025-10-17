@@ -4,7 +4,10 @@ export function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
 
   // Silently handle Chrome DevTools requests
-  if (url.pathname.includes(".well-known") && url.pathname.includes("chrome.devtools")) {
+  if (
+    url.pathname.includes(".well-known") &&
+    url.pathname.includes("chrome.devtools")
+  ) {
     return new Response(null, { status: 204 });
   }
 
