@@ -51,7 +51,7 @@ describe("smoke tests", () => {
 
     cy.url().should("include", /play/);
 
-    cy.findByRole("textbox", { name: /score/i }).type("5");
+    cy.findByRole("spinbutton", { name: /score/i }).type("5");
     cy.findByRole("button", { name: /submit score/i }).should(
       "not.be.disabled"
     );
@@ -59,7 +59,7 @@ describe("smoke tests", () => {
 
     cy.wait(500);
 
-    cy.findByRole("textbox", { name: /score/i }).type("11");
+    cy.findByRole("spinbutton", { name: /score/i }).type("11");
     cy.findByRole("button", { name: /submit score/i }).should(
       "not.be.disabled"
     );
