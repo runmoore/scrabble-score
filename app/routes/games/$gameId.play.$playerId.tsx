@@ -106,9 +106,9 @@ export default function Play() {
 
   return (
     <>
-      <div className="mb-8 flex flex-row justify-evenly text-center">
+      <div className="mb-8 flex flex-row gap-4 text-center">
         {game.players.map((player) => (
-          <div key={player.name} className="flex flex-col">
+          <div key={player.name} className="flex flex-1 flex-col">
             <span className="font-bold">
               {player.name}{" "}
               {player.totalScore === topScore && player.totalScore > 0
