@@ -148,6 +148,10 @@ export default function Play() {
       <Form method="post" action="" key={playerId}>
         <input
           className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+          type="number"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          autoComplete="off"
           name="score"
           aria-label="score"
           value={score}
