@@ -118,7 +118,7 @@ export default function Play() {
           >
             <span
               className={`truncate font-bold ${
-                game.players.length > 4 ? "text-xs" : ""
+                game.players.length > 4 ? "text-xs md:text-base" : ""
               }`}
               title={player.name}
             >

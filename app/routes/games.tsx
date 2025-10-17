@@ -61,7 +61,7 @@ export default function GamesPage() {
           className="hidden h-full w-80 border-r bg-gray-50 sm:block"
           games={games}
         />
-        <div className="flex-1 p-6">
+        <div className="flex-1 px-2 py-6 sm:p-6">
           <Outlet />
         </div>
       </main>
