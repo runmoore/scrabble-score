@@ -157,7 +157,7 @@ export default function Play() {
             className="rounded border bg-red-100 px-2 py-1 text-lg text-red-600 hover:bg-red-200 disabled:bg-gray-200 disabled:text-gray-400 disabled:hover:bg-gray-200"
             disabled={!score || score.startsWith("-")}
           >
-            −
+            -
           </button>
           <button
             type="button"

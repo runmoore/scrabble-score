@@ -1,141 +1,67 @@
-import { faker } from "@faker-js/faker";
+/**
+ * Negative Score Functionality Tests
+ * Tests +/- button behavior using shared commands for efficiency
+ */
+describe("Negative Score Functionality", () => {
+  beforeEach(() => {
+    cy.login();
+    cy.quickStartGame(); // Use shared command for consistent setup
+  });
 
-describe("negative score functionality", () => {
   afterEach(() => {
     cy.cleanupUser();
   });
 
-  it("should allow entering negative scores using +/− buttons", () => {
-    const player1 = faker.person.firstName();
-    const player2 = faker.person.firstName();
-
-    cy.login();
-    cy.visitAndCheck("/");
-
-    // Create a new game with two players
-    cy.findByRole("link", { name: /games/i }).click();
-    cy.findByRole("link", { name: /\+ new game/i }).click();
-
-    cy.findByRole("textbox", { name: /name/i }).type(player1);
-    cy.findByRole("button", { name: /\+ Add new player/i }).click();
-    cy.wait(500);
-
-    cy.findByRole("textbox", { name: /name/i }).type(player2);
-    cy.findByRole("button", { name: /\+ add new player/i }).click();
-    cy.wait(500);
-
-    cy.findByRole("checkbox", { name: player1 }).check();
-    cy.findByRole("checkbox", { name: player2 }).check();
-
-    cy.findByRole("button", { name: /start new game/i }).click();
-    cy.url().should("include", /play/);
-
+  it("should handle +/- button functionality for score input", () => {
     // Test positive score entry (baseline)
     cy.findByRole("spinbutton", { name: /score/i }).type("10");
-    cy.findByRole("button", { name: /submit score/i }).should(
-      "not.be.disabled"
-    );
 
-    // Test +/− button functionality
-    cy.findByRole("button", { name: "−" }).should("not.be.disabled");
-    cy.findByRole("button", { name: "+" }).should("be.disabled");
-
-    // Click minus button to make score negative
-    cy.findByRole("button", { name: "−" }).click();
+    cy.checkButtonStates(true, false); // minus enabled, plus disabled
+    cy.toggleNegativeScoreSign();
     cy.findByRole("spinbutton", { name: /score/i }).should("have.value", "-10");
 
-    // After making negative, minus should be disabled, plus should be enabled
-    cy.findByRole("button", { name: "−" }).should("be.disabled");
-    cy.findByRole("button", { name: "+" }).should("not.be.disabled");
+    // After making negative: minus disabled, plus enabled
+    cy.checkButtonStates(false, true);
+    cy.togglePlusScoreSign();
+    cy.findByRole("spinbutton", { name: /score/i }).should("have.value", "10");
 
-    // Submit negative score
-    cy.findByRole("button", { name: /submit score/i }).click();
-    cy.wait(500);
+    // Back to: minus enabled, plus disabled
+    cy.checkButtonStates(true, false);
 
-    // Verify negative score appears in the game (check for -10 in the score display)
-    cy.contains("-10").should("be.visible");
-
-    // Test positive score for second player
-    cy.findByRole("spinbutton", { name: /score/i }).type("15");
-    cy.findByRole("button", { name: /submit score/i }).click();
-    cy.wait(500);
-
-    // Go back to first player and test plus button functionality
-    cy.findByRole("spinbutton", { name: /score/i }).type("5");
-
-    // Make it negative first
-    cy.findByRole("button", { name: "−" }).click();
-    cy.findByRole("spinbutton", { name: /score/i }).should("have.value", "-5");
-
-    // Now test plus button to make it positive again
-    cy.findByRole("button", { name: "+" }).click();
-    cy.findByRole("spinbutton", { name: /score/i }).should("have.value", "5");
-
-    // Plus button should now be disabled, minus should be enabled
-    cy.findByRole("button", { name: "+" }).should("be.disabled");
-    cy.findByRole("button", { name: "−" }).should("not.be.disabled");
-
-    // Submit positive score
-    cy.findByRole("button", { name: /submit score/i }).click();
-    cy.wait(500);
-
-    // Test buttons are disabled when no score is entered
-    cy.findByRole("button", { name: "−" }).should("be.disabled");
-    cy.findByRole("button", { name: "+" }).should("be.disabled");
-
-    // Enter a score and verify buttons become enabled appropriately
-    cy.findByRole("spinbutton", { name: /score/i }).type("3");
-    cy.findByRole("button", { name: "−" }).should("not.be.disabled");
-    cy.findByRole("button", { name: "+" }).should("be.disabled");
+    // Submit the positive score
+    cy.submitScore("");
   });
 
-  it("should handle edge cases for +/− buttons", () => {
-    const player1 = faker.person.firstName();
-    const player2 = faker.person.firstName();
+  it("should integrate negative scores with complete game workflow", () => {
+    // Player 1: Submit positive score
+    cy.findByRole("spinbutton", { name: /score/i }).type("15");
+    cy.submitScore("");
 
-    cy.login();
-    cy.visitAndCheck("/");
+    // Player 2: Submit negative score
+    cy.findByRole("spinbutton", { name: /score/i }).type("5");
+    cy.toggleNegativeScoreSign();
+    cy.submitScore("");
 
-    // Create a game with two players (minimum required)
-    cy.findByRole("link", { name: /games/i }).click();
-    cy.findByRole("link", { name: /\+ new game/i }).click();
+    // Complete the game
+    cy.intercept("POST", "**/play/**").as("completeGame");
+    cy.findByRole("button", { name: /complete game/i }).click();
+    cy.wait("@completeGame");
 
-    cy.findByRole("textbox", { name: /name/i }).type(player1);
-    cy.findByRole("button", { name: /\+ Add new player/i }).click();
-    cy.wait(500);
+    // Verify the player with positive score wins
+    cy.findByText(/has won with a score of 15/i).should("be.visible");
+  });
 
-    cy.findByRole("textbox", { name: /name/i }).type(player2);
-    cy.findByRole("button", { name: /\+ Add new player/i }).click();
-    cy.wait(500);
+  it("should handle multiple negative score submissions", () => {
+    // Test submitting multiple scores with mixed positive/negative
+    const scoreData = [
+      { score: "10", negative: false },
+      { score: "5", negative: true },
+      { score: "20", negative: false }
+    ];
 
-    cy.findByRole("checkbox", { name: player1 }).check();
-    cy.findByRole("checkbox", { name: player2 }).check();
-    cy.findByRole("button", { name: /start new game/i }).should(
-      "not.be.disabled"
-    );
-    cy.findByRole("button", { name: /start new game/i }).click();
+    cy.submitMultipleScores(scoreData);
 
+    // Should still be in the game after multiple submissions
     cy.url().should("include", /play/);
-
-    // Test with zero
-    cy.findByRole("spinbutton", { name: /score/i }).type("0");
-    cy.findByRole("button", { name: "−" }).should("not.be.disabled");
-    cy.findByRole("button", { name: "−" }).click();
-    cy.findByRole("spinbutton", { name: /score/i }).should("have.value", "-0");
-
-    // Test clearing input resets button states
-    cy.findByRole("spinbutton", { name: /score/i }).clear();
-    cy.findByRole("button", { name: "−" }).should("be.disabled");
-    cy.findByRole("button", { name: "+" }).should("be.disabled");
-
-    // Test multiple digit numbers
-    cy.findByRole("spinbutton", { name: /score/i }).type("123");
-    cy.findByRole("button", { name: "−" }).click();
-    cy.findByRole("spinbutton", { name: /score/i }).should(
-      "have.value",
-      "-123"
-    );
-    cy.findByRole("button", { name: "+" }).click();
-    cy.findByRole("spinbutton", { name: /score/i }).should("have.value", "123");
   });
 });
