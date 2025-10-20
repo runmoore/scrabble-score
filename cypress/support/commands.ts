@@ -138,7 +138,7 @@ function deleteUserByEmail(email: string) {
 // Also added custom types to avoid getting detached
 // https://github.com/cypress-io/cypress/issues/7306#issuecomment-1152752612
 // ===========================================================
-function visitAndCheck(url: string, waitTime: number = 1000) {
+function visitAndCheck(url: string, waitTime: number = 1500) {
   cy.visit(url);
   cy.location("pathname").should("contain", url).wait(waitTime);
 }
@@ -181,27 +181,40 @@ function createGameWithPlayers(players: string[] | number) {
   cy.visit("/games");
   cy.findByRole("link", { name: /\+ new game/i }).click();
 
+  // Wait for the new game form to be fully loaded
+  cy.findByRole("textbox", { name: /name/i }).should("be.visible").and("not.be.disabled");
+
   // Add all players
-  playerNames.forEach((playerName) => {
-    cy.findByRole("textbox", { name: /name/i }).should("not.be.disabled");
+  playerNames.forEach((playerName, index) => {
+    // Set up intercept before the action that will trigger it
+    cy.intercept("POST", "**/games/new**").as(`addPlayer${index}`);
+
+    // Wait for input to be ready, then interact with it
+    cy.findByRole("textbox", { name: /name/i }).should("be.visible").and("not.be.disabled");
     cy.findByRole("textbox", { name: /name/i }).clear();
     cy.findByRole("textbox", { name: /name/i }).type(playerName);
-    cy.intercept("POST", "**/games/new**").as("addPlayer");
+
     cy.findByRole("button", { name: /\+ Add new player/i }).click();
-    cy.wait("@addPlayer");
+    cy.wait(`@addPlayer${index}`);
+
+    // Wait for the form to reset/reload after adding player
+    cy.findByRole("textbox", { name: /name/i }).should("have.value", "");
   });
 
-  // Select all players
+  // Select all players - wait for each checkbox to be available
   playerNames.forEach((playerName) => {
-    cy.findByRole("checkbox", { name: playerName }).check();
+    cy.findByRole("checkbox", { name: playerName }).should("be.visible").check();
   });
 
-  // Start the game
+  // Start the game - set up intercept before clicking
   cy.intercept("POST", "**/games/new**").as("startGame");
-  cy.findByRole("button", { name: /start new game/i }).click();
+  cy.findByRole("button", { name: /start new game/i }).should("not.be.disabled").click();
   cy.wait("@startGame");
 
+  // Wait for navigation to play page
   cy.url().should("include", /play/);
+  // Ensure the game interface is loaded
+  cy.findByRole("spinbutton", { name: /score/i }).should("be.visible");
 
   // Return player names for further use
   return cy.wrap(playerNames);
@@ -209,11 +222,11 @@ function createGameWithPlayers(players: string[] | number) {
 
 function submitScore(score: string) {
   if (score) {
-    cy.findByRole("spinbutton", { name: /score/i }).clear();
+    cy.findByRole("spinbutton", { name: /score/i }).should("be.visible").clear();
     cy.findByRole("spinbutton", { name: /score/i }).type(score);
   }
 
-  cy.findByRole("button", { name: /submit score/i }).should("not.be.disabled");
+  cy.findByRole("button", { name: /submit score/i }).should("be.visible").and("not.be.disabled");
 
   cy.intercept("POST", "**/play/**").as("submitScore");
   cy.findByRole("button", { name: /submit score/i }).click();
