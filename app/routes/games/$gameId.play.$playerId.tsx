@@ -146,18 +146,44 @@ export default function Play() {
         It's <span className="font-bold">{player.name}'s</span> turn
       </h1>
       <Form method="post" action="" key={playerId}>
-        <input
-          className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
-          type="number"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          autoComplete="off"
-          name="score"
-          aria-label="score"
-          value={score}
-          onChange={(e) => setScore(e.target.value)}
-          autoFocus
-        />
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              if (score && !score.startsWith("-")) {
+                setScore("-" + score);
+              }
+            }}
+            className="rounded border bg-red-100 px-2 py-1 text-lg text-red-600 hover:bg-red-200 disabled:bg-gray-200 disabled:text-gray-400 disabled:hover:bg-gray-200"
+            disabled={!score || score.startsWith("-")}
+          >
+            −
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (score.startsWith("-")) {
+                setScore(score.slice(1));
+              }
+            }}
+            className="rounded border bg-green-100 px-2 py-1 text-lg text-green-600 hover:bg-green-200 disabled:bg-gray-200 disabled:text-gray-400 disabled:hover:bg-gray-200"
+            disabled={!score || !score.startsWith("-")}
+          >
+            +
+          </button>
+          <input
+            className="flex-1 rounded border border-gray-500 px-2 py-1 text-lg"
+            type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoComplete="off"
+            name="score"
+            aria-label="score"
+            value={score}
+            onChange={(e) => setScore(e.target.value)}
+            autoFocus
+          />
+        </div>
         <div className="m mt-4 flex flex-col lg:flex-row lg:justify-around">
           {!game.completed && (
             <button
