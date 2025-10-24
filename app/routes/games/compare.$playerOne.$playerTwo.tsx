@@ -12,8 +12,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
 
   const [playerOneName, playerTwoName, allGames] = await Promise.all([
-    (await getPlayer({ id: params.playerOne }))?.name,
-    (await getPlayer({ id: params.playerTwo }))?.name,
+    (await getPlayer({ id: params.playerOne, userId }))?.name,
+    (await getPlayer({ id: params.playerTwo, userId }))?.name,
     await getAllGames({ userId }),
   ]);
 

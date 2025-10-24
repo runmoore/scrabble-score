@@ -112,10 +112,15 @@ export function getAllPlayers({ userId }: { userId: User["id"] }) {
   });
 }
 
-export function getPlayer({ id }: { id: Player["id"] }) {
+export function getPlayer({
+  id,
+  userId,
+}: {
+  id: Player["id"];
+  userId: User["id"];
+}) {
   return prisma.player.findFirst({
-    // TODO: add userId
-    where: { id },
+    where: { id, userId },
     select: { name: true },
   });
 }
