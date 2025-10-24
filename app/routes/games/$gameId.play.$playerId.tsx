@@ -79,10 +79,6 @@ export default function Play() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
-  if (isSubmitting && score) {
-    setScore("");
-  }
-
   const { game, playerId, topScore } = useLoaderData<typeof loader>();
 
   const player = game.players.find((p) => p.id === playerId);
@@ -94,6 +90,15 @@ export default function Play() {
   useEffect(() => {
     setScore("");
   }, [playerId]);
+
+  useEffect(() => {
+    if (
+      navigation.state === "submitting" &&
+      navigation.formData?.get("action") === "score"
+    ) {
+      setScore("");
+    }
+  }, [navigation.state, navigation.formData]);
 
   if (!player) {
     return "oops, bad player id supplied";
