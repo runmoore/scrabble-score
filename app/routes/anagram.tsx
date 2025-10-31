@@ -69,7 +69,9 @@ function Letter({
 }) {
   // The first letter is at the top, subsequent letters are rotated clockwise via rotating, moving, then un-rotating to maintain the correct text orientation
   const transform = `rotate(-90deg) rotate(${angle}deg) translate(${radius}px) rotate(-${angle}deg) rotate(90deg)`;
-  const dismissedStyle = isDismissed ? "text-gray-300" : "";
+  const dismissedStyle = isDismissed
+    ? "text-gray-300 dark:text-gray-600"
+    : "dark:text-gray-100";
   return (
     <div
       data-testid={id}
@@ -143,12 +145,12 @@ export default function Anagram() {
   return (
     <>
       <div className="align-center mt-8 flex flex-wrap justify-center">
-        <h1 className="text-xxl mb-4 basis-full items-center text-center font-bold">
+        <h1 className="text-xxl mb-4 basis-full items-center text-center font-bold dark:text-gray-100">
           Anagram circle generator
         </h1>
         <Form method="get" key={searchQuery}>
           <input
-            className="w-36 border border-gray-300"
+            className="w-36 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
             type="text"
             id="word"
             name="word"
@@ -159,14 +161,17 @@ export default function Anagram() {
             autoCorrect="off"
             autoComplete="off"
           />
-          <button type="submit" className="ml-4 rounded-md bg-blue-200 p-2">
+          <button
+            type="submit"
+            className="ml-4 rounded-md bg-blue-200 p-2 dark:bg-blue-700 dark:text-white"
+          >
             Go
           </button>
           {searchQuery && (
             <button
               type="button"
               onClick={clearWord}
-              className="absolute ml-4 rounded-md bg-red-200 p-2"
+              className="absolute ml-4 rounded-md bg-red-200 p-2 dark:bg-red-700 dark:text-white"
             >
               ❌
             </button>
@@ -176,7 +181,7 @@ export default function Anagram() {
 
       <div
         key={letters.join("")}
-        className="relative mt-8 flex items-center justify-center bg-gray-100 "
+        className="relative mt-8 flex items-center justify-center bg-gray-100 dark:bg-gray-900"
         style={{ height: radius * 2 + SIZE_OF_LETTER }}
       >
         {letters.map(({ character, isDismissed }, i) => {
@@ -221,19 +226,19 @@ export default function Anagram() {
       </div>
       {searchQuery && (
         <div>
-          <div className="align-center mt-8 flex flex-wrap justify-center">
+          <div className="align-center mt-8 flex flex-wrap justify-center dark:text-gray-100">
             ({newWord.length})
           </div>
           <div className="align-center mt-8 flex flex-wrap justify-center">
             <button
               onClick={shuffle}
-              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700"
+              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700 dark:border-gray-400 dark:bg-gray-800 dark:text-gray-200"
             >
               Shuffle
             </button>
             <button
               onClick={clearNewWord}
-              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700"
+              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700 dark:border-gray-400 dark:bg-gray-800 dark:text-gray-200"
             >
               Clear
             </button>
@@ -245,8 +250,10 @@ export default function Anagram() {
           {newWord.map((letter, i) => (
             <div
               key={i}
-              className={`m-2 flex h-4 w-4 cursor-pointer items-center justify-center border-b-2 pl-2 pr-2 pb-2 leading-normal ${
-                indexOfNewWord === i ? "border-b-red-500" : "border-b-gray-500"
+              className={`m-2 flex h-4 w-4 cursor-pointer items-center justify-center border-b-2 pl-2 pr-2 pb-2 leading-normal dark:text-gray-100 ${
+                indexOfNewWord === i
+                  ? "border-b-red-500 dark:border-b-red-400"
+                  : "border-b-gray-500 dark:border-b-gray-400"
               }`}
               onClick={() => {
                 if (newWord[i] !== "") {

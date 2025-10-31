@@ -74,7 +74,7 @@ export default function NewGamePage() {
   return (
     <div className="flex flex-col justify-around lg:flex-row">
       <Form className="flex flex-col" method="post">
-        <p className="mb-2">
+        <p className="mb-2 dark:text-gray-200">
           {players.length > 1
             ? "Please select at least 2 players to play:"
             : "Please add more players:"}
@@ -88,7 +88,10 @@ export default function NewGamePage() {
               value={p.id}
               onChange={onPlayerChange}
             />
-            <label htmlFor={p.id} className="cursor-pointer pl-8">
+            <label
+              htmlFor={p.id}
+              className="cursor-pointer pl-8 dark:text-gray-200"
+            >
               {p.name}
             </label>
           </div>
@@ -97,20 +100,26 @@ export default function NewGamePage() {
           type="submit"
           name="action"
           value="start-new-game"
-          className="my-4 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
+          className="my-4 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200 dark:bg-blue-700 dark:hover:bg-blue-600"
           disabled={selectedPlayers.length < 2}
         >
           Start new Game
         </button>
       </Form>
       <Form className="flex flex-col" method="post" key={players.length}>
-        <input name="name" aria-label="name" className="mt-8 mb-4 border-4" />
-        <span className="text-red-500">{actionData?.errors}</span>
+        <input
+          name="name"
+          aria-label="name"
+          className="mt-8 mb-4 border-4 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+        />
+        <span className="text-red-500 dark:text-red-400">
+          {actionData?.errors}
+        </span>
         <button
           type="submit"
           name="action"
           value="add-player"
-          className="rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400"
+          className="rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:bg-green-400 dark:bg-green-700 dark:hover:bg-green-600"
         >
           + Add new player
         </button>

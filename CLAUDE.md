@@ -9,6 +9,7 @@ This is a Scrabble score tracking application built with the Remix Indie Stack. 
 ## Common Commands
 
 ### Development
+
 ```bash
 npm run dev              # Start development server with MSW mocks
 npm run build            # Build production bundle
@@ -17,6 +18,7 @@ npm run start:mocks      # Run production server with MSW mocks
 ```
 
 ### Testing
+
 ```bash
 npm test                 # Run Vitest unit tests (watch mode)
 npm run test -- --run    # Run Vitest once without watch mode
@@ -26,6 +28,7 @@ npm run validate         # Run all tests, lint, typecheck, and e2e
 ```
 
 ### Code Quality
+
 ```bash
 npm run lint             # Run ESLint
 npm run typecheck        # Run TypeScript type checking
@@ -33,6 +36,7 @@ npm run format           # Format code with Prettier
 ```
 
 ### Database
+
 ```bash
 npm run setup            # Reset database and run seed (prisma migrate dev + seed)
 npx prisma migrate dev   # Create and apply new migration
@@ -53,6 +57,7 @@ The data model centers around multiplayer Scrabble games:
 - **Score**: Individual point entries linked to both a Player and Game
 
 Key relationships:
+
 - A Game has many Players (many-to-many)
 - A Game has many Scores
 - A Player has many Scores
@@ -61,17 +66,20 @@ Key relationships:
 ### Core Game Logic
 
 **app/game-utils.ts**: Contains `getNextPlayerToPlay()` which determines turn order by:
+
 1. Finding the last score entry
 2. Cycling through players array in order
 3. Wrapping to first player after last player
 
 **app/models/game.server.ts**: Database operations including:
+
 - `getGame()`: Fetches game with scores and calculates `totalScore` for each player
 - `createGame()`: Creates game with connected players
 - `addScore()`: Records points for a player's turn
 - `completeGame()`/`reopenGame()`: Toggle game completion status
 
 The `EnhancedGame` type augments Prisma's Game model with:
+
 - `PlayerWithScores[]` - players with their scores array and computed totalScore
 - Used throughout the app for displaying game state
 
@@ -93,6 +101,7 @@ The `EnhancedGame` type augments Prisma's Game model with:
 ### Session Management
 
 **app/session.server.ts**: Cookie-based sessions with helpers:
+
 - `requireUserId()`: Enforces authentication
 - `getUser()`: Retrieves current user from session
 - `createUserSession()`: Sets cookie after login
@@ -100,11 +109,13 @@ The `EnhancedGame` type augments Prisma's Game model with:
 ### Testing Architecture
 
 **Vitest** (unit tests): Co-located `.test.ts` files using `@testing-library/react` for component tests. Key files:
+
 - app/game-utils.test.ts
 - app/models/game.server.test.ts
 - app/routes/games/\*.test.tsx
 
 **Cypress** (e2e tests): Located in `cypress/e2e/`:
+
 - **cypress/support/commands.ts**: Custom commands for game workflows:
   - `cy.login()`: Authenticates test user
   - `cy.createGameWithPlayers(players)`: Full game setup flow with player creation
@@ -119,6 +130,7 @@ The `EnhancedGame` type augments Prisma's Game model with:
 ### CI/CD
 
 **GitHub Actions** (.github/workflows/deploy.yml):
+
 - Runs on push to `main` (production) and `dev` (staging) branches
 - Jobs: lint → typecheck → vitest → cypress → deploy
 - Cypress runs with build server on port 8811

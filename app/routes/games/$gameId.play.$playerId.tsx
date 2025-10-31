@@ -117,12 +117,12 @@ export default function Play() {
             key={player.name}
             className={`flex min-w-0 flex-1 flex-col ${
               player.totalScore === topScore && player.totalScore > 0
-                ? "rounded-md bg-yellow-100/80"
+                ? "rounded-md bg-yellow-100/80 dark:bg-yellow-900/40"
                 : ""
             }`}
           >
             <span
-              className={`truncate font-bold ${
+              className={`truncate font-bold dark:text-gray-100 ${
                 game.players.length > 4 ? "text-xs md:text-base" : ""
               }`}
               title={player.name}
@@ -130,7 +130,7 @@ export default function Play() {
               {player.name}
             </span>
             {player.scores.map((score) => (
-              <span key={score.id} className="leading-6">
+              <span key={score.id} className="leading-6 dark:text-gray-200">
                 {score.points}
               </span>
             ))}
@@ -141,13 +141,13 @@ export default function Play() {
                   &nbsp;
                 </span>
               ))}
-            <div className="border-t-4 border-b-4 px-1 font-bold">
+            <div className="border-t-4 border-b-4 px-1 font-bold dark:border-gray-600 dark:text-gray-100">
               {player.totalScore}
             </div>
           </div>
         ))}
       </div>
-      <h1 className="mb-4">
+      <h1 className="mb-4 dark:text-gray-100">
         It's <span className="font-bold">{player.name}'s</span> turn
       </h1>
       <Form method="post" action="" key={playerId}>
@@ -159,7 +159,7 @@ export default function Play() {
                 setScore("-" + score);
               }
             }}
-            className="rounded border bg-red-100 px-2 py-1 text-lg text-red-600 hover:bg-red-200 disabled:bg-gray-200 disabled:text-gray-400 disabled:hover:bg-gray-200"
+            className="rounded border bg-red-100 px-2 py-1 text-lg text-red-600 hover:bg-red-200 disabled:bg-gray-200 disabled:text-gray-400 disabled:hover:bg-gray-200 dark:bg-red-900 dark:text-red-200 dark:hover:bg-red-800 dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
             disabled={!score || score.startsWith("-")}
           >
             -
@@ -171,13 +171,13 @@ export default function Play() {
                 setScore(score.slice(1));
               }
             }}
-            className="rounded border bg-green-100 px-2 py-1 text-lg text-green-600 hover:bg-green-200 disabled:bg-gray-200 disabled:text-gray-400 disabled:hover:bg-gray-200"
+            className="rounded border bg-green-100 px-2 py-1 text-lg text-green-600 hover:bg-green-200 disabled:bg-gray-200 disabled:text-gray-400 disabled:hover:bg-gray-200 dark:bg-green-900 dark:text-green-200 dark:hover:bg-green-800 dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
             disabled={!score || !score.startsWith("-")}
           >
             +
           </button>
           <input
-            className="flex-1 rounded border border-gray-500 px-2 py-1 text-lg"
+            className="flex-1 rounded border border-gray-500 px-2 py-1 text-lg dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
             type="number"
             inputMode="numeric"
             pattern="[0-9]*"
@@ -193,7 +193,7 @@ export default function Play() {
           {!game.completed && (
             <button
               type="submit"
-              className="mb-4 min-w-[128px] rounded bg-blue-primary py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
+              className="mb-4 min-w-[128px] rounded bg-blue-primary py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200 dark:bg-blue-700 dark:hover:bg-blue-600 dark:disabled:bg-gray-700"
               name="action"
               value="score"
               disabled={(hasMounted && !score) || isSubmitting}
@@ -204,7 +204,7 @@ export default function Play() {
           {!game.completed && (
             <button
               type="submit"
-              className="mb-4 rounded bg-green-primary py-2 px-4 text-white hover:bg-green-secondary focus:bg-green-secondary"
+              className="mb-4 rounded bg-green-primary py-2 px-4 text-white hover:bg-green-secondary focus:bg-green-secondary dark:bg-green-700 dark:hover:bg-green-600"
               name="action"
               value="complete"
             >
@@ -214,7 +214,7 @@ export default function Play() {
           {game.completed && (
             <button
               type="submit"
-              className="mb-4 rounded bg-green-primary py-2 px-4 text-white hover:bg-green-secondary focus:bg-green-secondary"
+              className="mb-4 rounded bg-green-primary py-2 px-4 text-white hover:bg-green-secondary focus:bg-green-secondary dark:bg-green-700 dark:hover:bg-green-600"
               name="action"
               value="reopen"
             >
@@ -228,7 +228,7 @@ export default function Play() {
                 <button
                   type="button"
                   key={p.id}
-                  className="mb-4 rounded bg-purple-primary py-2 px-4 text-white hover:bg-purple-secondary focus:bg-purple-secondary"
+                  className="mb-4 rounded bg-purple-primary py-2 px-4 text-white hover:bg-purple-secondary focus:bg-purple-secondary dark:bg-purple-700 dark:hover:bg-purple-600"
                 >
                   <Link to={`/games/${game.id}/play/${p.id}`}>
                     Switch to {p.name}'s turn

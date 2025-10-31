@@ -24,7 +24,7 @@ export default function GamesPage() {
 
   return (
     <div className="flex h-full min-h-screen flex-col">
-      <header className="flex items-center justify-between bg-slate-800 p-4 text-white">
+      <header className="dark:bg-slate-950 flex items-center justify-between bg-slate-800 p-4 text-white">
         <h1 className="text-3xl font-bold">
           <Link to=".">Games</Link>
         </h1>
@@ -32,7 +32,9 @@ export default function GamesPage() {
         <button
           type="button"
           className={`rounded  py-2 px-4 text-blue-100 sm:hidden ${
-            showMobileMenu ? "bg-slate-500" : "bg-slate-600"
+            showMobileMenu
+              ? "bg-slate-500 dark:bg-slate-700"
+              : "bg-slate-600 dark:bg-slate-800"
           }`}
           onClick={() => setShowMobileMenu(!showMobileMenu)}
         >
@@ -43,22 +45,22 @@ export default function GamesPage() {
         <Form action="/logout" method="post" className="hidden sm:block">
           <button
             type="submit"
-            className="rounded bg-slate-600 py-2 px-4 text-gray-100 hover:bg-blue-primary active:bg-blue-secondary"
+            className="rounded bg-slate-600 py-2 px-4 text-gray-100 hover:bg-blue-primary active:bg-blue-secondary dark:bg-slate-800 dark:hover:bg-blue-600"
           >
             Logout
           </button>
         </Form>
       </header>
-      <main className="h-full flex-col bg-white sm:flex sm:flex-row">
+      <main className="h-full flex-col bg-white dark:bg-gray-900 sm:flex sm:flex-row">
         {showMobileMenu && (
           <GamesMenu
             games={games}
-            className="bg-gray-50 sm:hidden"
+            className="bg-gray-50 dark:bg-gray-800 sm:hidden"
             onLinkClick={() => setShowMobileMenu(false)}
           />
         )}
         <GamesMenu
-          className="hidden h-full w-80 border-r bg-gray-50 sm:block"
+          className="hidden h-full w-80 border-r bg-gray-50 dark:border-gray-700 dark:bg-gray-800 sm:block"
           games={games}
         />
         <div className="flex-1 px-2 py-6 sm:p-6">
@@ -88,29 +90,31 @@ function GamesMenu({
     <div className={className}>
       <NavLink
         to="compare"
-        className="block border-b p-4 text-xl text-blue-500"
+        className="block border-b p-4 text-xl text-blue-500 dark:border-gray-700 dark:text-blue-400"
         onClick={() => onLinkClick()}
       >
         Compare Players
       </NavLink>
       <Link
         to="new"
-        className="block p-4 text-xl text-blue-500"
+        className="block p-4 text-xl text-blue-500 dark:text-blue-400"
         onClick={() => onLinkClick()}
       >
         + New Game
       </Link>
 
-      <hr />
+      <hr className="dark:border-gray-700" />
       {games.length === 0 ? (
-        <p className="p-4">No games yet</p>
+        <p className="p-4 dark:text-gray-300">No games yet</p>
       ) : (
         <ol>
           {games.map((game) => (
             <li key={game.id}>
               <NavLink
                 className={({ isActive }) =>
-                  `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
+                  `block border-b p-4 text-xl dark:border-gray-700 dark:text-gray-200 ${
+                    isActive ? "bg-white dark:bg-gray-700" : ""
+                  }`
                 }
                 onClick={() => onLinkClick()}
                 to={

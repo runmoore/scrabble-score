@@ -102,8 +102,8 @@ export default function GamePage() {
 
   return (
     <>
-      <h2 className="text-3xl">{title}</h2>
-      <div className="my-8 flex justify-around">
+      <h2 className="text-3xl dark:text-gray-100">{title}</h2>
+      <div className="my-8 flex justify-around dark:text-gray-200">
         <div>
           {game.players.map((p) => (
             <p key={p.id}>
@@ -153,10 +153,10 @@ export function ErrorBoundary() {
 
   if (isRouteErrorResponse(error)) {
     if (error.status === 404) {
-      return <div>Game not found</div>;
+      return <div className="dark:text-gray-200">Game not found</div>;
     } else {
       return (
-        <div>
+        <div className="dark:text-gray-200">
           <h1>Oops</h1>
           <p>Status: {error.status}</p>
           <p>{error.data.message}</p>
@@ -166,7 +166,7 @@ export function ErrorBoundary() {
   }
 
   return (
-    <div>
+    <div className="dark:text-gray-200">
       <h1>Uh oh ...</h1>
       <p>Something went wrong.</p>
       {/* @ts-ignore */}

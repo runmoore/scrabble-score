@@ -31,7 +31,11 @@ function SelectPlayer({
   name: string;
 }) {
   return (
-    <select name={name} onChange={onChange} className="mb-4 border-2">
+    <select
+      name={name}
+      onChange={onChange}
+      className="mb-4 border-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+    >
       {players.map((p) => (
         <option key={p.id} value={p.id}>
           {p.name}
@@ -48,7 +52,9 @@ export default function ComparePage() {
 
   return (
     <Form className="flex flex-col" method="post">
-      <p className="mb-2">Please select 2 players to compare</p>
+      <p className="mb-2 dark:text-gray-200">
+        Please select 2 players to compare
+      </p>
       <SelectPlayer
         name="playerOne"
         players={players}
@@ -63,7 +69,7 @@ export default function ComparePage() {
         type="submit"
         name="action"
         value="start-new-game"
-        className="my-4 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200"
+        className="my-4 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200 dark:bg-blue-700 dark:hover:bg-blue-600 dark:disabled:bg-gray-700"
         disabled={playerOne === playerTwo}
       >
         Compare players
