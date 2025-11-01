@@ -182,7 +182,9 @@ function createGameWithPlayers(players: string[] | number) {
   cy.findByRole("link", { name: /\+ new game/i }).click();
 
   // Wait for the new game form to be fully loaded
-  cy.findByRole("textbox", { name: /name/i }).should("be.visible").and("not.be.disabled");
+  cy.findByRole("textbox", { name: /name/i })
+    .should("be.visible")
+    .and("not.be.disabled");
 
   // Add all players
   playerNames.forEach((playerName, index) => {
@@ -190,7 +192,9 @@ function createGameWithPlayers(players: string[] | number) {
     cy.intercept("POST", "**/games/new**").as(`addPlayer${index}`);
 
     // Wait for input to be ready, then interact with it
-    cy.findByRole("textbox", { name: /name/i }).should("be.visible").and("not.be.disabled");
+    cy.findByRole("textbox", { name: /name/i })
+      .should("be.visible")
+      .and("not.be.disabled");
     cy.findByRole("textbox", { name: /name/i }).clear();
     cy.findByRole("textbox", { name: /name/i }).type(playerName);
 
@@ -203,12 +207,16 @@ function createGameWithPlayers(players: string[] | number) {
 
   // Select all players - wait for each checkbox to be available
   playerNames.forEach((playerName) => {
-    cy.findByRole("checkbox", { name: playerName }).should("be.visible").check();
+    cy.findByRole("checkbox", { name: playerName })
+      .should("be.visible")
+      .check();
   });
 
   // Start the game - set up intercept before clicking
   cy.intercept("POST", "**/games/new**").as("startGame");
-  cy.findByRole("button", { name: /start new game/i }).should("not.be.disabled").click();
+  cy.findByRole("button", { name: /start new game/i })
+    .should("not.be.disabled")
+    .click();
   cy.wait("@startGame");
 
   // Wait for navigation to play page
@@ -222,11 +230,15 @@ function createGameWithPlayers(players: string[] | number) {
 
 function submitScore(score: string) {
   if (score) {
-    cy.findByRole("spinbutton", { name: /score/i }).should("be.visible").clear();
+    cy.findByRole("spinbutton", { name: /score/i })
+      .should("be.visible")
+      .clear();
     cy.findByRole("spinbutton", { name: /score/i }).type(score);
   }
 
-  cy.findByRole("button", { name: /submit score/i }).should("be.visible").and("not.be.disabled");
+  cy.findByRole("button", { name: /submit score/i })
+    .should("be.visible")
+    .and("not.be.disabled");
 
   cy.intercept("POST", "**/play/**").as("submitScore");
   cy.findByRole("button", { name: /submit score/i }).click();
@@ -265,7 +277,9 @@ function quickStartGame(playerCount: number = 2) {
   return createGameWithPlayers(playerCount);
 }
 
-function submitMultipleScores(scores: Array<{ score: string; negative?: boolean }>) {
+function submitMultipleScores(
+  scores: Array<{ score: string; negative?: boolean }>
+) {
   scores.forEach(({ score, negative = false }) => {
     cy.findByRole("spinbutton", { name: /score/i }).type(score);
 

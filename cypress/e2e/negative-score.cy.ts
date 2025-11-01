@@ -56,7 +56,7 @@ describe("Negative Score Functionality", () => {
     const scoreData = [
       { score: "10", negative: false },
       { score: "5", negative: true },
-      { score: "20", negative: false }
+      { score: "20", negative: false },
     ];
 
     cy.submitMultipleScores(scoreData);
