@@ -1,4 +1,4 @@
-import { Form, useSearchParams } from "@remix-run/react";
+import { Form, Link, useSearchParams } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/server-runtime";
 import { useEffect, useState } from "react";
 
@@ -113,6 +113,7 @@ export default function Anagram() {
   );
 
   const [indexOfNewWord, setIndexOfNewWord] = useState(0);
+  const [recentAnagrams, setRecentAnagrams] = useState<string[]>([]);
 
   const radius = generateRadius(letters.length);
 
@@ -121,6 +122,16 @@ export default function Anagram() {
     setLetters(queryToLetters(searchQuery));
     setNewWord(queryToBlankNewWord(searchQuery));
     setIndexOfNewWord(0);
+
+    // Add new search query to recent anagrams when it changes
+    if (searchQuery) {
+      setRecentAnagrams((prev) => {
+        if (prev.includes(searchQuery)) {
+          return prev;
+        }
+        return [searchQuery, ...prev];
+      });
+    }
   }, [searchQuery]);
 
   const clearWord = () => {
@@ -148,6 +159,46 @@ export default function Anagram() {
         <h1 className="text-xxl mb-4 basis-full items-center text-center font-bold dark:text-gray-100">
           Anagram circle generator
         </h1>
+
+        {recentAnagrams.length > 0 && (
+          <div className="mb-4 w-full px-4">
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {recentAnagrams.map((anagram, index) => {
+                const isActive = anagram === searchQuery;
+                return (
+                  <div
+                    key={`${anagram}-${index}`}
+                    className={`flex flex-shrink-0 items-center gap-2 rounded-full border-2 text-sm font-medium transition-colors ${
+                      isActive
+                        ? "border-gray-800 bg-gray-800 text-white dark:border-gray-200 dark:bg-gray-200 dark:text-gray-900"
+                        : "border-gray-300 bg-transparent text-gray-700 hover:border-gray-500 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400"
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRecentAnagrams((prev) =>
+                          prev.filter((a) => a !== anagram)
+                        );
+                      }}
+                      className="ml-2 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+                      aria-label={`Remove ${anagram}`}
+                    >
+                      ✕
+                    </button>
+                    <Link
+                      to={`?word=${encodeURIComponent(anagram)}`}
+                      className="flex-grow py-2 pr-4"
+                    >
+                      {anagram}
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <Form method="get" key={searchQuery}>
           <input
             className="w-36 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
