@@ -1,6 +1,6 @@
 import { Form, Link, useSearchParams } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/server-runtime";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const links: LinksFunction = () => {
   return [{ rel: "manifest", href: "/anagram-manifest.json" }];
@@ -115,6 +115,8 @@ export default function Anagram() {
   const [indexOfNewWord, setIndexOfNewWord] = useState(0);
   const [recentAnagrams, setRecentAnagrams] = useState<string[]>([]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const radius = generateRadius(letters.length);
 
   // Ensures we can submit new words without refreshing the page
@@ -131,6 +133,9 @@ export default function Anagram() {
         }
         return [searchQuery, ...prev];
       });
+    } else {
+      // Focus input when query is cleared
+      inputRef.current?.focus();
     }
   }, [searchQuery]);
 
@@ -171,7 +176,7 @@ export default function Anagram() {
                     className={`flex flex-shrink-0 items-center gap-2 rounded-full border-2 text-sm font-medium transition-colors ${
                       isActive
                         ? "border-gray-800 bg-gray-800 text-white dark:border-gray-200 dark:bg-gray-200 dark:text-gray-900"
-                        : "border-gray-300 bg-transparent text-gray-700 hover:border-gray-500 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400"
+                        : "bg-transparent border-gray-300 text-gray-700 hover:border-gray-500 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400"
                     }`}
                   >
                     <button
@@ -201,6 +206,7 @@ export default function Anagram() {
 
         <Form method="get" key={searchQuery}>
           <input
+            ref={inputRef}
             className="w-36 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
             type="text"
             id="word"
