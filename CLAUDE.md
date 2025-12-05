@@ -44,6 +44,16 @@ npx prisma db seed       # Seed database with test data
 npx prisma studio        # Open Prisma Studio UI
 ```
 
+## Code Quality Requirements
+
+**IMPORTANT**: After making ANY code changes, Claude must run the following commands in sequence:
+
+1. `npm run lint` - Check code quality with ESLint
+2. `npm run typecheck` - Verify TypeScript type safety
+3. `npm run format` - Format code with Prettier
+
+These commands must complete successfully before considering any task complete. If any command fails, the issues must be fixed before moving on.
+
 ## Architecture
 
 ### Database Schema (Prisma + SQLite)
