@@ -88,7 +88,7 @@ function Letter({
 
 function findNextBlankLetter(word: string[], startIndex: number): number {
   let count = 0;
-  let index = startIndex;
+  let index = startIndex % word.length;
   while (count < word.length) {
     if (word[index] === "") {
       return index;
@@ -156,6 +156,11 @@ export default function Anagram() {
     setLetters((value) =>
       value.map((letter) => ({ ...letter, isDismissed: false }))
     );
+  };
+
+  const goToNextBlankLetter = () => {
+    const nextIndex = findNextBlankLetter(newWord, indexOfNewWord + 1);
+    setIndexOfNewWord(nextIndex);
   };
 
   return (
@@ -298,6 +303,13 @@ export default function Anagram() {
               className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700 dark:border-gray-400 dark:bg-gray-800 dark:text-gray-200"
             >
               Clear
+            </button>
+            <button
+              onClick={goToNextBlankLetter}
+              disabled={newWord.filter((letter) => letter === "").length < 2}
+              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-400 dark:bg-gray-800 dark:text-gray-200"
+            >
+              Next
             </button>
           </div>
         </div>
