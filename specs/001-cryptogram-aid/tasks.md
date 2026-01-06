@@ -164,7 +164,7 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T017 [P] [US2] Write unit tests for inline mapping helper functions in `app/routes/cryptogram.test.tsx`:
+- [X] T017 [P] [US2] Write unit tests for inline mapping helper functions in `app/routes/cryptogram.test.tsx`:
 
   - Test `getUniqueCipherLetters()` extracts unique letters from puzzle text
   - Test `getUniqueCipherLetters()` returns sorted alphabetical order
