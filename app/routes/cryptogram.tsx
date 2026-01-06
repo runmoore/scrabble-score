@@ -193,15 +193,6 @@ function PuzzleDisplay({
   }
 
   const conflicts = getConflictingLetters(mappings);
-  const firstOccurrences = new Map<string, number>();
-
-  // Find first occurrence of each unique letter
-  puzzleText.split("").forEach((char, index) => {
-    const upper = char.toUpperCase();
-    if (/[A-Z]/.test(upper) && !firstOccurrences.has(upper)) {
-      firstOccurrences.set(upper, index);
-    }
-  });
 
   // Determine which letters are solved (have mappings)
   const renderDecryptedText = () => {
@@ -209,22 +200,18 @@ function PuzzleDisplay({
       const originalChar = puzzleText[index];
       const upper = originalChar.toUpperCase();
       const isSolved = /[A-Z]/.test(upper) && mappings[upper];
-      const isFirstOccurrence = firstOccurrences.get(upper) === index;
+      const isLetter = /[A-Z]/.test(upper);
 
       return (
         <span
           key={index}
-          className={
-            isFirstOccurrence && /[A-Z]/.test(upper)
-              ? "inline-flex flex-col items-center"
-              : "inline"
-          }
+          className={isLetter ? "inline-flex flex-col items-center" : "inline"}
           style={{
             verticalAlign: "bottom",
           }}
         >
-          {/* Inline input above first occurrence */}
-          {isFirstOccurrence && onMappingChange && /[A-Z]/.test(upper) && (
+          {/* Inline input above every letter */}
+          {isLetter && onMappingChange && (
             <span className="mb-1">
               <InlineMappingInput
                 cipherLetter={upper}
