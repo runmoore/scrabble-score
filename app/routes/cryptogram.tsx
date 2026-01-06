@@ -7,7 +7,9 @@ import { useMemo, useState } from "react";
 
 /**
  * Main state container for the cryptogram solver
+ * @unused - Documented type for state structure, not directly referenced
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface CryptogramState {
   // The original encrypted puzzle text (immutable after input)
   puzzleText: string;
@@ -22,7 +24,9 @@ interface CryptogramState {
 
 /**
  * Individual cipher-to-plain letter association (for UI rendering)
+ * @unused - Documented type for mapping structure, not directly referenced
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface LetterMapping {
   // Cipher letter (always uppercase A-Z)
   cipher: string;
@@ -36,10 +40,63 @@ interface LetterMapping {
 }
 
 // =============================================================================
-// HELPER FUNCTIONS (T008 - will be implemented next)
+// HELPER FUNCTIONS (T008)
 // =============================================================================
 
-// TODO: Add helper functions
+/**
+ * Apply letter mappings to puzzle text with case preservation
+ */
+export function applyMappings(
+  puzzleText: string,
+  mappings: Record<string, string>
+): string {
+  return puzzleText
+    .split("")
+    .map((char) => {
+      const upper = char.toUpperCase();
+      if (/[A-Z]/.test(upper)) {
+        const mapped = mappings[upper];
+        if (mapped) {
+          // Preserve original case
+          return char === upper ? mapped : mapped.toLowerCase();
+        }
+      }
+      // Non-letter or unmapped - return as-is
+      return char;
+    })
+    .join("");
+}
+
+/**
+ * Get list of cipher letters involved in mapping conflicts
+ */
+export function getConflictingLetters(
+  mappings: Record<string, string>
+): string[] {
+  const reversed: Record<string, string[]> = {};
+
+  for (const [cipher, plain] of Object.entries(mappings)) {
+    if (!plain) continue; // Skip empty mappings
+    if (!reversed[plain]) reversed[plain] = [];
+    reversed[plain].push(cipher);
+  }
+
+  const conflicts: string[] = [];
+  for (const ciphers of Object.values(reversed)) {
+    if (ciphers.length > 1) {
+      conflicts.push(...ciphers);
+    }
+  }
+
+  return conflicts;
+}
+
+/**
+ * Sanitize puzzle text (preserves all characters as-is)
+ */
+export function sanitizePuzzleText(text: string): string {
+  return text;
+}
 
 // =============================================================================
 // INLINE COMPONENTS
@@ -82,7 +139,7 @@ function PuzzleInput({
           {charCount} / {maxLength} characters
         </span>
         {isOverLimit && (
-          <span className="text-red-primary font-medium">
+          <span className="font-medium text-red-primary">
             Exceeds maximum length
           </span>
         )}
@@ -160,6 +217,79 @@ function PuzzleDisplay({
   );
 }
 
+/**
+ * MappingGrid Component (T011)
+ * 26 letter inputs (A-Z) in grid layout for creating cipher-to-plain mappings
+ */
+function MappingGrid({
+  mappings,
+  onMappingChange,
+  onClearAll,
+  disabled,
+}: {
+  mappings: Record<string, string>;
+  onMappingChange: (cipher: string, plain: string) => void;
+  onClearAll: () => void;
+  disabled: boolean;
+}) {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const conflicts = getConflictingLetters(mappings);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-medium">Letter Mappings (A-Z)</h3>
+        <button
+          type="button"
+          onClick={onClearAll}
+          className="rounded bg-red-primary px-3 py-1 text-sm text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-primary disabled:opacity-50"
+          disabled={disabled}
+          aria-label="Clear all mappings"
+        >
+          Clear All
+        </button>
+      </div>
+
+      <div className="lg:grid-cols-13 grid grid-cols-6 gap-2 md:grid-cols-8">
+        {alphabet.map((letter) => {
+          const hasConflict = conflicts.includes(letter);
+          const value = mappings[letter] || "";
+
+          return (
+            <div key={letter} className="flex flex-col items-center">
+              <label
+                htmlFor={`mapping-${letter}`}
+                className="mb-1 text-xs font-medium text-gray-600"
+              >
+                {letter}
+              </label>
+              <input
+                id={`mapping-${letter}`}
+                type="text"
+                inputMode="text"
+                maxLength={1}
+                value={value}
+                onChange={(e) => {
+                  const inputValue = e.target.value.toUpperCase();
+                  onMappingChange(letter, inputValue);
+                }}
+                disabled={disabled}
+                aria-label={`Mapping for ${letter}`}
+                className={`h-11 w-11 rounded border text-center font-mono text-lg uppercase focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:opacity-50 ${
+                  hasConflict
+                    ? "border-red-primary ring-2 ring-red-primary"
+                    : "border-gray-300 focus:border-blue-primary focus:ring-blue-primary"
+                }`}
+                style={{ minWidth: "44px", minHeight: "44px" }}
+              />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // =============================================================================
 // MAIN COMPONENT (T013 - will be implemented next)
 // =============================================================================
@@ -170,14 +300,32 @@ export default function Cryptogram() {
 
   // Basic state for testing components built so far
   const [puzzleText, setPuzzleText] = useState(initialPuzzle);
-  const [mappings] = useState<Record<string, string>>({});
+  const [mappings, setMappings] = useState<Record<string, string>>({});
 
-  // Placeholder for decrypted text (will use applyMappings helper once T008 is done)
-  const decryptedText = puzzleText; // TODO: Replace with applyMappings(puzzleText, mappings)
+  // Compute decrypted text using applyMappings helper (T008)
+  const decryptedText = useMemo(
+    () => applyMappings(puzzleText, mappings),
+    [puzzleText, mappings]
+  );
 
+  // Event handlers
   const handlePuzzleChange = (value: string) => {
     setPuzzleText(value);
   };
+
+  const handleMappingChange = (cipher: string, plain: string) => {
+    setMappings((prev) => ({
+      ...prev,
+      [cipher]: plain,
+    }));
+  };
+
+  const handleClearAll = () => {
+    setMappings({});
+  };
+
+  // Validation
+  const isOverLimit = puzzleText.length > 1000;
 
   return (
     <div className="min-h-screen bg-white p-4 md:p-8">
@@ -206,9 +354,13 @@ export default function Cryptogram() {
             mappings={mappings}
           />
 
-          <p className="text-gray-500 text-sm">
-            Note: Mapping grid and helper functions not yet implemented.
-          </p>
+          {/* MappingGrid component (T011) */}
+          <MappingGrid
+            mappings={mappings}
+            onMappingChange={handleMappingChange}
+            onClearAll={handleClearAll}
+            disabled={isOverLimit || !puzzleText}
+          />
         </Form>
       </div>
     </div>

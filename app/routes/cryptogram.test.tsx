@@ -116,11 +116,11 @@ describe("sanitizePuzzleText", () => {
   });
 
   test("preserves quotes and apostrophes", () => {
-    const text = "IT'S \"HELLO\" WORLD";
+    const text = 'IT\'S "HELLO" WORLD';
 
     const result = sanitizePuzzleText(text);
 
-    expect(result).toBe("IT'S \"HELLO\" WORLD");
+    expect(result).toBe('IT\'S "HELLO" WORLD');
   });
 
   test("handles empty string", () => {

@@ -110,7 +110,10 @@ describe("cryptogram solver", () => {
     cy.findByLabelText("Mapping for H").type("T");
 
     // Verify special characters and numbers are preserved
-    cy.findByTestId("decrypted-text").should("contain.text", "TELLO, WORLD! 123");
+    cy.findByTestId("decrypted-text").should(
+      "contain.text",
+      "TELLO, WORLD! 123"
+    );
   });
 
   it("should show conflict warning when multiple cipher letters map to same plain letter", () => {
@@ -126,8 +129,14 @@ describe("cryptogram solver", () => {
     cy.findByRole("alert").should("contain.text", "conflict");
 
     // Verify conflicting letters are highlighted
-    cy.findByLabelText("Mapping for A").should("have.class", "ring-red-primary");
-    cy.findByLabelText("Mapping for C").should("have.class", "ring-red-primary");
+    cy.findByLabelText("Mapping for A").should(
+      "have.class",
+      "ring-red-primary"
+    );
+    cy.findByLabelText("Mapping for C").should(
+      "have.class",
+      "ring-red-primary"
+    );
   });
 
   it("should handle 1000 character cryptogram without errors", () => {
