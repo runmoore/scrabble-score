@@ -156,14 +156,14 @@ function InlineMappingInput({
       }}
       disabled={disabled}
       aria-label={`Inline mapping for ${cipherLetter}`}
-      className={`h-11 w-11 rounded border text-center font-mono text-sm uppercase focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:opacity-50 md:h-8 md:w-8 ${
+      className={`h-8 w-8 rounded border text-center text-xs font-mono uppercase focus:outline-none focus:ring-1 disabled:bg-gray-100 disabled:opacity-50 md:h-6 md:w-6 ${
         hasConflict
-          ? "border-red-primary ring-2 ring-red-primary"
+          ? "border-red-primary ring-1 ring-red-primary"
           : "border-gray-300 focus:border-blue-primary focus:ring-blue-primary"
       }`}
       style={{
-        minWidth: "44px",
-        minHeight: "44px",
+        minWidth: "32px",
+        minHeight: "32px",
         touchAction: "manipulation",
       }}
     />
@@ -206,7 +206,7 @@ function PuzzleDisplay({
         >
           {/* Inline input above every letter showing the decrypted letter */}
           {isLetter && onMappingChange && (
-            <span className="mb-1">
+            <span className="mb-0.5">
               <InlineMappingInput
                 cipherLetter={upper}
                 value={mappings[upper] || ""}
@@ -217,40 +217,26 @@ function PuzzleDisplay({
             </span>
           )}
           {/* Always show the original cipher letter below */}
-          <span className="text-gray-600">{char}</span>
+          <span className="text-sm text-gray-600">{char}</span>
         </span>
       );
     });
   };
 
   return (
-    <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-      <div>
-        <h3 className="mb-2 text-sm font-medium text-gray-700">
-          Original (Encrypted):
-        </h3>
-        <div
-          data-testid="encrypted-text"
-          className="font-mono text-base text-gray-500"
-          style={{ wordBreak: "break-word", whiteSpace: "pre-wrap" }}
-        >
-          {puzzleText}
-        </div>
-      </div>
-      <div>
-        <h3 className="mb-2 text-sm font-medium text-gray-700">
-          Your Solution (enter guesses above each letter):
-        </h3>
-        <div
-          data-testid="decrypted-text"
-          className="font-mono text-lg"
-          style={{
-            wordBreak: "break-word",
-            whiteSpace: "pre-wrap",
-          }}
-        >
-          {renderPuzzleText()}
-        </div>
+    <div>
+      <h3 className="mb-2 text-sm font-medium text-gray-700">
+        Your Solution (enter guesses above each letter):
+      </h3>
+      <div
+        data-testid="decrypted-text"
+        className="font-mono text-base"
+        style={{
+          wordBreak: "break-word",
+          whiteSpace: "pre-wrap",
+        }}
+      >
+        {renderPuzzleText()}
       </div>
     </div>
   );
