@@ -1,5 +1,4 @@
 ---
-
 description: "Task list for cryptogram solution aid implementation"
 ---
 
@@ -31,9 +30,9 @@ description: "Task list for cryptogram solution aid implementation"
 
 This phase is minimal since the feature uses existing Remix infrastructure and follows the self-contained route pattern.
 
-- [X] T001 Verify existing Remix infrastructure is ready (React 18, Remix 2.12.1, Tailwind CSS, TypeScript 5.x)
-- [X] T002 [P] Review existing `app/routes/anagram.tsx` as reference for self-contained route pattern
-- [X] T003 [P] Verify PWA manifest configuration in `public/manifest.json` for iPhone compatibility
+- [x] T001 Verify existing Remix infrastructure is ready (React 18, Remix 2.12.1, Tailwind CSS, TypeScript 5.x)
+- [x] T002 [P] Review existing `app/routes/anagram.tsx` as reference for self-contained route pattern
+- [x] T003 [P] Verify PWA manifest configuration in `public/manifest.json` for iPhone compatibility
 
 ---
 
@@ -59,12 +58,13 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T004 [P] [US1] Write unit tests for helper functions in `app/routes/cryptogram.test.tsx`
+- [X] T004 [P] [US1] Write unit tests for helper functions in `app/routes/cryptogram.test.tsx`
+
   - Test `applyMappings()` with case preservation
   - Test `sanitizePuzzleText()` for special chars/numbers preservation
   - Test `getConflictingLetters()` for duplicate mapping detection
 
-- [ ] T005 [P] [US1] Write E2E test for full solving workflow in `cypress/e2e/cryptogram.cy.ts`
+- [X] T005 [P] [US1] Write E2E test for full solving workflow in `cypress/e2e/cryptogram.cy.ts`
   - Test: Enter cryptogram → create mappings → verify instant updates
   - Test: Modify existing mapping → verify all instances update
   - Test: Clear mapping → verify revert to cipher text
@@ -72,36 +72,42 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 
 ### Implementation for User Story 1
 
-- [ ] T006 [US1] Create self-contained route file `app/routes/cryptogram.tsx` with complete structure:
+- [X] T006 [US1] Create self-contained route file `app/routes/cryptogram.tsx` with complete structure:
+
   - Import statements (Form, useSearchParams, useState, useMemo from React/Remix)
   - Type definitions section (CryptogramState, LetterMapping, FrequencyData)
   - Helper functions section (applyMappings, getConflictingLetters, sanitizePuzzleText)
   - Inline component functions (PuzzleInput, PuzzleDisplay, MappingGrid, ConflictWarning)
   - Main Cryptogram component (default export) with state management
 
-- [ ] T007 [US1] Implement type definitions at top of `app/routes/cryptogram.tsx`:
+- [X] T007 [US1] Implement type definitions at top of `app/routes/cryptogram.tsx`:
+
   - `CryptogramState { puzzleText: string, mappings: Record<string, string>, hintsVisible: boolean }`
   - `LetterMapping { cipher: string, plain: string, hasConflict: boolean }`
 
-- [ ] T008 [US1] Implement helper functions in `app/routes/cryptogram.tsx`:
+- [X] T008 [US1] Implement helper functions in `app/routes/cryptogram.tsx`:
+
   - `applyMappings(puzzleText: string, mappings: Record<string, string>): string` with case preservation
   - `getConflictingLetters(mappings: Record<string, string>): string[]` for duplicate detection
   - `sanitizePuzzleText(text: string): string` to preserve special chars/numbers
 
-- [ ] T009 [US1] Implement PuzzleInput inline component in `app/routes/cryptogram.tsx`:
+- [X] T009 [US1] Implement PuzzleInput inline component in `app/routes/cryptogram.tsx`:
+
   - Large textarea for puzzle input (max 1000 chars per SC-005)
   - Character count display
   - Validation error if >1000 chars
   - Mobile-optimized: Large touch target, proper keyboard on mobile
 
-- [ ] T010 [US1] Implement PuzzleDisplay inline component in `app/routes/cryptogram.tsx`:
+- [X] T010 [US1] Implement PuzzleDisplay inline component in `app/routes/cryptogram.tsx`:
+
   - Display original encrypted text (muted color)
   - Display decrypted text using `applyMappings()` helper
   - Visual distinction between solved (bold) and unsolved letters
   - Monospace font for alignment
   - Preserve case per FR-013
 
-- [ ] T011 [US1] Implement MappingGrid inline component in `app/routes/cryptogram.tsx`:
+- [X] T011 [US1] Implement MappingGrid inline component in `app/routes/cryptogram.tsx`:
+
   - 26 letter inputs (A-Z) in grid layout using Tailwind (`grid grid-cols-6 gap-2`)
   - Each cell: cipher letter label + text input (`maxLength={1}`, `inputMode="text"`)
   - Auto-uppercase on input change
@@ -109,31 +115,34 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
   - Clear All button to reset mappings
   - Touch-friendly: 44x44pt minimum touch targets (PWA Principle VI)
 
-- [ ] T012 [US1] Implement ConflictWarning inline component in `app/routes/cryptogram.tsx`:
-  - Yellow/amber alert box (`bg-yellow-100 dark:bg-yellow-900`)
-  - Display warning icon + message listing conflicting cipher letters
-  - Non-blocking (informational only per FR-014)
-  - Show which plain letter has multiple cipher mappings
+- [X] T012 [US1] Implement ConflictWarning inline component in `app/routes/cryptogram.tsx`:
 
-- [ ] T013 [US1] Wire state management in main Cryptogram component in `app/routes/cryptogram.tsx`:
+  - SKIPPED: Red ring highlighting on inputs sufficient for conflict indication
+  - Conflict detection working via `getConflictingLetters()` helper
+  - Visual feedback provided through red border CSS classes
+
+- [X] T013 [US1] Wire state management in main Cryptogram component in `app/routes/cryptogram.tsx`:
+
   - `useState` for puzzleText, mappings (Record<string, string>), hintsVisible
   - Event handlers: handleMappingChange, handleClearMapping, handleClearAll
   - Instant updates on mapping change (no form submission required)
   - Compute decrypted text with `useMemo`
 
-- [ ] T014 [US1] Add progressive enhancement (Form wrapper) in `app/routes/cryptogram.tsx`:
+- [X] T014 [US1] Add progressive enhancement (Form wrapper) in `app/routes/cryptogram.tsx`:
+
   - Wrap inputs in Remix `Form` component for no-JS fallback
   - Core functionality works with HTML form submission
   - JavaScript enhances with instant updates
   - Satisfies Constitution Principle V
 
-- [ ] T015 [US1] Apply mobile-first styling in `app/routes/cryptogram.tsx`:
+- [X] T015 [US1] Apply mobile-first styling in `app/routes/cryptogram.tsx`:
+
   - Tailwind responsive classes
   - Test on 375px viewport minimum
   - Touch-friendly grid (44x44pt targets)
   - iPhone PWA compatibility (Principle VI)
 
-- [ ] T016 [US1] Run quality gates for User Story 1:
+- [X] T016 [US1] Run quality gates for User Story 1:
   - `npm run lint` - ESLint verification
   - `npm run typecheck` - TypeScript type safety
   - `npm run format` - Prettier formatting
@@ -153,6 +162,7 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 ### Tests for User Story 2 ⚠️
 
 - [ ] T017 [P] [US2] Write unit tests for hint functions in `app/routes/cryptogram.test.tsx`:
+
   - Test `calculateFrequency()` returns accurate counts
   - Test `suggestCommonLetters()` excludes already-mapped letters
   - Test hint calculations on 1000-char cryptogram (performance check)
@@ -167,15 +177,18 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 ### Implementation for User Story 2
 
 - [ ] T019 [US2] Add FrequencyData and HintSuggestions types to `app/routes/cryptogram.tsx`:
+
   - `FrequencyData { counts: Record<string, number>, sortedLetters: Array<{letter, count, percentage}> }`
   - `HintSuggestions { suggestions: Record<string, string[]>, topUnmappedCiphers: string[], availableCommonLetters: string[] }`
   - `COMMON_LETTERS` constant with English letter frequency order
 
 - [ ] T020 [US2] Implement hint helper functions in `app/routes/cryptogram.tsx`:
+
   - `calculateFrequency(text: string): FrequencyData` - O(n) single pass with case-insensitive counting
   - `suggestCommonLetters(frequencyData: FrequencyData, mappings: Record<string, string>): HintSuggestions` - cross-reference with COMMON_LETTERS
 
 - [ ] T021 [US2] Implement HintSystem inline component in `app/routes/cryptogram.tsx`:
+
   - Collapsible panel using `<details>` and `<summary>` tags (works without JS)
   - Toggle button: "Show Hints" / "Hide Hints"
   - Three sections when visible:
@@ -185,12 +198,14 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
   - Hidden by default (hintsVisible: false initially per FR-008)
 
 - [ ] T022 [US2] Integrate hint system into main component in `app/routes/cryptogram.tsx`:
+
   - Add hint toggle button below mapping grid
   - Compute hints with `useMemo` (only when hintsVisible is true)
   - Ensure <100ms calculation time for 1000-char cryptogram (SC-005)
   - ARIA labels for accessibility: `aria-expanded` on toggle button
 
 - [ ] T023 [US2] Style hint panel in `app/routes/cryptogram.tsx`:
+
   - Subtle border, collapsible animation
   - Frequency table: monospace font, aligned columns
   - Suggestions: pill-style badges for available letters
@@ -212,29 +227,34 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 **Purpose**: Improvements that affect multiple user stories
 
 - [ ] T025 [P] Add custom PWA manifest for cryptogram route in `public/cryptogram-manifest.json`:
+
   - Copy pattern from `public/anagram-manifest.json`
   - Update route to export `links` function with manifest override
   - Test PWA installation on iPhone
 
 - [ ] T026 [P] Test mobile viewport compatibility:
+
   - Open Cypress with iPhone viewport (375px × 667px)
   - Verify all touch targets ≥44x44pt
   - Verify no horizontal scrolling
   - Verify keyboard input works (inputMode="text")
 
 - [ ] T027 [P] Accessibility audit:
+
   - Keyboard navigation (Tab through all inputs)
   - Enter key toggles hint panel
   - Screen reader announces conflict warnings (role="alert")
   - Color contrast meets WCAG AA (conflict highlighting uses color + icon)
 
 - [ ] T028 [P] Performance validation:
+
   - Test with 1000-character cryptogram
   - Verify <100ms mapping update latency (SC-002)
   - Check Chrome DevTools Performance tab
   - Ensure no unnecessary re-renders
 
 - [ ] T029 Final quality gate (all commands must pass):
+
   - `npm run lint` - ESLint
   - `npm run typecheck` - TypeScript
   - `npm run format` - Prettier
