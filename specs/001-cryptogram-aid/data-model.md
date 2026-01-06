@@ -265,9 +265,28 @@ export function getConflictingLetters(
 ): string[] { /* ... */ }
 ```
 
-**Planned for User Story 2** (Phase 4 - Hint System):
+**Planned for User Story 2** (Phase 4 - Inline Mapping Input):
 ```typescript
-// Frequency analysis (will be added when implementing hints)
+// Inline mapping UI state (Phase 4)
+// Unique cipher letters extracted from puzzle text for inline input rendering
+export function getUniqueCipherLetters(puzzleText: string): string[] {
+  const letters = new Set<string>();
+  for (const char of puzzleText) {
+    const upper = char.toUpperCase();
+    if (/[A-Z]/.test(upper)) {
+      letters.add(upper);
+    }
+  }
+  return Array.from(letters).sort();
+}
+
+// No additional state needed - inline inputs share the same mappings Record
+// Synchronization happens naturally through React's single source of truth
+```
+
+**Future Enhancement** (002-cryptogram-hints - Frequency Analysis):
+```typescript
+// These will be added in a future feature when implementing hints
 export interface FrequencyData {
   counts: Record<string, number>;
   sortedLetters: Array<{
@@ -277,7 +296,6 @@ export interface FrequencyData {
   }>;
 }
 
-// Hint suggestions (will be added when implementing hints)
 export interface HintSuggestions {
   suggestions: Record<string, string[]>;
   topUnmappedCiphers: string[];
