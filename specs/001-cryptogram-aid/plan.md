@@ -5,7 +5,13 @@
 
 ## Summary
 
-Implement a digital cryptogram solving aid that replaces pen-and-paper methods. Users input cryptograms and solve them using a mapping table/grid control panel (A-Z with input fields). The tool provides instant visual updates as mappings are entered, with an optional progressive hint system (frequency analysis and letter suggestions) hidden by default. No persistence required - single-session solving only.
+Implement a digital cryptogram solving aid that replaces pen-and-paper methods.
+
+**Phase 3 (COMPLETE)**: Users input cryptograms and solve them using a mapping table/grid control panel (A-Z with input fields) with instant visual updates.
+
+**Phase 4 (NEW - User Story 2)**: Add inline mapping inputs positioned directly above each unique cipher letter in the puzzle text, mimicking the traditional pen-and-paper method where solvers write above letters. Make the alphabetical mapping grid more compact to reduce screen space. Both input methods (inline and grid) stay synchronized bidirectionally.
+
+**Future**: Progressive hint system (frequency analysis, letter suggestions) moved to separate feature 002-cryptogram-hints. No persistence required - single-session solving only.
 
 ## Technical Context
 
