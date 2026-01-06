@@ -229,10 +229,10 @@ function PuzzleDisplay({
         currentWord.push(
           <span
             key={index}
-            className="inline-flex flex-col items-center"
+            className="inline-flex flex-col items-center gap-0"
             style={{ verticalAlign: "bottom" }}
           >
-            <span className="mb-0.5">
+            <span>
               <InlineMappingInput
                 cipherLetter={upper}
                 value={mappings[upper] || ""}
