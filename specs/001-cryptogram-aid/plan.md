@@ -37,8 +37,9 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ✅ **III. Type Safety First**
 
-- Explicit TypeScript types for: CryptogramState, LetterMapping, FrequencyData, HintSystemState
-- No `any` types (all letter operations strongly typed)
+- Function signatures provide explicit types (no `any` types)
+- State types inferred via TypeScript (useState with generics where needed)
+- Explicit interfaces only when necessary (FrequencyData, HintSuggestions for Phase 4)
 
 ✅ **IV. Server-Side Security**
 

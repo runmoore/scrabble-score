@@ -31,13 +31,15 @@ import { useState, useMemo } from "react";
 // TYPE DEFINITIONS (inline)
 // ============================================================================
 
-interface CryptogramState {
-  puzzleText: string;
-  mappings: Record<string, string>;
-  hintsVisible: boolean;
-}
+// NOTE: CryptogramState and LetterMapping were removed in implementation
+// State is managed via individual useState hooks with inferred types
+// Explicit interfaces only added when needed (e.g., FrequencyData for hints)
 
-// ... other types
+// Example of actual implementation:
+// const [puzzleText, setPuzzleText] = useState(initialPuzzle);
+// const [mappings, setMappings] = useState<Record<string, string>>({});
+
+// ... other types (FrequencyData, HintSuggestions for Phase 4)
 
 // ============================================================================
 // HELPER FUNCTIONS (inline)

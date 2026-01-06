@@ -246,24 +246,28 @@ function getConflictingLetters(mappings: Record<string, string>): string[] {
 
 Location: **Inline within `app/routes/cryptogram.tsx`** (following anagram.tsx pattern)
 
-All types will be defined at the top of the route file, similar to how `anagram.tsx` defines `type Letter` inline.
+**Implementation Note**: Originally, explicit type definitions were planned for `CryptogramState` and `LetterMapping`, but these were removed during implementation as they were never used. The actual implementation uses individual `useState` hooks with TypeScript's type inference, making explicit interfaces unnecessary and keeping the code cleaner.
 
+**Current Implementation** (User Story 1):
 ```typescript
-// Main state
-export interface CryptogramState {
-  puzzleText: string;
-  mappings: Record<string, string>;
-  hintsVisible: boolean;
-}
+// State managed via individual useState hooks
+const [puzzleText, setPuzzleText] = useState(initialPuzzle); // inferred as string
+const [mappings, setMappings] = useState<Record<string, string>>({}); // explicit generic
 
-// Individual mapping entry (for UI rendering)
-export interface LetterMapping {
-  cipher: string;
-  plain: string;
-  hasConflict: boolean;
-}
+// Helper function signatures provide type safety
+export function applyMappings(
+  puzzleText: string,
+  mappings: Record<string, string>
+): string { /* ... */ }
 
-// Frequency analysis
+export function getConflictingLetters(
+  mappings: Record<string, string>
+): string[] { /* ... */ }
+```
+
+**Planned for User Story 2** (Phase 4 - Hint System):
+```typescript
+// Frequency analysis (will be added when implementing hints)
 export interface FrequencyData {
   counts: Record<string, number>;
   sortedLetters: Array<{
@@ -273,7 +277,7 @@ export interface FrequencyData {
   }>;
 }
 
-// Hint suggestions
+// Hint suggestions (will be added when implementing hints)
 export interface HintSuggestions {
   suggestions: Record<string, string[]>;
   topUnmappedCiphers: string[];

@@ -82,8 +82,9 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 
 - [X] T007 [US1] Implement type definitions at top of `app/routes/cryptogram.tsx`:
 
-  - `CryptogramState { puzzleText: string, mappings: Record<string, string>, hintsVisible: boolean }`
-  - `LetterMapping { cipher: string, plain: string, hasConflict: boolean }`
+  - **REMOVED**: Unused type definitions eliminated for code cleanliness
+  - State managed via individual `useState` hooks (self-documenting via TypeScript inference)
+  - No explicit interfaces needed - types inferred from usage
 
 - [X] T008 [US1] Implement helper functions in `app/routes/cryptogram.tsx`:
 
