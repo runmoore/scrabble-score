@@ -218,19 +218,20 @@ describe("cryptogram solver", () => {
 
   // Phase 4: Inline Mapping Input Tests (User Story 2)
   describe("Inline Mapping Input", () => {
-    it("should display inline input boxes above each unique cipher letter", () => {
+    it("should display inline input boxes above each cipher letter", () => {
       const cryptogram = "HELLO";
 
       cy.findByRole("textbox", { name: /puzzle/i }).type(cryptogram);
 
-      // Should have inline inputs for H, E, L, O (4 unique letters)
-      cy.findByLabelText("Inline mapping for H").should("be.visible");
-      cy.findByLabelText("Inline mapping for E").should("be.visible");
-      cy.findByLabelText("Inline mapping for L").should("be.visible");
-      cy.findByLabelText("Inline mapping for O").should("be.visible");
-
-      // Should not have input for duplicate letters
+      // Should have inline inputs for all 5 letters (H, E, L, L, O)
+      // "HELLO" has 2 L's, so we should see 2 inputs for L
       cy.get('[aria-label="Inline mapping for H"]').should("have.length", 1);
+      cy.get('[aria-label="Inline mapping for E"]').should("have.length", 1);
+      cy.get('[aria-label="Inline mapping for L"]').should("have.length", 2); // Two L's
+      cy.get('[aria-label="Inline mapping for O"]').should("have.length", 1);
+
+      // Total of 5 inline inputs for 5 letters
+      cy.get('[aria-label^="Inline mapping for"]').should("have.length", 5);
     });
 
     it("should update all instances and grid when typing in inline input", () => {
