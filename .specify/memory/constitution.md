@@ -1,16 +1,22 @@
 <!--
 Sync Impact Report
 ==================
-Version change: None → 1.0.0
-Constitution creation date: 2025-12-05
-Modified principles: N/A (initial creation)
-Added sections: All (Core Principles, Quality Gates, Testing Architecture, Governance)
+Version change: 1.0.0 → 1.1.0
+Constitution amendment date: 2026-01-06
+Modified principles:
+  - Principle V: Progressive Enhancement - Added PWA considerations
+Added sections:
+  - Principle VI: PWA-First Mobile Design (NEW)
+  - Pre-Implementation Checklist: Added PWA compatibility item
+Renumbered sections:
+  - Previous Principle VI (Database Schema Integrity) → Principle VII
 Removed sections: None
 Templates requiring updates:
-  ✅ plan-template.md - Constitution Check section aligns with quality gates
-  ✅ spec-template.md - User scenarios align with testing principles
-  ✅ tasks-template.md - Task structure aligns with test-first and parallel execution principles
+  ✅ plan-template.md - Should reference PWA requirements
+  ✅ spec-template.md - Mobile/PWA considerations in UI sections
+  ✅ tasks-template.md - PWA testing tasks
 Follow-up TODOs: None
+Rationale: Application is a PWA optimized for iPhone. This principle was implicit but needed to be explicit to ensure all features maintain mobile-first PWA compatibility.
 -->
 
 # Scrabble Score Constitution
@@ -72,7 +78,20 @@ User interfaces MUST work without JavaScript:
 
 **Rationale**: Progressive enhancement ensures accessibility, resilience to network issues, and broader device compatibility.
 
-### VI. Database Schema Integrity
+### VI. PWA-First Mobile Design
+
+All features MUST be optimized for Progressive Web App usage on mobile devices:
+
+- Mobile-first responsive design with iPhone as primary target
+- Touch-friendly UI elements (minimum 44x44pt touch targets)
+- PWA manifest configuration for home screen installation
+- Apple-specific meta tags for optimal iOS experience (`apple-mobile-web-app-capable`, `apple-touch-icon`)
+- Features MUST work when installed as PWA on iPhone home screen
+- Test on mobile viewports (375px width minimum)
+
+**Rationale**: The application is designed as a PWA for mobile-first usage, particularly iPhone devices. All features must provide a native-like experience when installed on the home screen.
+
+### VII. Database Schema Integrity
 
 Database changes MUST follow Prisma conventions:
 
@@ -93,6 +112,7 @@ Before starting any feature:
 - [ ] Data model changes identified (if applicable)
 - [ ] Testing strategy outlined (unit vs. e2e)
 - [ ] Mobile/iOS considerations documented (if UI changes)
+- [ ] PWA compatibility verified (works on iPhone home screen)
 
 ### Pre-Commit Checklist
 
@@ -161,7 +181,7 @@ Before deploying to production:
 
 All pull requests MUST verify compliance with:
 
-- Core Principles (I-VI)
+- Core Principles (I-VII)
 - Quality Gates (Pre-Commit Checklist minimum)
 - Testing Architecture requirements
 
@@ -176,4 +196,4 @@ Exceptions to these principles MUST be:
 3. Include explanation of why simpler alternatives were rejected
 4. Approved in code review with explicit acknowledgment
 
-**Version**: 1.0.0 | **Ratified**: 2025-12-05 | **Last Amended**: 2025-12-05
+**Version**: 1.1.0 | **Ratified**: 2025-12-05 | **Last Amended**: 2026-01-06
