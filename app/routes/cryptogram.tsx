@@ -230,10 +230,11 @@ function PuzzleDisplay({
       </h3>
       <div
         data-testid="decrypted-text"
-        className="font-mono text-base"
+        className="font-mono text-base leading-loose"
         style={{
-          wordBreak: "break-word",
           whiteSpace: "pre-wrap",
+          wordWrap: "break-word",
+          overflowWrap: "break-word",
         }}
       >
         {renderPuzzleText()}
