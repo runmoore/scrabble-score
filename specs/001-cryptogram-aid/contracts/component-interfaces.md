@@ -13,6 +13,7 @@
 **File**: `app/routes/cryptogram.tsx`
 
 **Structure**: Self-contained file with inline definitions (following `anagram.tsx` pattern):
+
 - Type definitions at top
 - Helper functions next
 - Inline component definitions
@@ -42,7 +43,10 @@ interface CryptogramState {
 // HELPER FUNCTIONS (inline)
 // ============================================================================
 
-function applyMappings(puzzleText: string, mappings: Record<string, string>): string {
+function applyMappings(
+  puzzleText: string,
+  mappings: Record<string, string>
+): string {
   // Implementation
 }
 
@@ -56,11 +60,21 @@ function calculateFrequency(text: string): FrequencyData {
 // INLINE COMPONENTS
 // ============================================================================
 
-function PuzzleInput({ value, onChange }: { value: string; onChange: (text: string) => void }) {
+function PuzzleInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (text: string) => void;
+}) {
   // Component implementation
 }
 
-function MappingGrid({ mappings, onMappingChange, conflictingLetters }: MappingGridProps) {
+function MappingGrid({
+  mappings,
+  onMappingChange,
+  conflictingLetters,
+}: MappingGridProps) {
   // Component implementation
 }
 
@@ -71,17 +85,13 @@ function MappingGrid({ mappings, onMappingChange, conflictingLetters }: MappingG
 // ============================================================================
 
 export default function Cryptogram() {
-  const [puzzleText, setPuzzleText] = useState<string>('');
+  const [puzzleText, setPuzzleText] = useState<string>("");
   const [mappings, setMappings] = useState<Record<string, string>>({});
   const [hintsVisible, setHintsVisible] = useState<boolean>(false);
 
   // Component logic
 
-  return (
-    <>
-      {/* JSX */}
-    </>
-  );
+  return <>{/* JSX */}</>;
 }
 ```
 
@@ -94,6 +104,7 @@ These components will be defined as functions within `cryptogram.tsx`, following
 ### PuzzleInput (inline component)
 
 ### Props
+
 ```typescript
 interface PuzzleInputProps {
   value: string;
@@ -103,18 +114,16 @@ interface PuzzleInputProps {
 ```
 
 ### Behavior
+
 - Large textarea for puzzle input
 - Paste support
 - Character count display
 - Validation: Error if >1000 chars (exceeds spec requirement SC-005)
 
 ### Example Usage
+
 ```tsx
-<PuzzleInput
-  value={puzzleText}
-  onChange={setPuzzleText}
-  maxLength={1000}
-/>
+<PuzzleInput value={puzzleText} onChange={setPuzzleText} maxLength={1000} />
 ```
 
 ---
@@ -124,6 +133,7 @@ interface PuzzleInputProps {
 **File**: `app/components/cryptogram/PuzzleDisplay.tsx`
 
 ### Props
+
 ```typescript
 interface PuzzleDisplayProps {
   puzzleText: string;
@@ -132,6 +142,7 @@ interface PuzzleDisplayProps {
 ```
 
 ### Behavior
+
 - Displays two text blocks:
   1. **Original encrypted text** (top, muted color)
   2. **Decrypted text** (bottom, bold, solved letters highlighted)
@@ -140,6 +151,7 @@ interface PuzzleDisplayProps {
 - Non-letter characters (spaces, punctuation) displayed as-is
 
 ### Derived Data
+
 ```typescript
 const decryptedText = useMemo(
   () => applyMappings(puzzleText, mappings),
@@ -148,10 +160,11 @@ const decryptedText = useMemo(
 ```
 
 ### Example Usage
+
 ```tsx
 <PuzzleDisplay
   puzzleText="HVWXYZ JKLMN"
-  mappings={{ H: 'T', V: 'H', W: 'E' }}
+  mappings={{ H: "T", V: "H", W: "E" }}
 />
 ```
 
@@ -162,6 +175,7 @@ const decryptedText = useMemo(
 **File**: `app/components/cryptogram/MappingGrid.tsx`
 
 ### Props
+
 ```typescript
 interface MappingGridProps {
   mappings: Record<string, string>;
@@ -172,6 +186,7 @@ interface MappingGridProps {
 ```
 
 ### Behavior
+
 - Display 26 letter pairs (A-Z) in grid layout (4-5 rows)
 - Each cell: cipher letter label + text input for plain letter
 - Inputs:
@@ -182,6 +197,7 @@ interface MappingGridProps {
 - "Clear All" button to reset all mappings
 
 ### Layout
+
 ```
 A: [_]  B: [_]  C: [_]  D: [_]  E: [_]  F: [_]
 G: [_]  H: [_]  I: [_]  J: [_]  K: [_]  L: [_]
@@ -191,12 +207,13 @@ Y: [_]  Z: [_]
 ```
 
 ### Example Usage
+
 ```tsx
 <MappingGrid
-  mappings={{ Q: 'E', W: 'T', X: 'A' }}
+  mappings={{ Q: "E", W: "T", X: "A" }}
   onMappingChange={handleMappingChange}
   onClearAll={handleClearAll}
-  conflictingLetters={['Q', 'W']} // Both map to same letter
+  conflictingLetters={["Q", "W"]} // Both map to same letter
 />
 ```
 
@@ -207,6 +224,7 @@ Y: [_]  Z: [_]
 **File**: `app/components/cryptogram/ConflictWarning.tsx`
 
 ### Props
+
 ```typescript
 interface ConflictWarningProps {
   conflictingMappings: Array<{
@@ -217,17 +235,17 @@ interface ConflictWarningProps {
 ```
 
 ### Behavior
+
 - Display warning message when conflicts detected
 - List which cipher letters map to the same plain letter
 - Non-blocking (informational only)
 - Yellow/amber background with warning icon
 
 ### Example Usage
+
 ```tsx
 <ConflictWarning
-  conflictingMappings={[
-    { plainLetter: 'E', cipherLetters: ['Q', 'W', 'X'] }
-  ]}
+  conflictingMappings={[{ plainLetter: "E", cipherLetters: ["Q", "W", "X"] }]}
 />
 // Displays: "⚠️ Multiple letters (Q, W, X) are mapped to 'E'"
 ```
@@ -239,6 +257,7 @@ interface ConflictWarningProps {
 **File**: `app/components/cryptogram/HintSystem.tsx`
 
 ### Props
+
 ```typescript
 interface HintSystemProps {
   visible: boolean;
@@ -249,6 +268,7 @@ interface HintSystemProps {
 ```
 
 ### Behavior
+
 - Collapsible panel (initially hidden)
 - Toggle button: "Show Hints" / "Hide Hints"
 - When visible, displays three sections:
@@ -257,6 +277,7 @@ interface HintSystemProps {
   3. **Top Unmapped Ciphers**: Most frequent cipher letters without mappings
 
 ### Derived Data
+
 ```typescript
 const frequencyData = useMemo(
   () => calculateFrequency(puzzleText),
@@ -270,6 +291,7 @@ const suggestions = useMemo(
 ```
 
 ### Example Usage
+
 ```tsx
 <HintSystem
   visible={hintsVisible}
@@ -332,9 +354,7 @@ export function suggestCommonLetters(
  * @param mappings - Current mappings
  * @returns Array of cipher letters involved in conflicts
  */
-export function detectConflicts(
-  mappings: Record<string, string>
-): string[];
+export function detectConflicts(mappings: Record<string, string>): string[];
 ```
 
 ### `getConflictDetails`
@@ -371,12 +391,13 @@ export function getConflictDetails(
 ```
 
 **Server action** (if no JS):
+
 ```typescript
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
-  const intent = formData.get('intent');
+  const intent = formData.get("intent");
 
-  if (intent === 'applyMappings') {
+  if (intent === "applyMappings") {
     // Parse mappings from form, return decrypted text
     // Set URL params to preserve state on reload
   }
@@ -398,31 +419,29 @@ export async function action({ request }: ActionArgs) {
 **File**: `app/utils/cryptogram.test.ts`
 
 ```typescript
-describe('applyMappings', () => {
-  it('should apply mappings with case preservation', () => {
-    expect(applyMappings('Hvwx', { H: 'T', V: 'H' }))
-      .toBe('Thwx');
+describe("applyMappings", () => {
+  it("should apply mappings with case preservation", () => {
+    expect(applyMappings("Hvwx", { H: "T", V: "H" })).toBe("Thwx");
   });
 
-  it('should ignore unmapped letters', () => {
-    expect(applyMappings('ABC', { A: 'X' }))
-      .toBe('XBC');
+  it("should ignore unmapped letters", () => {
+    expect(applyMappings("ABC", { A: "X" })).toBe("XBC");
   });
 });
 
-describe('calculateFrequency', () => {
-  it('should count letters case-insensitively', () => {
-    const freq = calculateFrequency('AaA');
-    expect(freq.counts['A']).toBe(3);
+describe("calculateFrequency", () => {
+  it("should count letters case-insensitively", () => {
+    const freq = calculateFrequency("AaA");
+    expect(freq.counts["A"]).toBe(3);
   });
 });
 
-describe('detectConflicts', () => {
-  it('should detect multiple ciphers to same plain', () => {
-    const conflicts = detectConflicts({ Q: 'E', W: 'E', X: 'A' });
-    expect(conflicts).toContain('Q');
-    expect(conflicts).toContain('W');
-    expect(conflicts).not.toContain('X');
+describe("detectConflicts", () => {
+  it("should detect multiple ciphers to same plain", () => {
+    const conflicts = detectConflicts({ Q: "E", W: "E", X: "A" });
+    expect(conflicts).toContain("Q");
+    expect(conflicts).toContain("W");
+    expect(conflicts).not.toContain("X");
   });
 });
 ```
@@ -432,29 +451,29 @@ describe('detectConflicts', () => {
 **File**: `cypress/e2e/cryptogram.cy.ts`
 
 ```typescript
-describe('Cryptogram Solver', () => {
-  it('should solve a cryptogram with mappings', () => {
-    cy.visit('/cryptogram');
-    cy.enterCryptogram('HVWX');
-    cy.createMapping('H', 'T');
-    cy.createMapping('V', 'H');
-    cy.verifyDecryptedText('THwx'); // Partial solve
+describe("Cryptogram Solver", () => {
+  it("should solve a cryptogram with mappings", () => {
+    cy.visit("/cryptogram");
+    cy.enterCryptogram("HVWX");
+    cy.createMapping("H", "T");
+    cy.createMapping("V", "H");
+    cy.verifyDecryptedText("THwx"); // Partial solve
   });
 
-  it('should show hints when requested', () => {
-    cy.visit('/cryptogram');
-    cy.enterCryptogram('EEETAA');
+  it("should show hints when requested", () => {
+    cy.visit("/cryptogram");
+    cy.enterCryptogram("EEETAA");
     cy.requestHints();
-    cy.get('[data-testid="frequency-table"]').should('be.visible');
-    cy.contains('E: 3'); // Most frequent
+    cy.get('[data-testid="frequency-table"]').should("be.visible");
+    cy.contains("E: 3"); // Most frequent
   });
 
-  it('should warn on conflicts', () => {
-    cy.visit('/cryptogram');
-    cy.enterCryptogram('ABC');
-    cy.createMapping('A', 'X');
-    cy.createMapping('B', 'X'); // Conflict
-    cy.get('[data-testid="conflict-warning"]').should('be.visible');
+  it("should warn on conflicts", () => {
+    cy.visit("/cryptogram");
+    cy.enterCryptogram("ABC");
+    cy.createMapping("A", "X");
+    cy.createMapping("B", "X"); // Conflict
+    cy.get('[data-testid="conflict-warning"]').should("be.visible");
   });
 });
 ```

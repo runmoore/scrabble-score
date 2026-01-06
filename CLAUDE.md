@@ -170,8 +170,10 @@ The `EnhancedGame` type augments Prisma's Game model with:
 7. **PWA-first design**: All features should be optimized for mobile use and work when installed as a PWA on iPhone home screen
 
 ## Active Technologies
+
 - TypeScript 5.x (existing project stack) + React 18, Remix 2.12.1 (Indie Stack), Tailwind CSS (001-cryptogram-aid)
 - N/A (session-only, no database persistence) (001-cryptogram-aid)
 
 ## Recent Changes
+
 - 001-cryptogram-aid: Added TypeScript 5.x (existing project stack) + React 18, Remix 2.12.1 (Indie Stack), Tailwind CSS

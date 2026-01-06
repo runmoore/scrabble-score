@@ -29,11 +29,13 @@ interface CryptogramState {
 ```
 
 **Validation Rules**:
+
 - `puzzleText`: Non-empty string, max 1000 characters (per success criteria SC-005)
 - `mappings`: Keys and values must be single uppercase letters A-Z
 - `hintsVisible`: Boolean flag
 
 **State Transitions**:
+
 1. **Initial** → User enters puzzle text → `puzzleText` populated, `mappings` empty, `hintsVisible` false
 2. **Solving** → User creates/modifies mappings → `mappings` updated, conflicts detected
 3. **Stuck** → User requests hints → `hintsVisible` toggled to true
@@ -114,10 +116,13 @@ interface HintSuggestions {
 ### Decrypted Text
 
 ```typescript
-function getDecryptedText(puzzleText: string, mappings: Record<string, string>): string {
+function getDecryptedText(
+  puzzleText: string,
+  mappings: Record<string, string>
+): string {
   return puzzleText
-    .split('')
-    .map(char => {
+    .split("")
+    .map((char) => {
       const upper = char.toUpperCase();
       if (/[A-Z]/.test(upper)) {
         const mapped = mappings[upper];
@@ -129,7 +134,7 @@ function getDecryptedText(puzzleText: string, mappings: Record<string, string>):
       // Non-letter or unmapped - return as-is
       return char;
     })
-    .join('');
+    .join("");
 }
 ```
 
@@ -224,11 +229,13 @@ function getConflictingLetters(mappings: Record<string, string>): string[] {
 **Storage**: None - all state is React component memory only
 
 **Rationale**:
+
 - Spec explicitly excludes cross-session persistence
 - No database entities required
 - State resets on page refresh (expected behavior)
 
 **Future Enhancement** (if needed):
+
 - Could add `localStorage` for session recovery on accidental refresh
 - Could add URL state for sharing puzzles (query params)
 - Not in current scope per clarifications
@@ -275,9 +282,32 @@ export interface HintSuggestions {
 
 // Common English letter frequency order (constant)
 export const COMMON_LETTERS = [
-  'E', 'T', 'A', 'O', 'I', 'N', 'S', 'H', 'R', 'D',
-  'L', 'C', 'U', 'M', 'W', 'F', 'G', 'Y', 'P', 'B',
-  'V', 'K', 'J', 'X', 'Q', 'Z'
+  "E",
+  "T",
+  "A",
+  "O",
+  "I",
+  "N",
+  "S",
+  "H",
+  "R",
+  "D",
+  "L",
+  "C",
+  "U",
+  "M",
+  "W",
+  "F",
+  "G",
+  "Y",
+  "P",
+  "B",
+  "V",
+  "K",
+  "J",
+  "X",
+  "Q",
+  "Z",
 ] as const;
 ```
 
@@ -285,12 +315,12 @@ export const COMMON_LETTERS = [
 
 ## Validation & Constraints
 
-| Field | Constraint | Error Handling |
-|-------|-----------|----------------|
-| `puzzleText` | Non-empty, max 1000 chars | Show inline error message, disable mapping grid |
-| `mappings[key]` | Single uppercase letter A-Z | Input validation: `maxLength={1}`, `pattern="[A-Za-z]"` |
-| `mappings[value]` | Single uppercase letter A-Z | Auto-uppercase on input, ignore non-letters |
-| Conflict detection | Allow but warn | Non-blocking warning + visual highlight |
+| Field              | Constraint                  | Error Handling                                          |
+| ------------------ | --------------------------- | ------------------------------------------------------- |
+| `puzzleText`       | Non-empty, max 1000 chars   | Show inline error message, disable mapping grid         |
+| `mappings[key]`    | Single uppercase letter A-Z | Input validation: `maxLength={1}`, `pattern="[A-Za-z]"` |
+| `mappings[value]`  | Single uppercase letter A-Z | Auto-uppercase on input, ignore non-letters             |
+| Conflict detection | Allow but warn              | Non-blocking warning + visual highlight                 |
 
 ---
 

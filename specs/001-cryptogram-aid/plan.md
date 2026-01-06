@@ -21,39 +21,46 @@ Implement a digital cryptogram solving aid that replaces pen-and-paper methods. 
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ### Core Principles Compliance
 
 ✅ **I. Test-First Development**
+
 - Unit tests: Co-located tests for utility functions (frequency analysis, letter mapping logic)
 - E2E tests: Cypress tests for user workflows (enter cryptogram, create mappings, request hints)
 - Custom commands: Create `cy.enterCryptogram()`, `cy.createMapping()`, `cy.requestHints()` in `cypress/support/commands.ts`
 
 ✅ **II. Code Quality Gates**
+
 - All code will pass `npm run lint`, `npm run typecheck`, `npm run format` before completion
 
 ✅ **III. Type Safety First**
+
 - Explicit TypeScript types for: CryptogramState, LetterMapping, FrequencyData, HintSystemState
 - No `any` types (all letter operations strongly typed)
 
 ✅ **IV. Server-Side Security**
+
 - N/A - No database persistence, no user data stored
 - Optional: If user authentication exists, can integrate with existing session management for user identification (not required for MVP)
 
 ✅ **V. Progressive Enhancement**
+
 - Core functionality (puzzle display, mapping grid) works with basic HTML forms
 - JavaScript enhancement adds instant updates and hint system interactions
 - Mobile-first: Touch-friendly inputs, `inputMode="text"` for letter inputs
 - PWA-compatible: Works as installable app on iPhone home screen
 
 ✅ **VI. PWA-First Mobile Design**
+
 - Mobile-first responsive design with iPhone as primary target
 - Touch-friendly UI elements (44x44pt minimum touch targets)
 - Works when installed as PWA on iPhone home screen
 - Tested on mobile viewports (375px width minimum)
 
 ✅ **VII. Database Schema Integrity**
+
 - N/A - No database changes required (session-only state)
 
 ### Pre-Implementation Checklist

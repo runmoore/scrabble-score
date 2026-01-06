@@ -15,7 +15,7 @@
 - Q: Where should frequency counts be displayed and should hints be always visible? → A: Toggle/modal view - Hidden by default to preserve puzzle challenge. When user requests hints, show frequency counts for each cipher letter, frequency analysis, and suggest common letters that haven't been mapped yet
 - Q: How should uppercase and lowercase letters be handled? → A: Case-insensitive mappings with display preservation - One mapping applies to both cases, but preserve original case formatting in the displayed text
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Manual Cryptogram Solving (Priority: P1)
 
@@ -59,7 +59,7 @@ A user solving a cryptogram gets stuck and wants to request hints without having
 - How does the system handle very long cryptograms (500+ characters)? (Should remain performant and usable)
 - What happens if a user tries to map a cipher letter to itself? (Should allow it but may show a hint that this is unusual)
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -86,7 +86,7 @@ A user solving a cryptogram gets stuck and wants to request hints without having
 - **Frequency Data**: Count of occurrences for each cipher letter in the puzzle
 - **Hint System**: Optional assistance feature providing frequency analysis and letter suggestions when explicitly requested by the user
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

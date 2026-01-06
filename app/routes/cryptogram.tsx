@@ -2,44 +2,6 @@ import { Form, useSearchParams } from "@remix-run/react";
 import { useMemo, useState } from "react";
 
 // =============================================================================
-// TYPE DEFINITIONS (T007)
-// =============================================================================
-
-/**
- * Main state container for the cryptogram solver
- * @unused - Documented type for state structure, not directly referenced
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface CryptogramState {
-  // The original encrypted puzzle text (immutable after input)
-  puzzleText: string;
-
-  // Letter mappings: cipher letter (uppercase) → plain letter (uppercase)
-  // Example: { "Q": "E", "W": "T", "X": "A" }
-  mappings: Record<string, string>;
-
-  // Whether the hint system panel is visible (Phase 4 - User Story 2)
-  hintsVisible: boolean;
-}
-
-/**
- * Individual cipher-to-plain letter association (for UI rendering)
- * @unused - Documented type for mapping structure, not directly referenced
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface LetterMapping {
-  // Cipher letter (always uppercase A-Z)
-  cipher: string;
-
-  // Plain letter (always uppercase A-Z, or empty string if not mapped)
-  plain: string;
-
-  // Whether this mapping conflicts with another
-  // (multiple cipher letters mapped to same plain letter)
-  hasConflict: boolean;
-}
-
-// =============================================================================
 // HELPER FUNCTIONS (T008)
 // =============================================================================
 
@@ -291,7 +253,7 @@ function MappingGrid({
 }
 
 // =============================================================================
-// MAIN COMPONENT (T013 - will be implemented next)
+// MAIN COMPONENT (T013)
 // =============================================================================
 
 export default function Cryptogram() {

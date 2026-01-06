@@ -27,6 +27,7 @@ Follow this sequence for systematic, testable development:
 **File to create**: `app/routes/cryptogram.tsx`
 
 **Steps**:
+
 ```bash
 # 1. Create the route file
 touch app/routes/cryptogram.tsx
@@ -51,6 +52,7 @@ npm run dev
 ```
 
 **Acceptance**:
+
 - ✅ Single file contains all logic, types, components
 - ✅ User can enter puzzle text
 - ✅ User can create letter mappings via grid
@@ -66,10 +68,12 @@ npm run dev
 **Goal**: Add tests next to route file
 
 **Files to create**:
+
 1. `app/routes/cryptogram.test.tsx` - Unit tests for helpers and components
 2. `cypress/e2e/cryptogram.cy.ts` - E2E tests
 
 **Steps**:
+
 ```bash
 # 1. Create co-located unit test file
 # Test helper functions and component behavior
@@ -85,6 +89,7 @@ npm run test:e2e:run         # E2E tests
 ```
 
 **Acceptance**:
+
 - ✅ Helper functions tested (unit tests)
 - ✅ User workflows tested (e2e tests)
 - ✅ All tests passing
@@ -96,6 +101,7 @@ npm run test:e2e:run         # E2E tests
 **Goal**: Final quality checks and styling refinements
 
 **Steps**:
+
 ```bash
 # 1. Run all quality gates
 npm run lint           # ESLint
@@ -125,6 +131,7 @@ npm run test:e2e:dev
 ```
 
 **Acceptance**:
+
 - ✅ `npm run lint` passes
 - ✅ `npm run typecheck` passes
 - ✅ `npm run format` applied
@@ -230,12 +237,12 @@ const frequencyData = useMemo(
 
 ```typescript
 // ❌ Flaky (race condition)
-cy.get('input').type('E');
-cy.contains('THE');
+cy.get("input").type("E");
+cy.contains("THE");
 
 // ✅ Stable (explicit wait)
-cy.get('input').type('E');
-cy.get('[data-testid="decrypted-text"]').should('contain', 'THE');
+cy.get("input").type("E");
+cy.get('[data-testid="decrypted-text"]').should("contain", "THE");
 ```
 
 ---
@@ -257,6 +264,7 @@ Before merging to main:
 ## Next Steps After MVP
 
 **Phase 2 (Future Enhancements)**:
+
 - Add puzzle library (example cryptograms to try)
 - Export/import puzzle state (JSON download/upload)
 - Dark mode support (using existing Tailwind dark: classes)
@@ -264,6 +272,7 @@ Before merging to main:
 - Keyboard shortcuts (e.g., Arrow keys to navigate grid)
 
 **Not in current scope** (per spec clarifications):
+
 - Cross-session persistence (localStorage/database)
 - Multi-user features (sharing puzzles)
 - Automatic solving (AI-powered)
@@ -273,12 +282,12 @@ Before merging to main:
 
 ## Time Estimates Summary
 
-| Phase | Task | Estimated Time |
-|-------|------|----------------|
-| 1 | Self-Contained Route File (all logic + components inline) | 3-4 hours |
-| 2 | Co-located Tests (unit + e2e) | 1.5 hours |
-| 3 | Polish & Quality Gates | 30 min |
-| **Total** | **MVP Complete** | **5-6 hours** |
+| Phase     | Task                                                      | Estimated Time |
+| --------- | --------------------------------------------------------- | -------------- |
+| 1         | Self-Contained Route File (all logic + components inline) | 3-4 hours      |
+| 2         | Co-located Tests (unit + e2e)                             | 1.5 hours      |
+| 3         | Polish & Quality Gates                                    | 30 min         |
+| **Total** | **MVP Complete**                                          | **5-6 hours**  |
 
 **Buffer**: Add 1-2 hours for unexpected issues, bringing realistic total to **6-7 hours**.
 
