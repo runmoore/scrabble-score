@@ -214,19 +214,18 @@ function PuzzleDisplay({
       return (
         <span
           key={index}
-          className="relative inline-block"
+          className={
+            isFirstOccurrence && /[A-Z]/.test(upper)
+              ? "inline-flex flex-col items-center"
+              : "inline"
+          }
           style={{
-            position: "relative",
-            minWidth: /[A-Z]/.test(upper) ? "48px" : "auto",
-            textAlign: "center",
+            verticalAlign: "bottom",
           }}
         >
           {/* Inline input above first occurrence */}
           {isFirstOccurrence && onMappingChange && /[A-Z]/.test(upper) && (
-            <span
-              className="absolute left-1/2 -translate-x-1/2"
-              style={{ top: "-48px" }}
-            >
+            <span className="mb-1">
               <InlineMappingInput
                 cipherLetter={upper}
                 value={mappings[upper] || ""}
@@ -274,8 +273,6 @@ function PuzzleDisplay({
           style={{
             wordBreak: "break-word",
             whiteSpace: "pre-wrap",
-            paddingTop: "52px",
-            position: "relative",
           }}
         >
           {renderDecryptedText()}
