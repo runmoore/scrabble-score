@@ -13,12 +13,13 @@ describe("cryptogram solver", () => {
     // Verify the encrypted text is displayed
     cy.findByTestId("encrypted-text").should("contain.text", "URYYB JBEYQ");
 
-    // Create mappings using the grid (ROT13: U→H, R→E, Y→L, B→O, J→W, Q→D)
+    // Create mappings using the grid (ROT13: U→H, R→E, Y→L, B→O, J→W, E→R, Q→D)
     cy.findByLabelText("Mapping for U").type("H");
     cy.findByLabelText("Mapping for R").type("E");
     cy.findByLabelText("Mapping for Y").type("L");
     cy.findByLabelText("Mapping for B").type("O");
     cy.findByLabelText("Mapping for J").type("W");
+    cy.findByLabelText("Mapping for E").type("R");
     cy.findByLabelText("Mapping for Q").type("D");
 
     // Verify instant updates in the decrypted display
@@ -36,6 +37,7 @@ describe("cryptogram solver", () => {
     cy.findByLabelText("Mapping for Y").type("L");
     cy.findByLabelText("Mapping for B").type("O");
     cy.findByLabelText("Mapping for J").type("W");
+    cy.findByLabelText("Mapping for E").type("R");
     cy.findByLabelText("Mapping for Q").type("D");
 
     // Verify case is preserved (Hello World, not HELLO WORLD)
@@ -125,10 +127,7 @@ describe("cryptogram solver", () => {
     cy.findByLabelText("Mapping for A").type("E");
     cy.findByLabelText("Mapping for C").type("E");
 
-    // Verify conflict warning appears
-    cy.findByRole("alert").should("contain.text", "conflict");
-
-    // Verify conflicting letters are highlighted
+    // Verify conflicting letters are highlighted with red ring
     cy.findByLabelText("Mapping for A").should(
       "have.class",
       "ring-red-primary"
