@@ -215,4 +215,132 @@ describe("cryptogram solver", () => {
       .find(".unsolved-letter")
       .should("not.have.class", "font-bold");
   });
+
+  // Phase 4: Inline Mapping Input Tests (User Story 2)
+  describe("Inline Mapping Input", () => {
+    it("should display inline input boxes above each unique cipher letter", () => {
+      const cryptogram = "HELLO";
+
+      cy.findByRole("textbox", { name: /puzzle/i }).type(cryptogram);
+
+      // Should have inline inputs for H, E, L, O (4 unique letters)
+      cy.findByLabelText("Inline mapping for H").should("be.visible");
+      cy.findByLabelText("Inline mapping for E").should("be.visible");
+      cy.findByLabelText("Inline mapping for L").should("be.visible");
+      cy.findByLabelText("Inline mapping for O").should("be.visible");
+
+      // Should not have input for duplicate letters
+      cy.get('[aria-label="Inline mapping for H"]').should("have.length", 1);
+    });
+
+    it("should update all instances and grid when typing in inline input", () => {
+      const cryptogram = "HELLO";
+
+      cy.findByRole("textbox", { name: /puzzle/i }).type(cryptogram);
+
+      // Type in inline input for H
+      cy.findByLabelText("Inline mapping for H").type("T");
+
+      // Verify decrypted text updates
+      cy.findByTestId("decrypted-text").should("contain.text", "TELLO");
+
+      // Verify grid also updates
+      cy.findByLabelText("Mapping for H").should("have.value", "T");
+    });
+
+    it("should update inline inputs when typing in grid", () => {
+      const cryptogram = "HELLO";
+
+      cy.findByRole("textbox", { name: /puzzle/i }).type(cryptogram);
+
+      // Type in grid for E
+      cy.findByLabelText("Mapping for E").type("A");
+
+      // Verify inline input updates
+      cy.findByLabelText("Inline mapping for E").should("have.value", "A");
+
+      // Verify decrypted text updates
+      cy.findByTestId("decrypted-text").should("contain.text", "HALLO");
+    });
+
+    it("should revert when clearing inline input", () => {
+      const cryptogram = "HELLO";
+
+      cy.findByRole("textbox", { name: /puzzle/i }).type(cryptogram);
+
+      // Create mapping via inline input
+      cy.findByLabelText("Inline mapping for H").type("T");
+      cy.findByTestId("decrypted-text").should("contain.text", "TELLO");
+
+      // Clear the inline input
+      cy.findByLabelText("Inline mapping for H").clear();
+
+      // Verify revert to cipher text
+      cy.findByTestId("decrypted-text").should("contain.text", "HELLO");
+
+      // Verify grid also clears
+      cy.findByLabelText("Mapping for H").should("have.value", "");
+    });
+
+    it("should maintain synchronization between inline and grid", () => {
+      const cryptogram = "ABCABC";
+
+      cy.findByRole("textbox", { name: /puzzle/i }).type(cryptogram);
+
+      // Set mapping via inline input
+      cy.findByLabelText("Inline mapping for A").type("X");
+
+      // Set another via grid
+      cy.findByLabelText("Mapping for B").type("Y");
+
+      // Verify both are synchronized
+      cy.findByLabelText("Mapping for A").should("have.value", "X");
+      cy.findByLabelText("Inline mapping for B").should("have.value", "Y");
+
+      // Verify all instances updated
+      cy.findByTestId("decrypted-text").should("contain.text", "XYCXYC");
+
+      // Change inline input
+      cy.findByLabelText("Inline mapping for A").clear().type("Z");
+
+      // Verify grid updates
+      cy.findByLabelText("Mapping for A").should("have.value", "Z");
+      cy.findByTestId("decrypted-text").should("contain.text", "ZYCZYC");
+    });
+
+    it("should have compact grid layout occupying less vertical space", () => {
+      cy.findByRole("textbox", { name: /puzzle/i }).type("HELLO");
+
+      // Get grid height (this test will need actual measurement)
+      cy.get('[data-testid="mapping-grid"]')
+        .invoke("height")
+        .should("be.lessThan", 300); // Adjust based on original grid height
+    });
+
+    it("should work on mobile viewport with touch-friendly inputs", () => {
+      // Set mobile viewport
+      cy.viewport(375, 667);
+
+      const cryptogram = "HELLO";
+      cy.findByRole("textbox", { name: /puzzle/i }).type(cryptogram);
+
+      // Verify inline inputs are visible and accessible
+      cy.findByLabelText("Inline mapping for H").should("be.visible");
+
+      // Verify touch target size (should be at least 44x44pt)
+      cy.findByLabelText("Inline mapping for H")
+        .invoke("outerWidth")
+        .should("be.gte", 44);
+
+      cy.findByLabelText("Inline mapping for H")
+        .invoke("outerHeight")
+        .should("be.gte", 44);
+
+      // Type in inline input
+      cy.findByLabelText("Inline mapping for H").type("T");
+
+      // Verify it works
+      cy.findByTestId("decrypted-text").should("contain.text", "TELLO");
+    });
+  });
 });

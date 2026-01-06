@@ -171,7 +171,7 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
   - Test `getUniqueCipherLetters()` ignores non-letter characters
   - Test inline input synchronization with mapping state
 
-- [ ] T018 [P] [US2] Write E2E test for inline mapping workflow in `cypress/e2e/cryptogram.cy.ts`:
+- [X] T018 [P] [US2] Write E2E test for inline mapping workflow in `cypress/e2e/cryptogram.cy.ts`:
   - Test: Inline input boxes appear above each unique cipher letter
   - Test: Type mapping in inline input → all instances update + grid updates
   - Test: Type mapping in grid → inline inputs update
