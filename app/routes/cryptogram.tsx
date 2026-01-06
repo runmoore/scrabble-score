@@ -1,5 +1,5 @@
 import { Form, useSearchParams } from "@remix-run/react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 // =============================================================================
 // HELPER FUNCTIONS (T008)
@@ -172,18 +172,15 @@ function InlineMappingInput({
 
 /**
  * PuzzleDisplay Component (T010, enhanced T021)
- * Shows original encrypted text and decrypted text with visual distinction
- * Now includes inline mapping inputs above first occurrence of each unique letter
+ * Shows original encrypted text with inline mapping inputs above each letter
  */
 function PuzzleDisplay({
   puzzleText,
-  decryptedText,
   mappings,
   onMappingChange,
   disabled,
 }: {
   puzzleText: string;
-  decryptedText: string;
   mappings: Record<string, string>;
   onMappingChange?: (cipher: string, plain: string) => void;
   disabled?: boolean;
@@ -194,12 +191,9 @@ function PuzzleDisplay({
 
   const conflicts = getConflictingLetters(mappings);
 
-  // Determine which letters are solved (have mappings)
-  const renderDecryptedText = () => {
-    return decryptedText.split("").map((char, index) => {
-      const originalChar = puzzleText[index];
-      const upper = originalChar.toUpperCase();
-      const isSolved = /[A-Z]/.test(upper) && mappings[upper];
+  const renderPuzzleText = () => {
+    return puzzleText.split("").map((char, index) => {
+      const upper = char.toUpperCase();
       const isLetter = /[A-Z]/.test(upper);
 
       return (
@@ -210,7 +204,7 @@ function PuzzleDisplay({
             verticalAlign: "bottom",
           }}
         >
-          {/* Inline input above every letter */}
+          {/* Inline input above every letter showing the decrypted letter */}
           {isLetter && onMappingChange && (
             <span className="mb-1">
               <InlineMappingInput
@@ -222,15 +216,8 @@ function PuzzleDisplay({
               />
             </span>
           )}
-          <span
-            className={
-              isSolved
-                ? "solved-letter font-bold text-green-primary"
-                : "unsolved-letter text-gray-600"
-            }
-          >
-            {char}
-          </span>
+          {/* Always show the original cipher letter below */}
+          <span className="text-gray-600">{char}</span>
         </span>
       );
     });
@@ -252,7 +239,7 @@ function PuzzleDisplay({
       </div>
       <div>
         <h3 className="mb-2 text-sm font-medium text-gray-700">
-          Decrypted (Your Solution):
+          Your Solution (enter guesses above each letter):
         </h3>
         <div
           data-testid="decrypted-text"
@@ -262,7 +249,7 @@ function PuzzleDisplay({
             whiteSpace: "pre-wrap",
           }}
         >
-          {renderDecryptedText()}
+          {renderPuzzleText()}
         </div>
       </div>
     </div>
@@ -356,12 +343,6 @@ export default function Cryptogram() {
   const [puzzleText, setPuzzleText] = useState(initialPuzzle);
   const [mappings, setMappings] = useState<Record<string, string>>({});
 
-  // Compute decrypted text using applyMappings helper (T008)
-  const decryptedText = useMemo(
-    () => applyMappings(puzzleText, mappings),
-    [puzzleText, mappings]
-  );
-
   // Event handlers
   const handlePuzzleChange = (value: string) => {
     setPuzzleText(value);
@@ -404,7 +385,6 @@ export default function Cryptogram() {
           {/* PuzzleDisplay component (T010, enhanced T021) */}
           <PuzzleDisplay
             puzzleText={puzzleText}
-            decryptedText={decryptedText}
             mappings={mappings}
             onMappingChange={handleMappingChange}
             disabled={isOverLimit}
