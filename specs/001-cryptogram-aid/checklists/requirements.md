@@ -33,6 +33,7 @@
 ## Validation Notes
 
 ### User Story 2 Update
+
 - ✅ Successfully replaced hint system with inline mapping inputs
 - ✅ Hint system properly documented as deferred to 002-cryptogram-hints
 - ✅ New requirements (FR-011 through FR-016) are clear and testable
@@ -40,13 +41,17 @@
 - ✅ SC-007 provides measurable criterion for grid compactness (30% reduction)
 
 ### Technology-Agnostic Check
+
 All requirements describe WHAT the system should do, not HOW:
+
 - ✅ "Display input box above cipher letter" (not "use CSS position: absolute")
 - ✅ "Synchronize mappings bidirectionally" (not "use React state hooks")
 - ✅ "Compact mapping grid" (not "use flexbox or grid layout")
 
 ### Acceptance Scenarios Quality
+
 All scenarios follow Given-When-Then format and are independently testable:
+
 - ✅ US2-AS1: Inline input boxes appear above unique cipher letters
 - ✅ US2-AS2: Mappings entered inline update both puzzle and grid
 - ✅ US2-AS3: Bidirectional synchronization between inline and grid
@@ -58,6 +63,7 @@ All scenarios follow Given-When-Then format and are independently testable:
 ✅ **APPROVED FOR PLANNING** - Spec is complete, clear, and ready for `/speckit.plan`
 
 No blocking issues found. The inline mapping input feature is well-specified with:
+
 - Clear user value proposition (pen-and-paper metaphor)
 - Testable functional requirements
 - Measurable success criteria

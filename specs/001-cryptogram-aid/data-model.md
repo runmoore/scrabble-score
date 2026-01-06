@@ -249,6 +249,7 @@ Location: **Inline within `app/routes/cryptogram.tsx`** (following anagram.tsx p
 **Implementation Note**: Originally, explicit type definitions were planned for `CryptogramState` and `LetterMapping`, but these were removed during implementation as they were never used. The actual implementation uses individual `useState` hooks with TypeScript's type inference, making explicit interfaces unnecessary and keeping the code cleaner.
 
 **Current Implementation** (User Story 1):
+
 ```typescript
 // State managed via individual useState hooks
 const [puzzleText, setPuzzleText] = useState(initialPuzzle); // inferred as string
@@ -258,14 +259,19 @@ const [mappings, setMappings] = useState<Record<string, string>>({}); // explici
 export function applyMappings(
   puzzleText: string,
   mappings: Record<string, string>
-): string { /* ... */ }
+): string {
+  /* ... */
+}
 
 export function getConflictingLetters(
   mappings: Record<string, string>
-): string[] { /* ... */ }
+): string[] {
+  /* ... */
+}
 ```
 
 **Planned for User Story 2** (Phase 4 - Inline Mapping Input):
+
 ```typescript
 // Inline mapping UI state (Phase 4)
 // Unique cipher letters extracted from puzzle text for inline input rendering
@@ -285,6 +291,7 @@ export function getUniqueCipherLetters(puzzleText: string): string[] {
 ```
 
 **Future Enhancement** (002-cryptogram-hints - Frequency Analysis):
+
 ```typescript
 // These will be added in a future feature when implementing hints
 export interface FrequencyData {

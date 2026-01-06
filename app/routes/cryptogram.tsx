@@ -215,7 +215,11 @@ function PuzzleDisplay({
         <span
           key={index}
           className="relative inline-block"
-          style={{ position: "relative" }}
+          style={{
+            position: "relative",
+            minWidth: /[A-Z]/.test(upper) ? "48px" : "auto",
+            textAlign: "center",
+          }}
         >
           {/* Inline input above first occurrence */}
           {isFirstOccurrence && onMappingChange && /[A-Z]/.test(upper) && (
@@ -316,7 +320,7 @@ function MappingGrid({
       </div>
 
       {/* Compact grid layout with reduced spacing */}
-      <div className="grid grid-cols-13 gap-1 lg:grid-cols-13 md:grid-cols-13">
+      <div className="grid grid-cols-6 gap-1 md:grid-cols-9 lg:grid-cols-13">
         {alphabet.map((letter) => {
           const hasConflict = conflicts.includes(letter);
           const value = mappings[letter] || "";
