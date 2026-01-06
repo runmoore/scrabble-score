@@ -15,7 +15,7 @@ describe("applyMappings", () => {
 
     const result = applyMappings(puzzleText, mappings);
 
-    expect(result).toBe("TESSO WOSSD");
+    expect(result).toBe("TESSO WORSD");
   });
 
   test("preserves original case in mapped text", () => {
@@ -24,7 +24,7 @@ describe("applyMappings", () => {
 
     const result = applyMappings(puzzleText, mappings);
 
-    expect(result).toBe("Tesso Wossd");
+    expect(result).toBe("Tesso Worsd");
   });
 
   test("leaves unmapped letters as original cipher text", () => {
@@ -42,7 +42,7 @@ describe("applyMappings", () => {
 
     const result = applyMappings(puzzleText, mappings);
 
-    expect(result).toBe("TESSO, WOSSD!");
+    expect(result).toBe("TESSO, WORSD!");
   });
 
   test("preserves numbers in puzzle text", () => {
@@ -51,7 +51,7 @@ describe("applyMappings", () => {
 
     const result = applyMappings(puzzleText, mappings);
 
-    expect(result).toBe("TESSO 123 WOSSD");
+    expect(result).toBe("TESSO 123 WORSD");
   });
 
   test("handles empty mappings object", () => {
@@ -219,11 +219,11 @@ describe("getConflictingLetters", () => {
 
     const result = getConflictingLetters(mappings);
 
-    // Only D and E conflict (both map to T)
+    // B, D, and E all conflict (all three map to T)
+    expect(result).toContain("B");
     expect(result).toContain("D");
     expect(result).toContain("E");
     expect(result).not.toContain("A");
-    expect(result).not.toContain("B");
     expect(result).not.toContain("C");
   });
 });
