@@ -154,72 +154,90 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 
 ---
 
-## Phase 4: User Story 2 - Progressive Hint System (Priority: P2)
+## Phase 4: User Story 2 - Inline Mapping Input (Priority: P2)
 
-**Goal**: Add opt-in hint system with frequency analysis and letter suggestions (hidden by default)
+**Goal**: Add inline mapping inputs positioned directly above each unique cipher letter in the puzzle, mimicking traditional pen-and-paper solving. Make the alphabetical mapping grid more compact to reduce screen space.
 
-**Independent Test**: User can toggle hints on/off, see frequency counts when enabled, get letter suggestions without auto-solving
+**Independent Test**: User can enter mappings in either inline inputs (above letters) or the grid, both stay synchronized, grid occupies less vertical space
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T017 [P] [US2] Write unit tests for hint functions in `app/routes/cryptogram.test.tsx`:
+> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-  - Test `calculateFrequency()` returns accurate counts
-  - Test `suggestCommonLetters()` excludes already-mapped letters
-  - Test hint calculations on 1000-char cryptogram (performance check)
+- [ ] T017 [P] [US2] Write unit tests for inline mapping helper functions in `app/routes/cryptogram.test.tsx`:
 
-- [ ] T018 [P] [US2] Write E2E test for hint system in `cypress/e2e/cryptogram.cy.ts`:
-  - Test: Hints hidden by default on page load
-  - Test: Click "Show Hints" → frequency table appears
-  - Test: Verify frequency counts match actual letter distribution
-  - Test: Letter suggestions show unmapped common letters (E, T, A, O, I, N, S, H, R)
-  - Test: Hide hints → panel collapses
+  - Test `getUniqueCipherLetters()` extracts unique letters from puzzle text
+  - Test `getUniqueCipherLetters()` returns sorted alphabetical order
+  - Test `getUniqueCipherLetters()` ignores non-letter characters
+  - Test inline input synchronization with mapping state
+
+- [ ] T018 [P] [US2] Write E2E test for inline mapping workflow in `cypress/e2e/cryptogram.cy.ts`:
+  - Test: Inline input boxes appear above each unique cipher letter
+  - Test: Type mapping in inline input → all instances update + grid updates
+  - Test: Type mapping in grid → inline inputs update
+  - Test: Clear mapping in inline input → all instances revert + grid clears
+  - Test: Grid occupies less vertical space than Phase 3 version
+  - Test: Inline inputs work on mobile (touch-friendly)
 
 ### Implementation for User Story 2
 
-- [ ] T019 [US2] Add FrequencyData and HintSuggestions types to `app/routes/cryptogram.tsx`:
+- [ ] T019 [US2] Implement `getUniqueCipherLetters()` helper function in `app/routes/cryptogram.tsx`:
 
-  - `FrequencyData { counts: Record<string, number>, sortedLetters: Array<{letter, count, percentage}> }`
-  - `HintSuggestions { suggestions: Record<string, string[]>, topUnmappedCiphers: string[], availableCommonLetters: string[] }`
-  - `COMMON_LETTERS` constant with English letter frequency order
+  - Extract unique cipher letters from puzzle text (A-Z only)
+  - Return sorted array of unique letters
+  - Handle case-insensitive extraction (uppercase normalization)
+  - Ignore spaces, punctuation, numbers
 
-- [ ] T020 [US2] Implement hint helper functions in `app/routes/cryptogram.tsx`:
+- [ ] T020 [US2] Create InlineMappingInput component in `app/routes/cryptogram.tsx`:
 
-  - `calculateFrequency(text: string): FrequencyData` - O(n) single pass with case-insensitive counting
-  - `suggestCommonLetters(frequencyData: FrequencyData, mappings: Record<string, string>): HintSuggestions` - cross-reference with COMMON_LETTERS
+  - Render small input box positioned above cipher letter
+  - Single character input (`maxLength={1}`)
+  - Auto-uppercase on input change
+  - Touch-friendly sizing (44x44pt minimum)
+  - `inputMode="text"` for proper mobile keyboard
+  - Share same `handleMappingChange` handler as grid
+  - Highlight conflicts with red ring (consistent with grid)
 
-- [ ] T021 [US2] Implement HintSystem inline component in `app/routes/cryptogram.tsx`:
+- [ ] T021 [US2] Update PuzzleDisplay component to integrate inline inputs in `app/routes/cryptogram.tsx`:
 
-  - Collapsible panel using `<details>` and `<summary>` tags (works without JS)
-  - Toggle button: "Show Hints" / "Hide Hints"
-  - Three sections when visible:
-    - Frequency table (sorted by count, descending)
-    - Letter suggestions (unmapped common letters)
-    - Top unmapped cipher letters
-  - Hidden by default (hintsVisible: false initially per FR-008)
+  - Render inline input above first occurrence of each unique cipher letter
+  - Position input directly above letter (CSS: relative/absolute positioning)
+  - Maintain letter alignment and readability
+  - Preserve existing solved/unsolved letter styling
+  - Handle long puzzles (inline inputs should stay with their letters)
 
-- [ ] T022 [US2] Integrate hint system into main component in `app/routes/cryptogram.tsx`:
+- [ ] T022 [US2] Redesign MappingGrid component for compact layout in `app/routes/cryptogram.tsx`:
 
-  - Add hint toggle button below mapping grid
-  - Compute hints with `useMemo` (only when hintsVisible is true)
-  - Ensure <100ms calculation time for 1000-char cryptogram (SC-005)
-  - ARIA labels for accessibility: `aria-expanded` on toggle button
+  - Reduce vertical space by at least 30% (per SC-007)
+  - Options: Smaller inputs, tighter spacing, horizontal scrolling, or collapsible sections
+  - Maintain full functionality (all 26 letters accessible)
+  - Keep 44x44pt touch targets on mobile
+  - Maintain Clear All button
+  - Keep conflict highlighting (red rings)
 
-- [ ] T023 [US2] Style hint panel in `app/routes/cryptogram.tsx`:
+- [ ] T023 [US2] Verify bidirectional synchronization in `app/routes/cryptogram.tsx`:
 
-  - Subtle border, collapsible animation
-  - Frequency table: monospace font, aligned columns
-  - Suggestions: pill-style badges for available letters
-  - Mobile-friendly layout (stacks on small screens)
+  - Confirm inline inputs use same `mappings` state as grid
+  - Confirm both use same `handleMappingChange` handler
+  - Test that React's single source of truth keeps both in sync
+  - No additional sync logic needed (architectural validation)
 
-- [ ] T024 [US2] Run quality gates for User Story 2:
+- [ ] T024 [US2] Apply mobile-first styling for inline inputs in `app/routes/cryptogram.tsx`:
+
+  - Responsive inline input sizing (scale with viewport)
+  - Ensure inputs don't overlap on small screens
+  - Test touch interaction on mobile (no accidental taps)
+  - Verify keyboard behavior (focus management)
+  - Maintain PWA compatibility
+
+- [ ] T025 [US2] Run quality gates for User Story 2:
   - `npm run lint` - ESLint verification
   - `npm run typecheck` - TypeScript type safety
   - `npm run format` - Prettier formatting
   - `npm test -- --run` - All unit tests passing (US1 + US2)
   - `npm run test:e2e:run` - All E2E tests passing (US1 + US2)
 
-**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently. Users can solve with or without hints.
+**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently. Users can solve using inline inputs, grid, or both methods together.
 
 ---
 
@@ -227,34 +245,34 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T025 [P] Add custom PWA manifest for cryptogram route in `public/cryptogram-manifest.json`:
+- [ ] T026 [P] Add custom PWA manifest for cryptogram route in `public/cryptogram-manifest.json`:
 
   - Copy pattern from `public/anagram-manifest.json`
   - Update route to export `links` function with manifest override
   - Test PWA installation on iPhone
 
-- [ ] T026 [P] Test mobile viewport compatibility:
+- [ ] T027 [P] Test mobile viewport compatibility:
 
   - Open Cypress with iPhone viewport (375px × 667px)
-  - Verify all touch targets ≥44x44pt
+  - Verify all touch targets ≥44x44pt (including inline inputs)
   - Verify no horizontal scrolling
   - Verify keyboard input works (inputMode="text")
 
-- [ ] T027 [P] Accessibility audit:
+- [ ] T028 [P] Accessibility audit:
 
-  - Keyboard navigation (Tab through all inputs)
-  - Enter key toggles hint panel
+  - Keyboard navigation (Tab through all inputs, including inline)
+  - Focus management between inline inputs and grid
   - Screen reader announces conflict warnings (role="alert")
   - Color contrast meets WCAG AA (conflict highlighting uses color + icon)
 
-- [ ] T028 [P] Performance validation:
+- [ ] T029 [P] Performance validation:
 
-  - Test with 1000-character cryptogram
+  - Test with 1000-character cryptogram (with inline inputs)
   - Verify <100ms mapping update latency (SC-002)
   - Check Chrome DevTools Performance tab
-  - Ensure no unnecessary re-renders
+  - Ensure no unnecessary re-renders with inline inputs
 
-- [ ] T029 Final quality gate (all commands must pass):
+- [ ] T030 Final quality gate (all commands must pass):
 
   - `npm run lint` - ESLint
   - `npm run typecheck` - TypeScript
@@ -263,7 +281,7 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
   - `npm run test:e2e:run` - All E2E tests
   - `npm run validate` - Full validation suite
 
-- [ ] T030 Verify Constitution compliance:
+- [ ] T031 Verify Constitution compliance:
   - ✅ Principle I: Tests written and passing (unit + e2e)
   - ✅ Principle II: Quality gates passed
   - ✅ Principle III: All types explicit, no `any`
@@ -379,11 +397,12 @@ With multiple developers:
 After implementation, verify success criteria from spec.md:
 
 - [ ] **SC-001**: Enter cryptogram + start solving in <10 seconds ✓
-- [ ] **SC-002**: Letter mappings update <100ms ✓
+- [ ] **SC-002**: Letter mappings update <100ms (both inline and grid) ✓
 - [ ] **SC-003**: Complete 200-300 char cryptogram without bugs ✓
 - [ ] **SC-004**: 90% first-attempt success (user testing) ⏳
-- [ ] **SC-005**: 1000 char cryptogram performs well ✓
+- [ ] **SC-005**: 1000 char cryptogram performs well (including inline inputs) ✓
 - [ ] **SC-006**: Users report intuitive vs pen-paper (feedback) ⏳
+- [ ] **SC-007**: Mapping grid occupies ≥30% less vertical space ✓
 
 ✓ = Testable during implementation
 ⏳ = Requires user feedback post-launch
