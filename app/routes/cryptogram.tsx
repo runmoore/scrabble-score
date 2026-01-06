@@ -192,35 +192,74 @@ function PuzzleDisplay({
   const conflicts = getConflictingLetters(mappings);
 
   const renderPuzzleText = () => {
-    return puzzleText.split("").map((char, index) => {
+    const chars = puzzleText.split("");
+    const elements: JSX.Element[] = [];
+    let currentWord: JSX.Element[] = [];
+    let wordKey = 0;
+
+    const flushWord = () => {
+      if (currentWord.length > 0) {
+        elements.push(
+          <span
+            key={`word-${wordKey++}`}
+            className="inline-block whitespace-nowrap"
+          >
+            {currentWord}
+          </span>
+        );
+        currentWord = [];
+      }
+    };
+
+    chars.forEach((char, index) => {
       const upper = char.toUpperCase();
       const isLetter = /[A-Z]/.test(upper);
+      const isSpace = /\s/.test(char);
 
-      return (
-        <span
-          key={index}
-          className={isLetter ? "inline-flex flex-col items-center" : "inline"}
-          style={{
-            verticalAlign: "bottom",
-          }}
-        >
-          {/* Inline input above every letter showing the decrypted letter */}
-          {isLetter && onMappingChange && (
+      if (isSpace) {
+        // Flush current word and add space
+        flushWord();
+        elements.push(
+          <span key={`space-${index}`} className="inline">
+            {char}
+          </span>
+        );
+      } else if (isLetter) {
+        // Add letter to current word
+        currentWord.push(
+          <span
+            key={index}
+            className="inline-flex flex-col items-center"
+            style={{ verticalAlign: "bottom" }}
+          >
             <span className="mb-0.5">
               <InlineMappingInput
                 cipherLetter={upper}
                 value={mappings[upper] || ""}
-                onChange={(plain) => onMappingChange(upper, plain)}
+                onChange={(plain) => onMappingChange!(upper, plain)}
                 hasConflict={conflicts.includes(upper)}
                 disabled={disabled || false}
               />
             </span>
-          )}
-          {/* Always show the original cipher letter below */}
-          <span className="text-sm text-gray-600">{char}</span>
-        </span>
-      );
+            <span className="text-sm text-gray-600">{char}</span>
+          </span>
+        );
+      } else {
+        // Punctuation - flush word, add punctuation
+        flushWord();
+        currentWord.push(
+          <span key={index} className="inline">
+            {char}
+          </span>
+        );
+        flushWord();
+      }
     });
+
+    // Flush any remaining word
+    flushWord();
+
+    return elements;
   };
 
   return (
