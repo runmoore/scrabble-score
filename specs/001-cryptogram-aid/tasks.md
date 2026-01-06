@@ -58,13 +58,13 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [X] T004 [P] [US1] Write unit tests for helper functions in `app/routes/cryptogram.test.tsx`
+- [x] T004 [P] [US1] Write unit tests for helper functions in `app/routes/cryptogram.test.tsx`
 
   - Test `applyMappings()` with case preservation
   - Test `sanitizePuzzleText()` for special chars/numbers preservation
   - Test `getConflictingLetters()` for duplicate mapping detection
 
-- [X] T005 [P] [US1] Write E2E test for full solving workflow in `cypress/e2e/cryptogram.cy.ts`
+- [x] T005 [P] [US1] Write E2E test for full solving workflow in `cypress/e2e/cryptogram.cy.ts`
   - Test: Enter cryptogram → create mappings → verify instant updates
   - Test: Modify existing mapping → verify all instances update
   - Test: Clear mapping → verify revert to cipher text
@@ -72,7 +72,7 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 
 ### Implementation for User Story 1
 
-- [X] T006 [US1] Create self-contained route file `app/routes/cryptogram.tsx` with complete structure:
+- [x] T006 [US1] Create self-contained route file `app/routes/cryptogram.tsx` with complete structure:
 
   - Import statements (Form, useSearchParams, useState, useMemo from React/Remix)
   - Type definitions section (CryptogramState, LetterMapping, FrequencyData)
@@ -80,26 +80,26 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
   - Inline component functions (PuzzleInput, PuzzleDisplay, MappingGrid, ConflictWarning)
   - Main Cryptogram component (default export) with state management
 
-- [X] T007 [US1] Implement type definitions at top of `app/routes/cryptogram.tsx`:
+- [x] T007 [US1] Implement type definitions at top of `app/routes/cryptogram.tsx`:
 
   - **REMOVED**: Unused type definitions eliminated for code cleanliness
   - State managed via individual `useState` hooks (self-documenting via TypeScript inference)
   - No explicit interfaces needed - types inferred from usage
 
-- [X] T008 [US1] Implement helper functions in `app/routes/cryptogram.tsx`:
+- [x] T008 [US1] Implement helper functions in `app/routes/cryptogram.tsx`:
 
   - `applyMappings(puzzleText: string, mappings: Record<string, string>): string` with case preservation
   - `getConflictingLetters(mappings: Record<string, string>): string[]` for duplicate detection
   - `sanitizePuzzleText(text: string): string` to preserve special chars/numbers
 
-- [X] T009 [US1] Implement PuzzleInput inline component in `app/routes/cryptogram.tsx`:
+- [x] T009 [US1] Implement PuzzleInput inline component in `app/routes/cryptogram.tsx`:
 
   - Large textarea for puzzle input (max 1000 chars per SC-005)
   - Character count display
   - Validation error if >1000 chars
   - Mobile-optimized: Large touch target, proper keyboard on mobile
 
-- [X] T010 [US1] Implement PuzzleDisplay inline component in `app/routes/cryptogram.tsx`:
+- [x] T010 [US1] Implement PuzzleDisplay inline component in `app/routes/cryptogram.tsx`:
 
   - Display original encrypted text (muted color)
   - Display decrypted text using `applyMappings()` helper
@@ -107,7 +107,7 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
   - Monospace font for alignment
   - Preserve case per FR-013
 
-- [X] T011 [US1] Implement MappingGrid inline component in `app/routes/cryptogram.tsx`:
+- [x] T011 [US1] Implement MappingGrid inline component in `app/routes/cryptogram.tsx`:
 
   - 26 letter inputs (A-Z) in grid layout using Tailwind (`grid grid-cols-6 gap-2`)
   - Each cell: cipher letter label + text input (`maxLength={1}`, `inputMode="text"`)
@@ -116,34 +116,34 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
   - Clear All button to reset mappings
   - Touch-friendly: 44x44pt minimum touch targets (PWA Principle VI)
 
-- [X] T012 [US1] Implement ConflictWarning inline component in `app/routes/cryptogram.tsx`:
+- [x] T012 [US1] Implement ConflictWarning inline component in `app/routes/cryptogram.tsx`:
 
   - SKIPPED: Red ring highlighting on inputs sufficient for conflict indication
   - Conflict detection working via `getConflictingLetters()` helper
   - Visual feedback provided through red border CSS classes
 
-- [X] T013 [US1] Wire state management in main Cryptogram component in `app/routes/cryptogram.tsx`:
+- [x] T013 [US1] Wire state management in main Cryptogram component in `app/routes/cryptogram.tsx`:
 
   - `useState` for puzzleText, mappings (Record<string, string>), hintsVisible
   - Event handlers: handleMappingChange, handleClearMapping, handleClearAll
   - Instant updates on mapping change (no form submission required)
   - Compute decrypted text with `useMemo`
 
-- [X] T014 [US1] Add progressive enhancement (Form wrapper) in `app/routes/cryptogram.tsx`:
+- [x] T014 [US1] Add progressive enhancement (Form wrapper) in `app/routes/cryptogram.tsx`:
 
   - Wrap inputs in Remix `Form` component for no-JS fallback
   - Core functionality works with HTML form submission
   - JavaScript enhances with instant updates
   - Satisfies Constitution Principle V
 
-- [X] T015 [US1] Apply mobile-first styling in `app/routes/cryptogram.tsx`:
+- [x] T015 [US1] Apply mobile-first styling in `app/routes/cryptogram.tsx`:
 
   - Tailwind responsive classes
   - Test on 375px viewport minimum
   - Touch-friendly grid (44x44pt targets)
   - iPhone PWA compatibility (Principle VI)
 
-- [X] T016 [US1] Run quality gates for User Story 1:
+- [x] T016 [US1] Run quality gates for User Story 1:
   - `npm run lint` - ESLint verification
   - `npm run typecheck` - TypeScript type safety
   - `npm run format` - Prettier formatting
@@ -164,14 +164,14 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [X] T017 [P] [US2] Write unit tests for inline mapping helper functions in `app/routes/cryptogram.test.tsx`:
+- [x] T017 [P] [US2] Write unit tests for inline mapping helper functions in `app/routes/cryptogram.test.tsx`:
 
   - Test `getUniqueCipherLetters()` extracts unique letters from puzzle text
   - Test `getUniqueCipherLetters()` returns sorted alphabetical order
   - Test `getUniqueCipherLetters()` ignores non-letter characters
   - Test inline input synchronization with mapping state
 
-- [X] T018 [P] [US2] Write E2E test for inline mapping workflow in `cypress/e2e/cryptogram.cy.ts`:
+- [x] T018 [P] [US2] Write E2E test for inline mapping workflow in `cypress/e2e/cryptogram.cy.ts`:
   - Test: Inline input boxes appear above each unique cipher letter
   - Test: Type mapping in inline input → all instances update + grid updates
   - Test: Type mapping in grid → inline inputs update
@@ -181,14 +181,14 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 
 ### Implementation for User Story 2
 
-- [ ] T019 [US2] Implement `getUniqueCipherLetters()` helper function in `app/routes/cryptogram.tsx`:
+- [x] T019 [US2] Implement `getUniqueCipherLetters()` helper function in `app/routes/cryptogram.tsx`:
 
   - Extract unique cipher letters from puzzle text (A-Z only)
   - Return sorted array of unique letters
   - Handle case-insensitive extraction (uppercase normalization)
   - Ignore spaces, punctuation, numbers
 
-- [ ] T020 [US2] Create InlineMappingInput component in `app/routes/cryptogram.tsx`:
+- [x] T020 [US2] Create InlineMappingInput component in `app/routes/cryptogram.tsx`:
 
   - Render small input box positioned above cipher letter
   - Single character input (`maxLength={1}`)
@@ -198,7 +198,7 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
   - Share same `handleMappingChange` handler as grid
   - Highlight conflicts with red ring (consistent with grid)
 
-- [ ] T021 [US2] Update PuzzleDisplay component to integrate inline inputs in `app/routes/cryptogram.tsx`:
+- [x] T021 [US2] Update PuzzleDisplay component to integrate inline inputs in `app/routes/cryptogram.tsx`:
 
   - Render inline input above first occurrence of each unique cipher letter
   - Position input directly above letter (CSS: relative/absolute positioning)
@@ -206,7 +206,7 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
   - Preserve existing solved/unsolved letter styling
   - Handle long puzzles (inline inputs should stay with their letters)
 
-- [ ] T022 [US2] Redesign MappingGrid component for compact layout in `app/routes/cryptogram.tsx`:
+- [x] T022 [US2] Redesign MappingGrid component for compact layout in `app/routes/cryptogram.tsx`:
 
   - Reduce vertical space by at least 30% (per SC-007)
   - Options: Smaller inputs, tighter spacing, horizontal scrolling, or collapsible sections
@@ -215,14 +215,14 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
   - Maintain Clear All button
   - Keep conflict highlighting (red rings)
 
-- [ ] T023 [US2] Verify bidirectional synchronization in `app/routes/cryptogram.tsx`:
+- [x] T023 [US2] Verify bidirectional synchronization in `app/routes/cryptogram.tsx`:
 
   - Confirm inline inputs use same `mappings` state as grid
   - Confirm both use same `handleMappingChange` handler
   - Test that React's single source of truth keeps both in sync
   - No additional sync logic needed (architectural validation)
 
-- [ ] T024 [US2] Apply mobile-first styling for inline inputs in `app/routes/cryptogram.tsx`:
+- [x] T024 [US2] Apply mobile-first styling for inline inputs in `app/routes/cryptogram.tsx`:
 
   - Responsive inline input sizing (scale with viewport)
   - Ensure inputs don't overlap on small screens

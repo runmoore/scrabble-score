@@ -60,6 +60,23 @@ export function sanitizePuzzleText(text: string): string {
   return text;
 }
 
+/**
+ * Get unique cipher letters from puzzle text (T019)
+ * Returns sorted array of unique uppercase letters only
+ */
+export function getUniqueCipherLetters(puzzleText: string): string[] {
+  const letters = new Set<string>();
+
+  for (const char of puzzleText) {
+    const upper = char.toUpperCase();
+    if (/[A-Z]/.test(upper)) {
+      letters.add(upper);
+    }
+  }
+
+  return Array.from(letters).sort();
+}
+
 // =============================================================================
 // INLINE COMPONENTS
 // =============================================================================
@@ -111,21 +128,80 @@ function PuzzleInput({
 }
 
 /**
- * PuzzleDisplay Component (T010)
+ * InlineMappingInput Component (T020)
+ * Small input box for entering mappings inline above cipher letters
+ */
+function InlineMappingInput({
+  cipherLetter,
+  value,
+  onChange,
+  hasConflict,
+  disabled,
+}: {
+  cipherLetter: string;
+  value: string;
+  onChange: (plain: string) => void;
+  hasConflict: boolean;
+  disabled: boolean;
+}) {
+  return (
+    <input
+      type="text"
+      inputMode="text"
+      maxLength={1}
+      value={value}
+      onChange={(e) => {
+        const inputValue = e.target.value.toUpperCase();
+        onChange(inputValue);
+      }}
+      disabled={disabled}
+      aria-label={`Inline mapping for ${cipherLetter}`}
+      className={`h-11 w-11 rounded border text-center font-mono text-sm uppercase focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:opacity-50 md:h-8 md:w-8 ${
+        hasConflict
+          ? "border-red-primary ring-2 ring-red-primary"
+          : "border-gray-300 focus:border-blue-primary focus:ring-blue-primary"
+      }`}
+      style={{
+        minWidth: "44px",
+        minHeight: "44px",
+        touchAction: "manipulation",
+      }}
+    />
+  );
+}
+
+/**
+ * PuzzleDisplay Component (T010, enhanced T021)
  * Shows original encrypted text and decrypted text with visual distinction
+ * Now includes inline mapping inputs above first occurrence of each unique letter
  */
 function PuzzleDisplay({
   puzzleText,
   decryptedText,
   mappings,
+  onMappingChange,
+  disabled,
 }: {
   puzzleText: string;
   decryptedText: string;
   mappings: Record<string, string>;
+  onMappingChange?: (cipher: string, plain: string) => void;
+  disabled?: boolean;
 }) {
   if (!puzzleText) {
     return null;
   }
+
+  const conflicts = getConflictingLetters(mappings);
+  const firstOccurrences = new Map<string, number>();
+
+  // Find first occurrence of each unique letter
+  puzzleText.split("").forEach((char, index) => {
+    const upper = char.toUpperCase();
+    if (/[A-Z]/.test(upper) && !firstOccurrences.has(upper)) {
+      firstOccurrences.set(upper, index);
+    }
+  });
 
   // Determine which letters are solved (have mappings)
   const renderDecryptedText = () => {
@@ -133,17 +209,38 @@ function PuzzleDisplay({
       const originalChar = puzzleText[index];
       const upper = originalChar.toUpperCase();
       const isSolved = /[A-Z]/.test(upper) && mappings[upper];
+      const isFirstOccurrence = firstOccurrences.get(upper) === index;
 
       return (
         <span
           key={index}
-          className={
-            isSolved
-              ? "solved-letter font-bold text-green-primary"
-              : "unsolved-letter text-gray-600"
-          }
+          className="relative inline-block"
+          style={{ position: "relative" }}
         >
-          {char}
+          {/* Inline input above first occurrence */}
+          {isFirstOccurrence && onMappingChange && /[A-Z]/.test(upper) && (
+            <span
+              className="absolute left-1/2 -translate-x-1/2"
+              style={{ top: "-48px" }}
+            >
+              <InlineMappingInput
+                cipherLetter={upper}
+                value={mappings[upper] || ""}
+                onChange={(plain) => onMappingChange(upper, plain)}
+                hasConflict={conflicts.includes(upper)}
+                disabled={disabled || false}
+              />
+            </span>
+          )}
+          <span
+            className={
+              isSolved
+                ? "solved-letter font-bold text-green-primary"
+                : "unsolved-letter text-gray-600"
+            }
+          >
+            {char}
+          </span>
         </span>
       );
     });
@@ -170,7 +267,12 @@ function PuzzleDisplay({
         <div
           data-testid="decrypted-text"
           className="font-mono text-lg"
-          style={{ wordBreak: "break-word", whiteSpace: "pre-wrap" }}
+          style={{
+            wordBreak: "break-word",
+            whiteSpace: "pre-wrap",
+            paddingTop: "52px",
+            position: "relative",
+          }}
         >
           {renderDecryptedText()}
         </div>
@@ -180,8 +282,9 @@ function PuzzleDisplay({
 }
 
 /**
- * MappingGrid Component (T011)
- * 26 letter inputs (A-Z) in grid layout for creating cipher-to-plain mappings
+ * MappingGrid Component (T011, enhanced T022)
+ * Compact 26 letter inputs (A-Z) in grid layout for creating cipher-to-plain mappings
+ * Redesigned for 30% less vertical space
  */
 function MappingGrid({
   mappings,
@@ -198,13 +301,13 @@ function MappingGrid({
   const conflicts = getConflictingLetters(mappings);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2" data-testid="mapping-grid">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium">Letter Mappings (A-Z)</h3>
+        <h3 className="text-xs font-medium">Letter Mappings (A-Z)</h3>
         <button
           type="button"
           onClick={onClearAll}
-          className="rounded bg-red-primary px-3 py-1 text-sm text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-primary disabled:opacity-50"
+          className="rounded bg-red-primary px-2 py-1 text-xs text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-primary disabled:opacity-50"
           disabled={disabled}
           aria-label="Clear all mappings"
         >
@@ -212,7 +315,8 @@ function MappingGrid({
         </button>
       </div>
 
-      <div className="lg:grid-cols-13 grid grid-cols-6 gap-2 md:grid-cols-8">
+      {/* Compact grid layout with reduced spacing */}
+      <div className="grid grid-cols-13 gap-1 lg:grid-cols-13 md:grid-cols-13">
         {alphabet.map((letter) => {
           const hasConflict = conflicts.includes(letter);
           const value = mappings[letter] || "";
@@ -221,7 +325,7 @@ function MappingGrid({
             <div key={letter} className="flex flex-col items-center">
               <label
                 htmlFor={`mapping-${letter}`}
-                className="mb-1 text-xs font-medium text-gray-600"
+                className="mb-0.5 text-[10px] font-medium text-gray-600"
               >
                 {letter}
               </label>
@@ -237,12 +341,12 @@ function MappingGrid({
                 }}
                 disabled={disabled}
                 aria-label={`Mapping for ${letter}`}
-                className={`h-11 w-11 rounded border text-center font-mono text-lg uppercase focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:opacity-50 ${
+                className={`h-10 w-10 rounded border text-center font-mono text-sm uppercase focus:outline-none focus:ring-1 disabled:bg-gray-100 disabled:opacity-50 ${
                   hasConflict
                     ? "border-red-primary ring-2 ring-red-primary"
                     : "border-gray-300 focus:border-blue-primary focus:ring-blue-primary"
                 }`}
-                style={{ minWidth: "44px", minHeight: "44px" }}
+                style={{ minWidth: "40px", minHeight: "40px" }}
               />
             </div>
           );
@@ -309,11 +413,13 @@ export default function Cryptogram() {
             maxLength={1000}
           />
 
-          {/* PuzzleDisplay component (T010) */}
+          {/* PuzzleDisplay component (T010, enhanced T021) */}
           <PuzzleDisplay
             puzzleText={puzzleText}
             decryptedText={decryptedText}
             mappings={mappings}
+            onMappingChange={handleMappingChange}
+            disabled={isOverLimit}
           />
 
           {/* MappingGrid component (T011) */}
