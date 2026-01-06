@@ -200,11 +200,16 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
 
 - [x] T021 [US2] Update PuzzleDisplay component to integrate inline inputs in `app/routes/cryptogram.tsx`:
 
-  - Render inline input above first occurrence of each unique cipher letter
-  - Position input directly above letter (CSS: relative/absolute positioning)
-  - Maintain letter alignment and readability
-  - Preserve existing solved/unsolved letter styling
-  - Handle long puzzles (inline inputs should stay with their letters)
+  - **IMPLEMENTATION DEVIATION**: Render inline input above **EVERY** letter (not just first occurrence)
+  - **IMPLEMENTATION DEVIATION**: Used `inline-flex flex-col align-bottom` instead of absolute positioning
+  - Implemented word grouping algorithm to prevent mid-word line breaks:
+    - Group consecutive letters into word units
+    - Wrap each word in `inline-block whitespace-nowrap` span
+    - Add vertical padding (`py-2`) to word wrappers for line spacing
+    - Keep letter units tight with `gap-0`
+  - Maintain letter alignment and readability with Tailwind classes only
+  - Input boxes show mappings, cipher letters always displayed below
+  - Mobile-optimized sizing: 32x32px inputs (mobile), 24x24px (desktop)
 
 - [x] T022 [US2] Redesign MappingGrid component for compact layout in `app/routes/cryptogram.tsx`:
 
@@ -229,8 +234,9 @@ No foundational tasks needed - feature is entirely self-contained in a single ro
   - Test touch interaction on mobile (no accidental taps)
   - Verify keyboard behavior (focus management)
   - Maintain PWA compatibility
+  - **IMPLEMENTATION NOTE**: All inline styles converted to Tailwind classes (no style attributes)
 
-- [X] T025 [US2] Run quality gates for User Story 2:
+- [x] T025 [US2] Run quality gates for User Story 2:
   - `npm run lint` - ESLint verification
   - `npm run typecheck` - TypeScript type safety
   - `npm run format` - Prettier formatting

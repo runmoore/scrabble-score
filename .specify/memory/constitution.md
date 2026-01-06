@@ -1,6 +1,19 @@
 <!--
 Sync Impact Report
 ==================
+Version change: 1.1.0 → 1.1.1
+Constitution amendment date: 2026-01-06
+Modified principles:
+  - Principle VI: PWA-First Mobile Design - Added Tailwind CSS styling guideline
+Added sections: None
+Renumbered sections: None
+Removed sections: None
+Templates requiring updates: None (styling guideline is a clarification)
+Follow-up TODOs: None
+Rationale: Clarifies that Tailwind CSS should be used for all styling instead of inline style attributes, ensuring consistent and maintainable styling patterns across the application.
+
+Previous Amendment
+==================
 Version change: 1.0.0 → 1.1.0
 Constitution amendment date: 2026-01-06
 Modified principles:
@@ -84,12 +97,13 @@ All features MUST be optimized for Progressive Web App usage on mobile devices:
 
 - Mobile-first responsive design with iPhone as primary target
 - Touch-friendly UI elements (minimum 44x44pt touch targets)
+- **Tailwind CSS for all styling**: Use Tailwind utility classes instead of inline `style` attributes wherever possible. Only use inline styles when absolutely necessary (e.g., dynamic values that can't be predetermined)
 - PWA manifest configuration for home screen installation
 - Apple-specific meta tags for optimal iOS experience (`apple-mobile-web-app-capable`, `apple-touch-icon`)
 - Features MUST work when installed as PWA on iPhone home screen
 - Test on mobile viewports (375px width minimum)
 
-**Rationale**: The application is designed as a PWA for mobile-first usage, particularly iPhone devices. All features must provide a native-like experience when installed on the home screen.
+**Rationale**: The application is designed as a PWA for mobile-first usage, particularly iPhone devices. All features must provide a native-like experience when installed on the home screen. Tailwind ensures consistent, maintainable styling across the application.
 
 ### VII. Database Schema Integrity
 
@@ -196,4 +210,4 @@ Exceptions to these principles MUST be:
 3. Include explanation of why simpler alternatives were rejected
 4. Approved in code review with explicit acknowledgment
 
-**Version**: 1.1.0 | **Ratified**: 2025-12-05 | **Last Amended**: 2026-01-06
+**Version**: 1.1.1 | **Ratified**: 2025-12-05 | **Last Amended**: 2026-01-06

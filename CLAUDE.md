@@ -151,6 +151,7 @@ The `EnhancedGame` type augments Prisma's Game model with:
 ### Styling
 
 - **Tailwind CSS** for all styling
+- **Avoid inline `style` attributes**: Use Tailwind utility classes instead of inline styles wherever possible. Only use inline styles when absolutely necessary (e.g., dynamic values that can't be predetermined)
 - Custom colors: `blue-primary`, `green-primary/secondary`, `purple-primary/secondary`, `red-primary/secondary`
 - Mobile-first responsive design (primary target: iPhone)
 - Progressive Web App (PWA) capabilities:

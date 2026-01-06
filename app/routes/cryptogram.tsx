@@ -108,10 +108,9 @@ function PuzzleInput({
         aria-label="Puzzle text input"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded border border-gray-300 p-4 font-mono text-lg focus:border-blue-primary focus:outline-none focus:ring-2 focus:ring-blue-primary"
+        className="min-h-30 w-full rounded border border-gray-300 p-4 font-mono text-lg focus:border-blue-primary focus:outline-none focus:ring-2 focus:ring-blue-primary"
         rows={6}
         placeholder="Enter your encrypted puzzle text here..."
-        style={{ minHeight: "120px", touchAction: "manipulation" }}
       />
       <div className="flex justify-between text-sm">
         <span className={isOverLimit ? "text-red-primary" : "text-gray-600"}>
@@ -156,16 +155,11 @@ function InlineMappingInput({
       }}
       disabled={disabled}
       aria-label={`Inline mapping for ${cipherLetter}`}
-      className={`h-8 w-8 rounded border text-center text-xs font-mono uppercase focus:outline-none focus:ring-1 disabled:bg-gray-100 disabled:opacity-50 md:h-6 md:w-6 ${
+      className={`min-h-8 min-w-8 md:min-h-6 md:min-w-6 h-8 w-8 rounded border text-center font-mono text-xs uppercase focus:outline-none focus:ring-1 disabled:bg-gray-100 disabled:opacity-50 md:h-6 md:w-6 ${
         hasConflict
           ? "border-red-primary ring-1 ring-red-primary"
           : "border-gray-300 focus:border-blue-primary focus:ring-blue-primary"
       }`}
-      style={{
-        minWidth: "32px",
-        minHeight: "32px",
-        touchAction: "manipulation",
-      }}
     />
   );
 }
@@ -202,7 +196,7 @@ function PuzzleDisplay({
         elements.push(
           <span
             key={`word-${wordKey++}`}
-            className="inline-block whitespace-nowrap"
+            className="inline-block whitespace-nowrap py-2"
           >
             {currentWord}
           </span>
@@ -229,8 +223,7 @@ function PuzzleDisplay({
         currentWord.push(
           <span
             key={index}
-            className="inline-flex flex-col items-center gap-0"
-            style={{ verticalAlign: "bottom" }}
+            className="inline-flex flex-col items-center gap-0 align-bottom"
           >
             <span>
               <InlineMappingInput
@@ -269,13 +262,7 @@ function PuzzleDisplay({
       </h3>
       <div
         data-testid="decrypted-text"
-        className="font-mono text-base"
-        style={{
-          whiteSpace: "pre-wrap",
-          wordWrap: "break-word",
-          overflowWrap: "break-word",
-          lineHeight: "3",
-        }}
+        className="whitespace-pre-wrap break-words font-mono text-base"
       >
         {renderPuzzleText()}
       </div>
@@ -343,12 +330,11 @@ function MappingGrid({
                 }}
                 disabled={disabled}
                 aria-label={`Mapping for ${letter}`}
-                className={`h-10 w-10 rounded border text-center font-mono text-sm uppercase focus:outline-none focus:ring-1 disabled:bg-gray-100 disabled:opacity-50 ${
+                className={`min-h-10 min-w-10 h-10 w-10 rounded border text-center font-mono text-sm uppercase focus:outline-none focus:ring-1 disabled:bg-gray-100 disabled:opacity-50 ${
                   hasConflict
                     ? "border-red-primary ring-2 ring-red-primary"
                     : "border-gray-300 focus:border-blue-primary focus:ring-blue-primary"
                 }`}
-                style={{ minWidth: "40px", minHeight: "40px" }}
               />
             </div>
           );
