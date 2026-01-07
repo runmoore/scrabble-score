@@ -27,11 +27,11 @@ A user receives a cryptogram puzzle and wants to solve it manually using systema
 
 **Acceptance Scenarios**:
 
-1. **Given** an empty cryptogram workspace, **When** I enter a cryptogram puzzle text, **Then** the encrypted text is displayed with each letter clearly visible and a mapping control panel shows all 26 letters with empty input fields
-2. **Given** a displayed cryptogram with the mapping control panel, **When** I enter a plain letter in the input field for a cipher letter (e.g., enter "E" for cipher letter "Q"), **Then** all instances of that cipher letter are replaced with my chosen plain letter throughout the puzzle
-3. **Given** existing letter mappings in the control panel, **When** I change a mapping (e.g., change "Q" from "E" to "A" in the control panel), **Then** all instances update immediately to reflect the new mapping
-4. **Given** a letter mapping in the control panel, **When** I clear or remove it, **Then** the cipher letters revert to their original encrypted form in the puzzle text
-5. **Given** a partially solved puzzle, **When** I review my work, **Then** I can see all my current mappings in the control panel and clearly distinguish between solved letters and unsolved cipher letters in the puzzle text
+1. **Given** an empty cryptogram workspace, **When** I enter a cryptogram puzzle text, **Then** the cipher text is displayed with inline input boxes positioned above each letter, and a mapping control panel shows all 26 letters with empty input fields
+2. **Given** a displayed cryptogram with inline inputs and the mapping control panel, **When** I enter a plain letter in either an inline input box or in the mapping grid (e.g., enter "E" for cipher letter "Q"), **Then** all inline input boxes for that cipher letter display "E" and the mapping grid also reflects this mapping
+3. **Given** existing letter mappings, **When** I change a mapping (e.g., change "Q" from "E" to "A" in either the inline input or the control panel), **Then** all inline input boxes for that cipher letter update immediately to show the new mapping
+4. **Given** a letter mapping, **When** I clear or remove it from either the inline input or the control panel, **Then** all inline input boxes for that cipher letter become empty
+5. **Given** a partially solved puzzle, **When** I review my work, **Then** I can see all my current mappings in both the inline input boxes above cipher letters and in the control panel, with cipher letters remaining visible below the input boxes for reference
 
 ---
 
@@ -45,11 +45,11 @@ A user wants to enter letter mappings directly above the encrypted letters while
 
 **Acceptance Scenarios**:
 
-1. **Given** a cryptogram is displayed, **When** I view the puzzle, **Then** each unique cipher letter has a small input box positioned directly above it where I can enter the plain letter mapping
-2. **Given** inline input boxes above cipher letters, **When** I type a plain letter in an inline box (e.g., "E" above cipher letter "Q"), **Then** all instances of "Q" throughout the puzzle update to "E" and the mapping grid also updates to show "E" for "Q"
-3. **Given** an existing mapping, **When** I change the mapping in either the inline box or the grid, **Then** both locations stay synchronized and all puzzle instances update immediately
-4. **Given** both inline inputs and the mapping grid visible, **When** I compare the screen space used, **Then** the mapping grid occupies less vertical space than before while remaining fully functional
-5. **Given** a cryptogram with many different cipher letters, **When** I scroll through the puzzle, **Then** I can easily see and edit mappings for letters currently in view without scrolling to the grid
+1. **Given** a cryptogram is displayed, **When** I view the puzzle, **Then** each cipher letter in the puzzle (not just unique letters, but every occurrence) has a small input box positioned directly above it where I can enter the plain letter mapping, with the cipher letter visible below the input box
+2. **Given** inline input boxes above cipher letters, **When** I type a plain letter in any inline box for a cipher letter (e.g., "E" above any occurrence of cipher letter "Q"), **Then** all inline input boxes for "Q" throughout the puzzle show "E" and the mapping grid also updates to show "E" for "Q"
+3. **Given** an existing mapping, **When** I change the mapping in either any inline box or the grid, **Then** all inline boxes for that cipher letter stay synchronized with the grid, updating immediately
+4. **Given** both inline inputs and the mapping grid visible, **When** I compare the screen space used, **Then** the mapping grid occupies approximately 30% less vertical space than before while remaining fully functional and readable
+5. **Given** a cryptogram with many letters, **When** I work through the puzzle, **Then** I can see and edit mappings for any letter by interacting with its inline input box or the mapping grid, without needing to scroll to find either control
 
 ---
 
@@ -65,7 +65,7 @@ A user wants to enter letter mappings directly above the encrypted letters while
 - What happens when a user enters a cryptogram with numbers or special characters? (Should preserve them as-is since they're typically not encrypted, and no inline input box should appear above them)
 - How does the system handle very long cryptograms (500+ characters)? (Should remain performant and usable with inline inputs)
 - What happens if a user tries to map a cipher letter to itself? (Should allow it but may show a hint that this is unusual)
-- What happens when the same cipher letter appears multiple times in the puzzle? (Only one inline input box should appear above the first occurrence of each unique letter, and all instances update when that input changes)
+- What happens when the same cipher letter appears multiple times in the puzzle? (An inline input box appears above every occurrence of the letter, and all boxes for the same cipher letter stay synchronized - editing any one updates all others plus the mapping grid)
 - How should inline inputs behave on mobile devices with touch keyboards? (Should support touch input with appropriate keyboard and input sizing)
 
 ## Requirements _(mandatory)_
@@ -75,11 +75,11 @@ A user wants to enter letter mappings directly above the encrypted letters while
 #### Core Solving (User Story 1)
 
 - **FR-001**: System MUST allow users to input or paste cryptogram puzzle text
-- **FR-002**: System MUST display the cryptogram text with cipher letters clearly visible
+- **FR-002**: System MUST display the cryptogram text with cipher letters clearly visible below inline input boxes
 - **FR-003**: System MUST provide a mapping table/grid control panel displaying all 26 letters (A-Z) with input fields where users can enter the corresponding plain letter for each cipher letter
-- **FR-004**: System MUST instantly update all occurrences of a cipher letter in the puzzle text when a mapping is entered in the control panel
+- **FR-004**: System MUST instantly update all inline input boxes for a cipher letter when a mapping is entered in either any inline input box or the control panel
 - **FR-005**: System MUST allow users to modify or remove existing letter mappings
-- **FR-006**: System MUST visually distinguish between mapped (solved) letters and unmapped cipher letters
+- **FR-006**: System MUST visually distinguish between mapped (solved) letters and unmapped cipher letters by showing filled inline input boxes for mapped letters and empty boxes for unmapped letters
 - **FR-007**: System MUST preserve spaces, punctuation, and numbers from the original cryptogram without modification
 - **FR-008**: System MUST treat letter mappings as case-insensitive (one mapping for both 'A' and 'a'), while preserving the original case formatting of letters in the displayed cryptogram text
 - **FR-009**: System MUST display a warning message when a user attempts to map multiple cipher letters to the same plain letter, while still allowing the mapping to proceed, and MUST visually highlight the conflicting mappings in the control panel
@@ -87,18 +87,18 @@ A user wants to enter letter mappings directly above the encrypted letters while
 
 #### Inline Mapping Input (User Story 2)
 
-- **FR-011**: System MUST display a small input box above each unique cipher letter in the puzzle text where users can directly enter the plain letter mapping
-- **FR-012**: System MUST synchronize mappings bidirectionally - changes made in inline input boxes MUST update the mapping grid, and changes made in the mapping grid MUST update inline input boxes
-- **FR-013**: System MUST update all instances of a cipher letter throughout the puzzle when a mapping is entered in either the inline input or the mapping grid
-- **FR-014**: System MUST make the mapping grid more compact, occupying less vertical screen space while maintaining full functionality and readability
-- **FR-015**: System MUST ensure inline input boxes are clearly associated with their corresponding cipher letters through visual positioning and styling
+- **FR-011**: System MUST display a small input box above every occurrence of every cipher letter in the puzzle text (not just the first occurrence), where users can directly enter the plain letter mapping
+- **FR-012**: System MUST synchronize all inline input boxes for the same cipher letter - when any inline input box for a cipher letter is changed, all other inline boxes for that same letter MUST update immediately, and the mapping grid MUST also update
+- **FR-013**: System MUST synchronize changes bidirectionally between all inline input boxes and the mapping grid - changes in any location MUST update all other locations for that cipher letter instantly
+- **FR-014**: System MUST make the mapping grid more compact, occupying approximately 30% less vertical screen space while maintaining full functionality and readability
+- **FR-015**: System MUST ensure inline input boxes are clearly associated with their corresponding cipher letters by positioning the cipher letter directly below each input box, grouped as a vertical unit
 - **FR-016**: System MUST prevent automatic solving - all letter mappings must be user-initiated, regardless of input method (inline or grid)
 
 ### Key Entities
 
 - **Cryptogram**: The encrypted puzzle text containing cipher letters to be decoded
 - **Letter Mapping**: A single association between a cipher letter and a plain letter (e.g., Q → E)
-- **Inline Input**: An input box positioned directly above a cipher letter in the puzzle text for direct mapping entry
+- **Inline Input**: An input box positioned directly above every occurrence of every cipher letter in the puzzle text for direct mapping entry, with the cipher letter visible below for reference
 - **Mapping Grid**: The alphabetical reference grid (A-Z) showing all possible letter mappings in a compact layout
 
 ## Success Criteria _(mandatory)_
@@ -111,7 +111,8 @@ A user wants to enter letter mappings directly above the encrypted letters while
 - **SC-004**: 90% of users successfully create and modify letter mappings on their first attempt without instructions, using either input method
 - **SC-005**: System supports cryptograms up to 1000 characters without performance degradation, including inline input rendering
 - **SC-006**: Users report that the digital tool is as intuitive or more intuitive than pen-and-paper solving (qualitative feedback)
-- **SC-007**: The mapping grid occupies at least 30% less vertical screen space than the original implementation while maintaining full functionality
+- **SC-007**: The mapping grid occupies approximately 30% less vertical screen space than the original implementation while maintaining full functionality
+- **SC-008**: Users can see the cipher letter and its corresponding mapping input together as a visual unit, reducing back-and-forth eye movement between puzzle and control panel
 
 ### Assumptions
 

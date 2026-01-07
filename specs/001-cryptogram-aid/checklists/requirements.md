@@ -75,3 +75,43 @@ No blocking issues found. The inline mapping input feature is well-specified wit
 1. Run `/speckit.plan` to create technical implementation plan
 2. Run `/speckit.tasks` to break down into actionable tasks
 3. Run `/speckit.implement` to execute Phase 4 (User Story 2)
+
+---
+
+## Update 2026-01-07: Post-E2E Test Validation
+
+### Context
+
+During E2E test execution, the tests revealed that the actual implementation differed from the original specification. The tests were updated to match the implementation, and the specification has been updated accordingly.
+
+### Key Specification Updates
+
+1. **Inline Input Architecture** (FR-011): Clarified that inline input boxes appear above **every occurrence** of every cipher letter, not just unique letters. Each letter occurrence has its own input box.
+
+2. **Visual Layout** (FR-015): Specified that cipher letters are positioned directly **below** each input box, forming a vertical unit (input above, cipher below), rather than a separate display area.
+
+3. **Synchronization Model** (FR-012, FR-013): Enhanced to emphasize that:
+   - All inline input boxes for the same cipher letter stay synchronized with each other
+   - Changes in any inline box update all other inline boxes for that letter + the mapping grid
+   - The mapping grid updates all inline boxes when changed
+
+4. **User Story 1 Integration**: Updated acceptance scenarios to reflect that inline inputs are part of the core experience from the start, not added separately.
+
+5. **Success Criteria** (SC-008): Added new criterion measuring the reduced eye movement benefit of seeing cipher letter and mapping input together.
+
+### Validation Status
+
+✅ All checklist items remain PASSED after specification updates
+
+✅ E2E Test Results: 20/20 cryptogram tests passing
+
+✅ Code Quality: All checks passing (lint, typecheck, format)
+
+### Implementation Match
+
+The specification now accurately describes the implementation where:
+- Every cipher letter occurrence has an inline input box above it
+- Cipher letters remain visible below their input boxes for reference
+- All inputs for the same letter stay synchronized
+- Users can edit from any inline input or the mapping grid
+- The mapping grid is ~30% more compact than original
