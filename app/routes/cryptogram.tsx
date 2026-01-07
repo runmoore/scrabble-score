@@ -1,32 +1,5 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import {
-  Form,
-  useNavigate,
-  useLoaderData,
-} from "@remix-run/react";
+import { Form, useNavigate, useSearchParams } from "@remix-run/react";
 import { useState, useEffect } from "react";
-
-// =============================================================================
-// LOADER (Server-Side Rendering)
-// =============================================================================
-
-export async function loader({ request }: LoaderFunctionArgs) {
-  const url = new URL(request.url);
-  const puzzleParam = url.searchParams.get("puzzle");
-
-  let initialPuzzle = "";
-  if (puzzleParam) {
-    try {
-      initialPuzzle = decodeURIComponent(puzzleParam);
-    } catch {
-      // Silent fallback per FR-006
-      initialPuzzle = "";
-    }
-  }
-
-  return json({ initialPuzzle });
-}
 
 // =============================================================================
 // HELPER FUNCTIONS (T008)
@@ -377,10 +350,19 @@ function MappingGrid({
 
 export default function Cryptogram() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  // Initialize from SSR loader data (T008)
-  const { initialPuzzle } = useLoaderData<typeof loader>();
-  const [puzzleText, setPuzzleText] = useState(initialPuzzle);
+  // Initialize from URL params (works on both SSR and client)
+  const [puzzleText, setPuzzleText] = useState(() => {
+    const puzzleParam = searchParams.get("puzzle");
+    if (!puzzleParam) return "";
+    try {
+      return decodeURIComponent(puzzleParam);
+    } catch {
+      // Silent fallback per FR-006
+      return "";
+    }
+  });
   const [mappings, setMappings] = useState<Record<string, string>>({});
 
   // Write puzzle to URL on change with debounce (T010 - inline encoding)

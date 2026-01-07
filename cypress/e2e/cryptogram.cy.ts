@@ -396,10 +396,10 @@ describe("cryptogram solver", () => {
 
     it("should load puzzle from URL on page load", () => {
       // SSR BEHAVIOR: This test validates server-side rendering (SSR) works correctly.
-      // When visiting a URL with ?puzzle=... parameter, the Remix loader function
-      // decodes the puzzle server-side and returns it in the initial HTML response.
-      // The puzzle should be visible in the initial page load with NO content flash.
-      // The loader pre-populates the puzzle text, eliminating client-side URL reading.
+      // Remix's useSearchParams() hook works during SSR, allowing the component to read
+      // the puzzle parameter directly from the URL without a separate loader function.
+      // The puzzle is initialized during SSR and included in the initial HTML response,
+      // eliminating client-side content flash with no extra fetch requests.
       const puzzle = "SECRET MESSAGE";
       const encodedPuzzle = encodeURIComponent(puzzle);
 
