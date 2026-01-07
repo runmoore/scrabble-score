@@ -3,6 +3,8 @@
 **Branch**: `002-cryptogram-url-persistence` | **Date**: 2026-01-07 | **Spec**: [spec.md](./spec.md)
 **Input**: Feature specification from `/specs/002-cryptogram-url-persistence/spec.md`
 
+**FINAL IMPLEMENTATION NOTE (2026-01-07)**: After initial implementation with loader function, simplified to direct URL reading via `useSearchParams()`. This approach eliminates unnecessary fetch overhead while maintaining SSR support. See Implementation History section for full evolution.
+
 ## Summary
 
 Enable cryptogram puzzle shareability and page-reload persistence by encoding puzzle text in URL query parameters. Users can share puzzles via URL, and puzzle text persists through page refreshes without requiring database storage. The URL automatically updates as users type, ensuring the address bar always reflects the current puzzle state.
@@ -206,22 +208,31 @@ During post-implementation review, identified two improvements:
    - Needed: Inline encoding/decoding directly
    - Impact: Simpler, more maintainable code
 
-### Refinements (Planned)
+### Refinements (Completed)
 
-**Changes to make:**
+**Phase 1: Remove Abstraction**
+1. ✅ Deleted `app/utils/url-encoding.ts` and tests (~130 LOC removed)
+2. ✅ Removed utility imports from cryptogram route
 
-1. Delete `app/utils/url-encoding.ts` and tests (~130 LOC removed)
-2. Add loader function for SSR (~15 LOC)
-3. Inline encoding in component
-4. Initialize state from loader data
-5. Update e2e tests to verify SSR
+**Phase 2: Add SSR (Initial Approach)**
+1. ✅ Initially implemented Remix loader function for SSR
+2. ✅ Initialized state from loader data
+3. ✅ Inlined encoding/decoding
 
-**Net result:**
+**Phase 3: Simplify (Final Approach)**
+1. ✅ Removed loader function (unnecessary overhead for URL params)
+2. ✅ Simplified to direct `useSearchParams()` reading
+3. ✅ Added try-catch for error handling
+4. ✅ Maintains SSR support without extra fetches
 
-- Simpler codebase (net -115 LOC)
-- No content flash (better UX)
+**Final result:**
+- Simplest possible implementation
+- SSR works (no content flash)
+- No extra network requests
 - Constitution compliant
 - All functionality maintained
+
+**Key insight:** The original pattern of reading `searchParams.get("puzzle")` directly was correct all along! It works during SSR because Remix's `useSearchParams()` provides URL context on both server and client. The only addition needed was error handling for `decodeURIComponent()`.
 
 ## Success Criteria
 

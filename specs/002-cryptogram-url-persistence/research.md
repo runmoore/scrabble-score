@@ -1,10 +1,15 @@
-# Research: Cryptogram URL Persistence (Updated for Refactoring)
+# Research: Cryptogram URL Persistence (Final Implementation)
 
 **Feature**: 002-cryptogram-url-persistence
-**Date**: 2026-01-07 (Updated after clarification and refactoring)
+**Date**: 2026-01-07 (Updated after implementation evolution)
 **Purpose**: Research technical decisions for URL-based state persistence in Remix with SSR
 
-**IMPORTANT UPDATE (2026-01-07)**: Initial implementation used a Remix loader function, but this was refactored to use direct URL reading via `useSearchParams()` for simplicity. Loaders add unnecessary fetch overhead for client-available data like URL params. The simpler approach maintains SSR support while eliminating extra network requests.
+**IMPLEMENTATION EVOLUTION**:
+1. Initial: Utility files wrapping `encodeURIComponent` ❌ Removed (premature abstraction)
+2. Refinement: Remix loader function for SSR ❌ Removed (unnecessary overhead)
+3. Final: Direct `useSearchParams()` reading ✅ **Simplest approach that works**
+
+The original simple pattern was correct - `useSearchParams()` provides URL context during SSR in Remix. Only needed to add error handling for `decodeURIComponent()`.
 
 ## Research Questions
 
