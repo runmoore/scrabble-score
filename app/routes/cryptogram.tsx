@@ -352,20 +352,22 @@ export default function Cryptogram() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Initialize from URL params (works on both SSR and client)
-  const [puzzleText, setPuzzleText] = useState(() => {
-    const puzzleParam = searchParams.get("puzzle");
-    if (!puzzleParam) return "";
+  // Initialize from URL params - decode with error handling
+  let initialPuzzle = "";
+  const puzzleParam = searchParams.get("puzzle");
+  if (puzzleParam) {
     try {
-      return decodeURIComponent(puzzleParam);
+      initialPuzzle = decodeURIComponent(puzzleParam);
     } catch {
       // Silent fallback per FR-006
-      return "";
+      initialPuzzle = "";
     }
-  });
+  }
+
+  const [puzzleText, setPuzzleText] = useState(initialPuzzle);
   const [mappings, setMappings] = useState<Record<string, string>>({});
 
-  // Write puzzle to URL on change with debounce (T010 - inline encoding)
+  // Write puzzle to URL on change with debounce
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (puzzleText) {
