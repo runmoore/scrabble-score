@@ -1,5 +1,5 @@
-import { Form, useSearchParams } from "@remix-run/react";
-import { useState } from "react";
+import { Form, useNavigate, useSearchParams } from "@remix-run/react";
+import { useState, useEffect } from "react";
 
 // =============================================================================
 // HELPER FUNCTIONS (T008)
@@ -349,12 +349,38 @@ function MappingGrid({
 // =============================================================================
 
 export default function Cryptogram() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const initialPuzzle = searchParams.get("puzzle") || "";
 
-  // Basic state for testing components built so far
+  // Initialize from URL params - decode with error handling
+  let initialPuzzle = "";
+  const puzzleParam = searchParams.get("puzzle");
+  if (puzzleParam) {
+    try {
+      initialPuzzle = decodeURIComponent(puzzleParam);
+    } catch {
+      // Silent fallback per FR-006
+      initialPuzzle = "";
+    }
+  }
+
   const [puzzleText, setPuzzleText] = useState(initialPuzzle);
   const [mappings, setMappings] = useState<Record<string, string>>({});
+
+  // Write puzzle to URL on change with debounce
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (puzzleText) {
+        navigate(`?puzzle=${encodeURIComponent(puzzleText)}`, {
+          replace: true,
+        });
+      } else {
+        navigate("/cryptogram", { replace: true });
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [puzzleText, navigate]);
 
   // Event handlers
   const handlePuzzleChange = (value: string) => {

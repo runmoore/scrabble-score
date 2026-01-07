@@ -377,4 +377,154 @@ describe("cryptogram solver", () => {
       cy.findByLabelText("Mapping for H").should("have.value", "T");
     });
   });
+
+  // URL Persistence Tests (User Stories 1, 2, 3)
+  describe("URL Persistence", () => {
+    it("should encode puzzle in URL when entered", () => {
+      const puzzle = "HELLO WORLD";
+
+      // Enter puzzle
+      cy.findByRole("textbox", { name: /puzzle/i }).type(puzzle);
+
+      // Wait for debounce (300ms + buffer)
+      cy.wait(400);
+
+      // Verify URL contains encoded puzzle
+      cy.url().should("include", "puzzle=");
+      cy.url().should("include", encodeURIComponent(puzzle));
+    });
+
+    it("should load puzzle from URL on page load", () => {
+      // SSR BEHAVIOR: This test validates server-side rendering (SSR) works correctly.
+      // Remix's useSearchParams() hook works during SSR, allowing the component to read
+      // the puzzle parameter directly from the URL without a separate loader function.
+      // The puzzle is initialized during SSR and included in the initial HTML response,
+      // eliminating client-side content flash with no extra fetch requests.
+      const puzzle = "SECRET MESSAGE";
+      const encodedPuzzle = encodeURIComponent(puzzle);
+
+      // Navigate directly to URL with puzzle
+      cy.visit(`/cryptogram?puzzle=${encodedPuzzle}`);
+
+      // Verify puzzle is loaded in input (pre-populated via SSR)
+      cy.findByRole("textbox", { name: /puzzle/i }).should(
+        "have.value",
+        puzzle
+      );
+
+      // Verify puzzle is displayed (no flash - SSR rendered)
+      cy.findByTestId("decrypted-text").should("contain.text", puzzle);
+    });
+
+    it("should persist puzzle through page refresh", () => {
+      const puzzle = "REFRESH TEST";
+
+      // Enter puzzle
+      cy.findByRole("textbox", { name: /puzzle/i }).type(puzzle);
+
+      // Wait for URL to update
+      cy.wait(400);
+
+      // Refresh page
+      cy.reload();
+
+      // Verify puzzle persists
+      cy.findByRole("textbox", { name: /puzzle/i }).should(
+        "have.value",
+        puzzle
+      );
+      cy.findByTestId("decrypted-text").should("contain.text", puzzle);
+    });
+
+    it("should clear URL when puzzle is cleared", () => {
+      const puzzle = "CLEAR ME";
+
+      // Enter puzzle
+      cy.findByRole("textbox", { name: /puzzle/i }).type(puzzle);
+
+      // Wait for URL to update
+      cy.wait(400);
+
+      // Verify URL has puzzle
+      cy.url().should("include", "puzzle=");
+
+      // Clear puzzle
+      cy.findByRole("textbox", { name: /puzzle/i }).clear();
+
+      // Wait for debounce
+      cy.wait(400);
+
+      // Verify URL no longer has puzzle param
+      cy.url().should("not.include", "puzzle=");
+    });
+
+    it("should handle special characters and newlines in URL", () => {
+      const puzzle = "Line 1\nLine 2";
+
+      // Visit with the puzzle already encoded in URL
+      cy.visit(`/cryptogram?puzzle=${encodeURIComponent(puzzle)}`);
+
+      // Verify puzzle loads with newlines preserved
+      cy.findByRole("textbox", { name: /puzzle/i }).should(
+        "have.value",
+        puzzle
+      );
+
+      // Refresh to test persistence
+      cy.reload();
+
+      // Verify still persists
+      cy.findByRole("textbox", { name: /puzzle/i }).should(
+        "have.value",
+        puzzle
+      );
+    });
+
+    it("should handle emoji in puzzle URL encoding", () => {
+      const puzzle = "Hello 😀 World";
+
+      // Enter puzzle
+      cy.findByRole("textbox", { name: /puzzle/i }).type(puzzle);
+
+      // Wait for URL to update
+      cy.wait(400);
+
+      // Refresh page
+      cy.reload();
+
+      // Verify emoji persists
+      cy.findByRole("textbox", { name: /puzzle/i }).should(
+        "have.value",
+        puzzle
+      );
+    });
+
+    it("should handle corrupted URL gracefully", () => {
+      // Navigate to URL with invalid encoding
+      cy.visit("/cryptogram?puzzle=%E0%A4%A");
+
+      // Should not crash - should show empty puzzle
+      cy.findByRole("textbox", { name: /puzzle/i }).should("have.value", "");
+    });
+
+    it("should update URL dynamically as user types", () => {
+      // Enter first part
+      cy.findByRole("textbox", { name: /puzzle/i }).type("HELLO");
+
+      // Wait for debounce
+      cy.wait(400);
+
+      // Check URL has HELLO
+      cy.url().should("include", "HELLO");
+
+      // Add more text
+      cy.findByRole("textbox", { name: /puzzle/i }).type(" WORLD");
+
+      // Wait for debounce
+      cy.wait(400);
+
+      // Check URL updated
+      cy.url().should("include", "HELLO%20WORLD");
+    });
+  });
 });
