@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a Scrabble score tracking application built with the Remix Indie Stack. It allows users to create games, track multiple players, and record scores throughout the game with turn-by-turn play.
 
+**Target Platform**: Progressive Web App (PWA) optimized for mobile browsers, specifically iPhone devices. The app is designed to be installed on the iPhone home screen and used as a native-like experience.
+
 ## Common Commands
 
 ### Development
@@ -149,9 +151,14 @@ The `EnhancedGame` type augments Prisma's Game model with:
 ### Styling
 
 - **Tailwind CSS** for all styling
+- **Avoid inline `style` attributes**: Use Tailwind utility classes instead of inline styles wherever possible. Only use inline styles when absolutely necessary (e.g., dynamic values that can't be predetermined)
 - Custom colors: `blue-primary`, `green-primary/secondary`, `purple-primary/secondary`, `red-primary/secondary`
-- Responsive design with mobile-first approach
-- Progressive Web App (PWA) capabilities via manifest.json
+- Mobile-first responsive design (primary target: iPhone)
+- Progressive Web App (PWA) capabilities:
+  - `manifest.json` for app installation
+  - `apple-touch-icon` for iPhone home screen icon
+  - `apple-mobile-web-app-capable` meta tag for standalone mode
+  - Routes can override default manifest (e.g., anagram route has custom manifest)
 
 ### Important Patterns
 
@@ -161,3 +168,13 @@ The `EnhancedGame` type augments Prisma's Game model with:
 4. **Optimistic UI**: Score input clears immediately on submit before server response
 5. **iOS considerations**: Uses `inputMode="numeric"` with +/- buttons instead of negative number input (iOS doesn't show minus key on number pad)
 6. **Authorization**: All database queries include userId filtering to ensure users can only access their own data
+7. **PWA-first design**: All features should be optimized for mobile use and work when installed as a PWA on iPhone home screen
+
+## Active Technologies
+
+- TypeScript 5.x (existing project stack) + React 18, Remix 2.12.1 (Indie Stack), Tailwind CSS (001-cryptogram-aid)
+- N/A (session-only, no database persistence) (001-cryptogram-aid)
+
+## Recent Changes
+
+- 001-cryptogram-aid: Added TypeScript 5.x (existing project stack) + React 18, Remix 2.12.1 (Indie Stack), Tailwind CSS
