@@ -1,6 +1,23 @@
 <!--
 Sync Impact Report
 ==================
+Version change: 1.1.1 → 1.2.0
+Constitution amendment date: 2026-01-07
+Modified principles: None
+Added sections:
+  - Principle VIII: Avoid Premature Abstraction (NEW)
+  - Pre-Implementation Checklist: Added abstraction justification item
+Renumbered sections:
+  - Previous Principle VII (Database Schema Integrity) remains Principle VII (no renumber needed, new principle added at end)
+Removed sections: None
+Templates requiring updates:
+  - plan-template.md - Should document abstraction decisions in technical context
+  - tasks-template.md - Tasks should prefer inline code unless abstraction justified
+Follow-up TODOs: None
+Rationale: Premature abstraction creates unnecessary complexity and indirection. Simple, inline code is easier to understand and maintain than trivial wrapper functions. Abstractions should only be introduced when there is clear evidence of reuse, complexity reduction, or encapsulation of business logic.
+
+Previous Amendment
+==================
 Version change: 1.1.0 → 1.1.1
 Constitution amendment date: 2026-01-06
 Modified principles:
@@ -116,6 +133,21 @@ Database changes MUST follow Prisma conventions:
 
 **Rationale**: Prisma migrations provide auditable schema history and prevent drift between environments.
 
+### VIII. Avoid Premature Abstraction
+
+Code MUST favor simplicity and directness over unnecessary abstraction:
+
+- **Default to inline code**: Keep related logic together in the same file unless there's clear justification for extraction
+- **Abstractions require evidence**: Only create separate utility functions/modules when there is:
+  - **Genuine reuse**: Used in 3+ different locations across the codebase
+  - **Complexity reduction**: The abstraction meaningfully simplifies the calling code (not just wrapping a single API call)
+  - **Business logic encapsulation**: Contains domain-specific logic that benefits from centralization
+- **Avoid trivial wrappers**: Do not create utility functions that simply wrap a single built-in API call (e.g., `encodePuzzleForUrl(text)` that only calls `encodeURIComponent(text)`)
+- **Inline is clearer**: Simple operations like `encodeURIComponent()` or `array.filter()` are more readable when used directly
+- **DRY is not absolute**: "Don't Repeat Yourself" should not override clarity - some repetition is acceptable if it keeps code self-contained and understandable
+
+**Rationale**: Premature abstraction creates unnecessary indirection, cognitive overhead, and maintenance burden. Simple, inline code that uses standard APIs directly is easier to understand, debug, and modify. Abstractions should solve real problems (reuse, complexity, encapsulation), not theoretical ones.
+
 ## Quality Gates
 
 ### Pre-Implementation Checklist
@@ -127,6 +159,7 @@ Before starting any feature:
 - [ ] Testing strategy outlined (unit vs. e2e)
 - [ ] Mobile/iOS considerations documented (if UI changes)
 - [ ] PWA compatibility verified (works on iPhone home screen)
+- [ ] Abstractions justified (if creating utility functions/modules, document why inline code insufficient)
 
 ### Pre-Commit Checklist
 
@@ -195,7 +228,7 @@ Before deploying to production:
 
 All pull requests MUST verify compliance with:
 
-- Core Principles (I-VII)
+- Core Principles (I-VIII)
 - Quality Gates (Pre-Commit Checklist minimum)
 - Testing Architecture requirements
 
@@ -210,4 +243,4 @@ Exceptions to these principles MUST be:
 3. Include explanation of why simpler alternatives were rejected
 4. Approved in code review with explicit acknowledgment
 
-**Version**: 1.1.1 | **Ratified**: 2025-12-05 | **Last Amended**: 2026-01-06
+**Version**: 1.2.0 | **Ratified**: 2025-12-05 | **Last Amended**: 2026-01-07

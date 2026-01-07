@@ -91,6 +91,7 @@ During E2E test execution, the tests revealed that the actual implementation dif
 2. **Visual Layout** (FR-015): Specified that cipher letters are positioned directly **below** each input box, forming a vertical unit (input above, cipher below), rather than a separate display area.
 
 3. **Synchronization Model** (FR-012, FR-013): Enhanced to emphasize that:
+
    - All inline input boxes for the same cipher letter stay synchronized with each other
    - Changes in any inline box update all other inline boxes for that letter + the mapping grid
    - The mapping grid updates all inline boxes when changed
@@ -110,6 +111,7 @@ During E2E test execution, the tests revealed that the actual implementation dif
 ### Implementation Match
 
 The specification now accurately describes the implementation where:
+
 - Every cipher letter occurrence has an inline input box above it
 - Cipher letters remain visible below their input boxes for reference
 - All inputs for the same letter stay synchronized

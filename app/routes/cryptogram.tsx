@@ -1,5 +1,32 @@
-import { Form, useSearchParams } from "@remix-run/react";
-import { useState } from "react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import {
+  Form,
+  useNavigate,
+  useLoaderData,
+} from "@remix-run/react";
+import { useState, useEffect } from "react";
+
+// =============================================================================
+// LOADER (Server-Side Rendering)
+// =============================================================================
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const puzzleParam = url.searchParams.get("puzzle");
+
+  let initialPuzzle = "";
+  if (puzzleParam) {
+    try {
+      initialPuzzle = decodeURIComponent(puzzleParam);
+    } catch {
+      // Silent fallback per FR-006
+      initialPuzzle = "";
+    }
+  }
+
+  return json({ initialPuzzle });
+}
 
 // =============================================================================
 // HELPER FUNCTIONS (T008)
@@ -349,12 +376,27 @@ function MappingGrid({
 // =============================================================================
 
 export default function Cryptogram() {
-  const [searchParams] = useSearchParams();
-  const initialPuzzle = searchParams.get("puzzle") || "";
+  const navigate = useNavigate();
 
-  // Basic state for testing components built so far
+  // Initialize from SSR loader data (T008)
+  const { initialPuzzle } = useLoaderData<typeof loader>();
   const [puzzleText, setPuzzleText] = useState(initialPuzzle);
   const [mappings, setMappings] = useState<Record<string, string>>({});
+
+  // Write puzzle to URL on change with debounce (T010 - inline encoding)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (puzzleText) {
+        navigate(`?puzzle=${encodeURIComponent(puzzleText)}`, {
+          replace: true,
+        });
+      } else {
+        navigate("/cryptogram", { replace: true });
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [puzzleText, navigate]);
 
   // Event handlers
   const handlePuzzleChange = (value: string) => {

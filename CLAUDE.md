@@ -172,6 +172,9 @@ The `EnhancedGame` type augments Prisma's Game model with:
 
 ## Active Technologies
 
+- TypeScript 5.x (existing project stack) + React 18, Remix 2.12.1 (Indie Stack), Remix Router/Navigation (002-cryptogram-url-persistence)
+- TypeScript 5.x (existing project stack) + React 18, Remix 2.12.1 (Indie Stack with SSR support) (002-cryptogram-url-persistence)
+
 - TypeScript 5.x (existing project stack) + React 18, Remix 2.12.1 (Indie Stack), Tailwind CSS (001-cryptogram-aid)
 - N/A (session-only, no database persistence) (001-cryptogram-aid)
 
