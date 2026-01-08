@@ -290,15 +290,18 @@ function submitMultipleScores(
   scores: Array<{ score: string; negative?: boolean }>
 ) {
   scores.forEach(({ score, negative = false }) => {
-    // Clear any existing value and type new score, then wait for value to be set
-    cy.findByRole("spinbutton", { name: /score/i })
-      .clear()
-      .type(score)
-      .should("have.value", score); // Wait for React state to update
+    // Clear any existing value
+    cy.findByRole("spinbutton", { name: /score/i }).clear();
+
+    // Re-query and type new score (avoids detached element)
+    cy.findByRole("spinbutton", { name: /score/i }).type(score);
+
+    // Re-query and verify value was set (waits for React state)
+    cy.findByRole("spinbutton", { name: /score/i }).should("have.value", score);
 
     if (negative) {
       cy.toggleNegativeScoreSign();
-      // Verify the value became negative
+      // Verify the value became negative (re-query again)
       cy.findByRole("spinbutton", { name: /score/i }).should(
         "have.value",
         `-${score}`
