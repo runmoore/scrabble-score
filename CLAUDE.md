@@ -137,6 +137,57 @@ The `EnhancedGame` type augments Prisma's Game model with:
   - All commands include proper intercepts and waits for reliability
 - Tests use `cy.cleanupUser()` in `afterEach()` to delete test users
 
+**CRITICAL Cypress Best Practices - Avoiding Flaky Tests:**
+
+1. **NEVER use arbitrary `cy.wait(milliseconds)` with fixed timeouts** - This is a code smell and leads to flaky tests in CI
+
+2. **ALWAYS use assertion-based waiting** - Cypress automatically retries assertions for up to 4 seconds:
+
+   ```typescript
+   // ❌ BAD - Arbitrary wait, will be flaky
+   cy.get("input").type("10");
+   cy.wait(200); // Hope 200ms is enough?
+
+   // ✅ GOOD - Wait for actual state
+   cy.get("input").type("10").should("have.value", "10");
+   ```
+
+3. **Wait for React state updates after user input** - Our app uses React state (`useState`, `onChange`), which updates asynchronously:
+
+   ```typescript
+   // ❌ BAD - Next command runs before React finishes updating
+   cy.findByRole("spinbutton").clear().type("10");
+   cy.findByRole("button", { name: "-" }).click(); // May operate on stale state
+
+   // ✅ GOOD - Explicitly wait for value to be set
+   cy.findByRole("spinbutton").clear().type("10").should("have.value", "10"); // Waits until React state updates
+   cy.findByRole("button", { name: "-" }).click(); // Now safe to interact
+   ```
+
+4. **Assert element states before interaction** - Ensure elements are in the expected state:
+
+   ```typescript
+   // ✅ GOOD - Verify state before clicking
+   cy.findByRole("button", { name: "-" })
+     .should("be.visible")
+     .and("not.be.disabled")
+     .click();
+   ```
+
+5. **Trust Cypress's built-in retry logic** - Commands like `.should()`, `.contains()`, and `.find()` automatically retry. Don't add waits after them.
+
+6. **For number inputs with `.clear()`** - Always verify the new value was set:
+
+   ```typescript
+   // ❌ BAD - clear() can leave input in transient state
+   cy.get('input[type="number"]').clear().type("42");
+
+   // ✅ GOOD - Verify value is actually "42"
+   cy.get('input[type="number"]').clear().type("42").should("have.value", "42");
+   ```
+
+**Why This Matters**: Our score input uses `<input type="number">` with React `onChange` handlers. The DOM and React state don't update instantly - there's an asynchronous delay. Tests that don't wait for actual state changes will see stale values and fail intermittently, especially in CI environments that may be slower than local development machines.
+
 **MSW (Mock Service Worker)**: API mocking for development and testing. Configured in `mocks/` directory.
 
 ### CI/CD

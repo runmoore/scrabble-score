@@ -14,15 +14,22 @@ describe("Negative Score Functionality", () => {
 
   it("should handle +/- button functionality for score input", () => {
     // Test positive score entry (baseline)
-    cy.findByRole("spinbutton", { name: /score/i }).type("10");
+    cy.findByRole("spinbutton", { name: /score/i })
+      .clear()
+      .type("10")
+      .should("have.value", "10"); // Wait for value to be set
 
     cy.checkButtonStates(true, false); // minus enabled, plus disabled
     cy.toggleNegativeScoreSign();
+
+    // Verify the value changed to negative
     cy.findByRole("spinbutton", { name: /score/i }).should("have.value", "-10");
 
     // After making negative: minus disabled, plus enabled
     cy.checkButtonStates(false, true);
     cy.togglePlusScoreSign();
+
+    // Verify the value changed back to positive
     cy.findByRole("spinbutton", { name: /score/i }).should("have.value", "10");
 
     // Back to: minus enabled, plus disabled

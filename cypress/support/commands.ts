@@ -248,20 +248,29 @@ function submitScore(score: string) {
 }
 
 function checkButtonStates(minusEnabled: boolean, plusEnabled: boolean) {
-  cy.findByRole("button", { name: "-" }).should(
-    minusEnabled ? "not.be.disabled" : "be.disabled"
-  );
-  cy.findByRole("button", { name: "+" }).should(
-    plusEnabled ? "not.be.disabled" : "be.disabled"
-  );
+  // Check minus button state with automatic retry logic
+  cy.findByRole("button", { name: "-" })
+    .should("be.visible")
+    .and(minusEnabled ? "not.be.disabled" : "be.disabled");
+
+  // Check plus button state with automatic retry logic
+  cy.findByRole("button", { name: "+" })
+    .should("be.visible")
+    .and(plusEnabled ? "not.be.disabled" : "be.disabled");
 }
 
 function togglePlusScoreSign() {
-  cy.findByRole("button", { name: "+" }).click();
+  cy.findByRole("button", { name: "+" })
+    .should("be.visible")
+    .and("not.be.disabled")
+    .click();
 }
 
 function toggleNegativeScoreSign() {
-  cy.findByRole("button", { name: "-" }).click();
+  cy.findByRole("button", { name: "-" })
+    .should("be.visible")
+    .and("not.be.disabled")
+    .click();
 }
 
 // function toggleScoreSign(makeNegative: boolean) {
@@ -281,10 +290,19 @@ function submitMultipleScores(
   scores: Array<{ score: string; negative?: boolean }>
 ) {
   scores.forEach(({ score, negative = false }) => {
-    cy.findByRole("spinbutton", { name: /score/i }).type(score);
+    // Clear any existing value and type new score, then wait for value to be set
+    cy.findByRole("spinbutton", { name: /score/i })
+      .clear()
+      .type(score)
+      .should("have.value", score); // Wait for React state to update
 
     if (negative) {
       cy.toggleNegativeScoreSign();
+      // Verify the value became negative
+      cy.findByRole("spinbutton", { name: /score/i }).should(
+        "have.value",
+        `-${score}`
+      );
     }
 
     cy.submitScore("");
