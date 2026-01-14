@@ -272,8 +272,8 @@ function PuzzleDisplay({
 
 /**
  * MappingGrid Component (T011, enhanced T022)
- * Compact 26 letter inputs (A-Z) in grid layout for creating cipher-to-plain mappings
- * Redesigned for 30% less vertical space
+ * Compact 26 letter inputs (A-Z) in responsive flexbox layout for creating cipher-to-plain mappings
+ * Fixed-width cells (80px) with center alignment for consistent sizing
  */
 function MappingGrid({
   mappings,
@@ -304,17 +304,16 @@ function MappingGrid({
         </button>
       </div>
 
-      {/* Compact grid layout with reduced spacing */}
-      <div className="grid grid-cols-6 gap-1 md:grid-cols-9 lg:grid-cols-13">
+      <div className="mx-auto flex max-w-7xl flex-wrap justify-start gap-2">
         {alphabet.map((letter) => {
           const hasConflict = conflicts.includes(letter);
           const value = mappings[letter] || "";
 
           return (
-            <div key={letter} className="flex flex-col items-center">
+            <div key={letter} className="w-20 bg-gray-50 p-2 text-center">
               <label
                 htmlFor={`mapping-${letter}`}
-                className="mb-0.5 text-[10px] font-medium text-gray-600"
+                className="mb-0.5 block text-[10px] font-medium text-gray-600"
               >
                 {letter}
               </label>
