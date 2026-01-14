@@ -56,6 +56,122 @@ npx prisma studio        # Open Prisma Studio UI
 
 These commands must complete successfully before considering any task complete. If any command fails, the issues must be fixed before moving on.
 
+## Pull Request Best Practices
+
+When creating pull requests, Claude must follow these guidelines to ensure high-quality, well-documented PRs.
+
+### Screenshots for Visual Changes
+
+**CRITICAL**: For any UI/visual changes, always capture before/after screenshots with proper process:
+
+1. **Restart dev server between branches** - Browser cache is NOT sufficient, must restart server:
+   ```bash
+   # Kill existing server
+   lsof -ti:3000 | xargs kill -9
+
+   # Checkout base branch and start fresh server
+   git checkout main
+   npm run dev
+   # Capture "before" screenshots
+
+   # Kill server, switch to feature branch, restart
+   lsof -ti:3000 | xargs kill -9
+   git checkout feature-branch
+   npm run dev
+   # Capture "after" screenshots
+   ```
+
+2. **Use side-by-side comparison** - Format in PR description using HTML table for easy comparison:
+   ```html
+   <table>
+   <tr>
+   <th>Before</th>
+   <th>After</th>
+   </tr>
+   <tr>
+   <td width="50%">
+
+   **Mobile (375px)**
+
+   <img src="https://github.com/user/repo/blob/branch/path/screenshot-before-375px.png?raw=true" width="100%" alt="Before - Mobile 375px"/>
+
+   </td>
+   <td width="50%">
+
+   **Mobile (375px)**
+
+   <img src="https://github.com/user/repo/blob/branch/path/screenshot-after-375px.png?raw=true" width="100%" alt="After - Mobile 375px"/>
+
+   </td>
+   </tr>
+   </table>
+   ```
+
+3. **Capture multiple viewport sizes** - Show responsive behavior across devices:
+   - Mobile (375px) - Primary target (iPhone)
+   - Tablet (768px)
+   - Desktop (1920px)
+
+4. **Use Chrome DevTools MCP** - For consistent, high-quality screenshots:
+   - Resize page to target viewport
+   - Scroll element into view if needed
+   - Save to feature spec directory: `specs/###-feature/screenshot-*.png`
+
+5. **Commit screenshots to feature branch** - Include in PR for GitHub to display them
+
+### PR Description Management
+
+**NEVER spam PRs with multiple comments**. Instead:
+
+- **Update the PR description** once with all information: `gh pr edit <number> --body "..."`
+- Include screenshots, test results, and key changes in the description
+- Only add comments for substantive updates or responses to reviews
+- Use `gh pr edit` to update description, not `gh pr comment`
+
+### PR Description Structure
+
+Use this template for consistency:
+
+```markdown
+## Summary
+
+Brief description of what changed and why.
+
+## Visual Changes
+
+### Before & After Comparison
+
+[Side-by-side comparison table if UI changes]
+
+## Key Improvements
+
+- Bullet points highlighting main benefits
+- Technical improvements
+- Bug fixes
+
+## Technical Details
+
+- Implementation approach
+- Key decisions
+- Trade-offs considered
+
+## Test Results
+
+- ✅ All E2E tests passing (X/X)
+- ✅ Manual testing completed
+- ✅ Code quality checks: typecheck, lint, format all passing
+- ✅ Specific functionality verified
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+```
+
+### Screenshot File Naming
+
+Use consistent naming convention:
+- Before: `screenshot-before-375px.png`, `screenshot-before-768px.png`, etc.
+- After: `screenshot-after-375px.png`, `screenshot-after-768px.png`, etc.
+- Store in: `specs/###-feature-name/`
+
 ## Architecture
 
 ### Database Schema (Prisma + SQLite)
