@@ -1,3 +1,208 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Modal animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOutToTop {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOutToBottom {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0;
+  }
+}
+
+/* Backdrop animations */
+.modal-backdrop-enter {
+  animation: fadeIn 300ms ease-out forwards;
+}
+
+.modal-backdrop-exit {
+  animation: fadeOut 200ms ease-in forwards;
+}
+
+/* Panel animations - Right */
+.modal-panel-slide-right-enter {
+  animation: slideInFromRight 350ms ease-out forwards;
+}
+
+.modal-panel-slide-right-exit {
+  animation: slideOutToRight 250ms ease-in forwards;
+}
+
+/* Panel animations - Left */
+.modal-panel-slide-left-enter {
+  animation: slideInFromLeft 350ms ease-out forwards;
+}
+
+.modal-panel-slide-left-exit {
+  animation: slideOutToLeft 250ms ease-in forwards;
+}
+
+/* Panel animations - Top */
+.modal-panel-slide-top-enter {
+  animation: slideInFromTop 350ms ease-out forwards;
+}
+
+.modal-panel-slide-top-exit {
+  animation: slideOutToTop 250ms ease-in forwards;
+}
+
+/* Panel animations - Bottom */
+.modal-panel-slide-bottom-enter {
+  animation: slideInFromBottom 350ms ease-out forwards;
+}
+
+.modal-panel-slide-bottom-exit {
+  animation: slideOutToBottom 250ms ease-in forwards;
+}
+
+/* Panel animations - Center */
+.modal-panel-center-enter {
+  animation: scaleIn 300ms ease-out forwards;
+}
+
+.modal-panel-center-exit {
+  animation: scaleOut 200ms ease-in forwards;
+}
+
+/* Legacy classes for backward compatibility */
+.modal-panel-enter {
+  animation: slideInFromRight 350ms ease-out forwards;
+}
+
+.modal-panel-exit {
+  animation: slideOutToRight 250ms ease-in forwards;
+}
+
+/* Hover peek animations */
+@keyframes peekSlideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideFromPeek {
+  from {
+    transform: translateX(calc(100% - max(100px, min(20vw, 200px))));
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.hover-peek {
+  animation: peekSlideIn 150ms ease-out forwards;
+}
+
+.modal-panel-from-peek {
+  animation: modalSlideFromPeek 300ms ease-out forwards;
+}
