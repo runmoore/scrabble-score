@@ -5,6 +5,7 @@
 **Purpose**: Research technical decisions for URL-based state persistence in Remix with SSR
 
 **IMPLEMENTATION EVOLUTION**:
+
 1. Initial: Utility files wrapping `encodeURIComponent` ❌ Removed (premature abstraction)
 2. Refinement: Remix loader function for SSR ❌ Removed (unnecessary overhead)
 3. Final: Direct `useSearchParams()` reading ✅ **Simplest approach that works**

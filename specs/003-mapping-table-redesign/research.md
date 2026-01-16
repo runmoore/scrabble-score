@@ -105,11 +105,13 @@ This is a straightforward UI redesign with no unknowns requiring external resear
    ```
 
 2. Apply inverted color approach:
+
    - Light gray cells: `bg-gray-50`
    - White gaps: `gap-2` (8px)
    - Fixed width: `w-20` (80px)
 
 3. Key Tailwind classes:
+
    - `flex flex-wrap` - Responsive wrapping
    - `justify-start` - Left alignment
    - `gap-2` - 8px white gaps acting as borders

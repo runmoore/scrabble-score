@@ -211,21 +211,25 @@ During post-implementation review, identified two improvements:
 ### Refinements (Completed)
 
 **Phase 1: Remove Abstraction**
+
 1. ✅ Deleted `app/utils/url-encoding.ts` and tests (~130 LOC removed)
 2. ✅ Removed utility imports from cryptogram route
 
 **Phase 2: Add SSR (Initial Approach)**
+
 1. ✅ Initially implemented Remix loader function for SSR
 2. ✅ Initialized state from loader data
 3. ✅ Inlined encoding/decoding
 
 **Phase 3: Simplify (Final Approach)**
+
 1. ✅ Removed loader function (unnecessary overhead for URL params)
 2. ✅ Simplified to direct `useSearchParams()` reading
 3. ✅ Added try-catch for error handling
 4. ✅ Maintains SSR support without extra fetches
 
 **Final result:**
+
 - Simplest possible implementation
 - SSR works (no content flash)
 - No extra network requests

@@ -45,18 +45,21 @@ Simple visual redesign to convert the letter mapping grid from a box-based layou
 ### 2. Key Styling Changes
 
 **Container**:
+
 - `flex flex-wrap` - Enable flexible wrapping
 - `justify-start` - Left-align cells (conventional layout)
 - `gap-2` - 8px white gaps acting as visual borders
 - `max-w-7xl mx-auto` - Constrain width and center container
 
 **Cells**:
+
 - `w-20` - Fixed 80px width (prevents last row from appearing disproportionate)
 - `bg-gray-50` - Light gray background for distinction
 - `p-2` - Padding for touch targets
 - `text-center` - Center content
 
 **Responsive Behavior**:
+
 - No breakpoints needed - column count adapts naturally
 - 320px mobile: ~3 cells per row
 - 768px tablet: 8 cells per row
@@ -65,6 +68,7 @@ Simple visual redesign to convert the letter mapping grid from a box-based layou
 ### 3. Inputs Remain Unchanged
 
 **Inputs**:
+
 - Keep existing classes unchanged
 - Maintain conflict highlighting logic (`border-red-primary` when conflicts detected)
 - All existing functionality preserved (conflict detection, clear all, disabled states)
