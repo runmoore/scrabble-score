@@ -56,6 +56,30 @@ npx prisma studio        # Open Prisma Studio UI
 
 These commands must complete successfully before considering any task complete. If any command fails, the issues must be fixed before moving on.
 
+## Pull Request & Screenshot Workflow
+
+When creating pull requests with visual changes:
+
+1. **Capture screenshots** at multiple viewports:
+   - Mobile: 375px width
+   - Tablet: 768px width
+   - Desktop: 1920px width
+
+2. **Store in repo**: Save to `docs/screenshots/###-feature-name/`
+   - Naming: `before-375px.png`, `after-375px.png`, etc.
+   - Commit to feature branch
+
+3. **Reference from main**: In PR descriptions, reference screenshots from main branch:
+   - Pattern: `https://github.com/USER/REPO/blob/main/docs/screenshots/###-feature/after-375px.png?raw=true`
+   - This ensures screenshots persist after branch deletion
+   - Enables automated PR creation via `gh` CLI
+
+4. **Benefits**:
+   - Screenshots survive branch cleanup
+   - AI agents can fully automate PR creation
+   - Permanent documentation in version control
+   - Trade-off: Increases repo size (acceptable for documentation)
+
 ## Architecture
 
 ### Database Schema (Prisma + SQLite)

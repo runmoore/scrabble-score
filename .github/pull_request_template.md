@@ -20,14 +20,14 @@
 
 **Mobile (375px)**
 
-<img src="https://github.com/USER/REPO/blob/BRANCH/specs/###-feature/screenshot-before-375px.png?raw=true" width="100%" alt="Before - Mobile 375px"/>
+<img src="https://github.com/USER/REPO/blob/main/docs/screenshots/###-feature/before-375px.png?raw=true" width="100%" alt="Before - Mobile 375px"/>
 
 </td>
 <td width="50%">
 
 **Mobile (375px)**
 
-<img src="https://github.com/USER/REPO/blob/BRANCH/specs/###-feature/screenshot-after-375px.png?raw=true" width="100%" alt="After - Mobile 375px"/>
+<img src="https://github.com/USER/REPO/blob/main/docs/screenshots/###-feature/after-375px.png?raw=true" width="100%" alt="After - Mobile 375px"/>
 
 </td>
 </tr>
@@ -36,14 +36,14 @@
 
 **Tablet (768px)**
 
-<img src="https://github.com/USER/REPO/blob/BRANCH/specs/###-feature/screenshot-before-768px.png?raw=true" width="100%" alt="Before - Tablet 768px"/>
+<img src="https://github.com/USER/REPO/blob/main/docs/screenshots/###-feature/before-768px.png?raw=true" width="100%" alt="Before - Tablet 768px"/>
 
 </td>
 <td width="50%">
 
 **Tablet (768px)**
 
-<img src="https://github.com/USER/REPO/blob/BRANCH/specs/###-feature/screenshot-after-768px.png?raw=true" width="100%" alt="After - Tablet 768px"/>
+<img src="https://github.com/USER/REPO/blob/main/docs/screenshots/###-feature/after-768px.png?raw=true" width="100%" alt="After - Tablet 768px"/>
 
 </td>
 </tr>
@@ -52,14 +52,14 @@
 
 **Desktop (1920px)**
 
-<img src="https://github.com/USER/REPO/blob/BRANCH/specs/###-feature/screenshot-before-1920px.png?raw=true" width="100%" alt="Before - Desktop 1920px"/>
+<img src="https://github.com/USER/REPO/blob/main/docs/screenshots/###-feature/before-1920px.png?raw=true" width="100%" alt="Before - Desktop 1920px"/>
 
 </td>
 <td width="50%">
 
 **Desktop (1920px)**
 
-<img src="https://github.com/USER/REPO/blob/BRANCH/specs/###-feature/screenshot-after-1920px.png?raw=true" width="100%" alt="After - Desktop 1920px"/>
+<img src="https://github.com/USER/REPO/blob/main/docs/screenshots/###-feature/after-1920px.png?raw=true" width="100%" alt="After - Desktop 1920px"/>
 
 </td>
 </tr>
@@ -91,8 +91,20 @@
 Screenshot best practices:
 - Kill and restart dev server when switching branches (lsof -ti:3000 | xargs kill -9)
 - Capture at multiple viewports: 375px (mobile), 768px (tablet), 1920px (desktop)
-- Save as: specs/###-feature/screenshot-before-###px.png and screenshot-after-###px.png
-- Commit screenshots to feature branch before creating PR
+- Save screenshots to: docs/screenshots/###-feature-name/
+  - Format: before-375px.png, after-375px.png, before-768px.png, etc.
+- Commit screenshots to feature branch
+
+Screenshot Persistence for Automation:
+To ensure screenshots persist after branch deletion and enable automated PR creation:
+
+1. Store screenshots in docs/screenshots/ directory (committed to repo)
+2. Reference screenshots from main branch in PR template using this pattern:
+   https://github.com/USER/REPO/blob/main/docs/screenshots/###-feature/screenshot-after-375px.png?raw=true
+3. When PR is merged, screenshots automatically become available via main branch URLs
+4. This enables AI agents (Claude Code, etc.) to fully automate PR creation via gh CLI
+
+Note: This increases repo size, but is necessary for automation and permanent documentation.
 -->
 
 ---
