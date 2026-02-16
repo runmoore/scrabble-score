@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { json, type LoaderFunctionArgs } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
 import type { PlayerWithScores } from "~/models/game.server";
@@ -146,6 +146,60 @@ export default function ComparePlayers() {
             </div>
           </div>
         )}
+
+        {/* Last Game Card */}
+        {loaderData.relevantGames.length > 0 &&
+          (() => {
+            const lastGame = loaderData.relevantGames[0];
+            const p1 = lastGame.players.find(
+              (player) => player.name === loaderData.playerOne.name
+            );
+            const p2 = lastGame.players.find(
+              (player) => player.name === loaderData.playerTwo.name
+            );
+            const p1Won = p1 && p2 && p1.totalScore > p2.totalScore;
+            const p2Won = p1 && p2 && p2.totalScore > p1.totalScore;
+
+            return (
+              <Link
+                to={`/games/${lastGame.id}`}
+                className="block rounded-lg border border-gray-200 bg-white p-6 shadow-md transition-shadow hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
+              >
+                <h2 className="mb-4 text-lg font-semibold dark:text-gray-100">
+                  Last Game Played
+                </h2>
+                <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
+                  {new Date(lastGame.createdAt).toLocaleDateString()}
+                </div>
+                <div className="space-y-2">
+                  <div
+                    className={`flex items-center justify-between rounded p-2 ${
+                      p1Won ? "bg-yellow-100 dark:bg-yellow-900" : ""
+                    }`}
+                  >
+                    <div className="font-medium dark:text-gray-100">
+                      {loaderData.playerOne.name}
+                    </div>
+                    <div className="text-2xl font-bold text-blue-primary dark:text-blue-400">
+                      {p1?.totalScore ?? 0}
+                    </div>
+                  </div>
+                  <div
+                    className={`flex items-center justify-between rounded p-2 ${
+                      p2Won ? "bg-yellow-100 dark:bg-yellow-900" : ""
+                    }`}
+                  >
+                    <div className="font-medium dark:text-gray-100">
+                      {loaderData.playerTwo.name}
+                    </div>
+                    <div className="text-2xl font-bold text-blue-primary dark:text-blue-400">
+                      {p2?.totalScore ?? 0}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            );
+          })()}
       </div>
 
       {/* Temporary: Keep existing games list */}
