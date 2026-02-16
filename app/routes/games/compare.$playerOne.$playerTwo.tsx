@@ -81,19 +81,58 @@ const isDraw = (game: {
 export default function ComparePlayers() {
   const loaderData = useLoaderData<typeof loader>();
   return (
-    <>
-      <h1 className="mb-8 text-3xl font-bold dark:text-gray-100">{`${loaderData.playerOne.name} ${loaderData.playerOne.won} vs ${loaderData.playerTwo.won} ${loaderData.playerTwo.name} `}</h1>
-      {loaderData.relevantGames.map((game) => (
-        <div key={game?.id} className="dark:text-gray-200">
-          <span>{game?.createdAt.slice(0, 10)}&nbsp;</span>
-          <span>
-            {isDraw(game) ? "Drawn" : `${getWinnersNames(game)[0]} won`}
-          </span>
+    <div className="space-y-6">
+      {/* Page Title */}
+      <h1 className="text-3xl font-bold dark:text-gray-100">
+        {loaderData.playerOne.name} vs {loaderData.playerTwo.name}
+      </h1>
+
+      {/* Card Grid */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/* All-Time Record Card */}
+        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
+          <h2 className="mb-4 text-lg font-semibold dark:text-gray-100">
+            All-Time Record
+          </h2>
+          <div className="flex items-center justify-between">
+            <div className="text-center">
+              <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                {loaderData.playerOne.name}
+              </div>
+              <div className="text-3xl font-bold text-blue-primary dark:text-blue-400">
+                {loaderData.playerOne.won}
+              </div>
+            </div>
+            <div className="text-2xl font-bold text-gray-400">-</div>
+            <div className="text-center">
+              <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                {loaderData.playerTwo.name}
+              </div>
+              <div className="text-3xl font-bold text-blue-primary dark:text-blue-400">
+                {loaderData.playerTwo.won}
+              </div>
+            </div>
+          </div>
         </div>
-      ))}
-      {loaderData.relevantGames.length === 0 && (
-        <div className="dark:text-gray-200">You haven't played any games</div>
-      )}
-    </>
+      </div>
+
+      {/* Temporary: Keep existing games list */}
+      <div className="mt-8">
+        <h2 className="mb-4 text-xl font-semibold dark:text-gray-100">
+          All Games
+        </h2>
+        {loaderData.relevantGames.map((game) => (
+          <div key={game?.id} className="dark:text-gray-200">
+            <span>{game?.createdAt.slice(0, 10)}&nbsp;</span>
+            <span>
+              {isDraw(game) ? "Drawn" : `${getWinnersNames(game)[0]} won`}
+            </span>
+          </div>
+        ))}
+        {loaderData.relevantGames.length === 0 && (
+          <div className="dark:text-gray-200">You haven't played any games</div>
+        )}
+      </div>
+    </div>
   );
 }
