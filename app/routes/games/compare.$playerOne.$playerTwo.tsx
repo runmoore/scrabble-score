@@ -1,6 +1,7 @@
 import { Link, useLoaderData } from "@remix-run/react";
 import { json, type LoaderFunctionArgs } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
+import { Card } from "~/components/Card";
 import type { PlayerWithScores } from "~/models/game.server";
 import { getAllGames, getGame, getPlayer } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
@@ -125,10 +126,7 @@ export default function ComparePlayers() {
       {/* Card Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* All-Time Record Card */}
-        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="mb-4 text-lg font-semibold dark:text-gray-100">
-            All-Time Record
-          </h2>
+        <Card title="All-Time Record">
           <div className="flex items-center justify-between">
             <div className="text-center">
               <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -148,14 +146,11 @@ export default function ComparePlayers() {
               </div>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Last 5 Games Card - Only show if more than 5 games played */}
         {loaderData.relevantGames.length > 5 && (
-          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
-            <h2 className="mb-4 text-lg font-semibold dark:text-gray-100">
-              Last 5 Games
-            </h2>
+          <Card title="Last 5 Games">
             <div className="flex items-center justify-between">
               <div className="text-center">
                 <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -175,7 +170,7 @@ export default function ComparePlayers() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
         )}
 
         {/* Last Game Card */}
@@ -192,13 +187,11 @@ export default function ComparePlayers() {
             const p2Won = p1 && p2 && p2.totalScore > p1.totalScore;
 
             return (
-              <Link
+              <Card
+                title="Last Game Played"
+                asLink
                 to={`/games/${lastGame.id}`}
-                className="block rounded-lg border border-gray-200 bg-white p-6 shadow-md transition-shadow hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
               >
-                <h2 className="mb-4 text-lg font-semibold dark:text-gray-100">
-                  Last Game Played
-                </h2>
                 <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
                   {new Date(lastGame.createdAt).toLocaleDateString()}
                 </div>
@@ -228,19 +221,17 @@ export default function ComparePlayers() {
                     </div>
                   </div>
                 </div>
-              </Link>
+              </Card>
             );
           })()}
 
         {/* Highest Score Card */}
         {loaderData.highestScore.score > 0 && (
-          <Link
+          <Card
+            title="Highest Game Score"
+            asLink
             to={`/games/${loaderData.highestScore.gameId}`}
-            className="block rounded-lg border border-gray-200 bg-white p-6 shadow-md transition-shadow hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
           >
-            <h2 className="mb-4 text-lg font-semibold dark:text-gray-100">
-              Highest Game Score
-            </h2>
             <div className="text-center">
               <div className="text-4xl font-bold text-purple-primary dark:text-purple-400">
                 {loaderData.highestScore.score}
@@ -254,7 +245,7 @@ export default function ComparePlayers() {
                 ).toLocaleDateString()}
               </div>
             </div>
-          </Link>
+          </Card>
         )}
       </div>
 
