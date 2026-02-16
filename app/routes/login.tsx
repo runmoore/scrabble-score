@@ -149,7 +149,7 @@ export default function LoginPage() {
           >
             Log in
           </button>
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between gap-4">
             <div className="flex items-center">
               <input
                 id="remember"
@@ -159,7 +159,7 @@ export default function LoginPage() {
               />
               <label
                 htmlFor="remember"
-                className="ml-2 block text-sm text-gray-900 dark:text-gray-300"
+                className="ml-2 block whitespace-nowrap text-sm text-gray-900 dark:text-gray-300"
               >
                 Remember me
               </label>
