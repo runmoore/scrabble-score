@@ -258,21 +258,57 @@ export default function ComparePlayers() {
         )}
       </div>
 
-      {/* Temporary: Keep existing games list */}
+      {/* All Games List */}
       <div className="mt-8">
         <h2 className="mb-4 text-xl font-semibold dark:text-gray-100">
           All Games
         </h2>
-        {loaderData.relevantGames.map((game) => (
-          <div key={game?.id} className="dark:text-gray-200">
-            <span>{game?.createdAt.slice(0, 10)}&nbsp;</span>
-            <span>
-              {isDraw(game) ? "Drawn" : `${getWinnersNames(game)[0]} won`}
-            </span>
+        {loaderData.relevantGames.length === 0 ? (
+          <div className="py-8 text-center text-gray-600 dark:text-gray-400">
+            You haven't played any games yet
           </div>
-        ))}
-        {loaderData.relevantGames.length === 0 && (
-          <div className="dark:text-gray-200">You haven't played any games</div>
+        ) : (
+          <div className="max-h-96 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700">
+            {loaderData.relevantGames.map((game, index) => {
+              const p1 = game.players.find(
+                (player) => player.name === loaderData.playerOne.name
+              );
+              const p2 = game.players.find(
+                (player) => player.name === loaderData.playerTwo.name
+              );
+              const winner = isDraw(game) ? "Draw" : getWinnersNames(game)[0];
+              const score = `${p1?.totalScore ?? 0} - ${p2?.totalScore ?? 0}`;
+
+              return (
+                <Link
+                  key={game.id}
+                  to={`/games/${game.id}`}
+                  className={`flex items-center justify-between p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                    index % 2 === 0
+                      ? "bg-white dark:bg-gray-900"
+                      : "bg-gray-50 dark:bg-gray-800"
+                  }`}
+                >
+                  <div className="flex-1">
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      {new Date(game.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div className="flex-1 text-center font-medium dark:text-gray-100">
+                    {winner}
+                  </div>
+                  <div className="flex-1 text-center text-gray-600 dark:text-gray-400">
+                    {score}
+                  </div>
+                  <div className="flex-1 text-right">
+                    <span className="text-sm text-blue-primary hover:underline dark:text-blue-400">
+                      View
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>
