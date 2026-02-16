@@ -43,6 +43,18 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     name: playerTwoName,
   };
 
+  let highestScore: {
+    score: number;
+    playerName: string;
+    gameId: string;
+    gameDate: Date | string;
+  } = {
+    score: 0,
+    playerName: "",
+    gameId: "",
+    gameDate: "",
+  };
+
   for (const [index, game] of relevantGames.entries()) {
     if (!game) continue;
 
@@ -51,6 +63,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     if (!p1 || !p2) continue;
 
+    // Track wins
     if (p1.totalScore > p2.totalScore) {
       playerOne.won++;
       if (index < 5) playerOne.wonLastFive++;
@@ -58,9 +71,27 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
       playerTwo.won++;
       if (index < 5) playerTwo.wonLastFive++;
     }
+
+    // Track highest score
+    if (p1.totalScore > highestScore.score) {
+      highestScore = {
+        score: p1.totalScore,
+        playerName: p1.name,
+        gameId: game.id,
+        gameDate: game.createdAt,
+      };
+    }
+    if (p2.totalScore > highestScore.score) {
+      highestScore = {
+        score: p2.totalScore,
+        playerName: p2.name,
+        gameId: game.id,
+        gameDate: game.createdAt,
+      };
+    }
   }
 
-  return json({ playerOne, playerTwo, relevantGames });
+  return json({ playerOne, playerTwo, relevantGames, highestScore });
 };
 
 const getWinnersNames = (game: {
@@ -200,6 +231,31 @@ export default function ComparePlayers() {
               </Link>
             );
           })()}
+
+        {/* Highest Score Card */}
+        {loaderData.highestScore.score > 0 && (
+          <Link
+            to={`/games/${loaderData.highestScore.gameId}`}
+            className="block rounded-lg border border-gray-200 bg-white p-6 shadow-md transition-shadow hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
+          >
+            <h2 className="mb-4 text-lg font-semibold dark:text-gray-100">
+              Highest Game Score
+            </h2>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-purple-primary dark:text-purple-400">
+                {loaderData.highestScore.score}
+              </div>
+              <div className="mt-2 text-lg font-medium dark:text-gray-100">
+                {loaderData.highestScore.playerName}
+              </div>
+              <div className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                {new Date(
+                  loaderData.highestScore.gameDate
+                ).toLocaleDateString()}
+              </div>
+            </div>
+          </Link>
+        )}
       </div>
 
       {/* Temporary: Keep existing games list */}
