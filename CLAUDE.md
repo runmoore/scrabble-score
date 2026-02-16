@@ -56,6 +56,33 @@ npx prisma studio        # Open Prisma Studio UI
 
 These commands must complete successfully before considering any task complete. If any command fails, the issues must be fixed before moving on.
 
+## Library Usage Guidelines
+
+**IMPORTANT**: Always use existing project dependencies instead of writing custom implementations.
+
+### Before Writing Custom Code
+
+1. **Check `package.json`** for existing libraries that solve the problem
+2. **Search for existing utilities** in the codebase (`app/utils/`, `app/components/`)
+3. **Only write custom code** if no suitable library or utility exists
+
+### Common Libraries Available
+
+- **date-fns** (`^4.1.0`): Date formatting, manipulation, and parsing
+  - Use `format()` for date formatting instead of custom logic
+  - Example: `format(date, "do MMM yyyy")` → "16th Feb 2026"
+- **Remix utilities**: Forms, navigation, data loading
+- **React**: Component patterns, hooks
+- **Tailwind CSS**: Styling (prefer utility classes over custom CSS)
+
+### When to Write Custom Code
+
+- No existing library provides the functionality
+- The existing library is overkill for a simple use case
+- Performance or bundle size concerns with existing solutions
+
+**Rationale**: Using established libraries reduces bugs, maintenance burden, and keeps code consistent with project standards.
+
 ## Pull Request & Screenshot Workflow
 
 When creating pull requests with visual changes:
