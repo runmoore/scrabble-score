@@ -1,11 +1,11 @@
 import { Link, useLoaderData } from "@remix-run/react";
 import { json, type LoaderFunctionArgs } from "@remix-run/server-runtime";
+import { format } from "date-fns";
 import invariant from "tiny-invariant";
 import { Card } from "~/components/Card";
 import type { PlayerWithScores } from "~/models/game.server";
 import { getAllGames, getGame, getPlayer } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
-import { formatDate } from "~/utils/date";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.playerOne, "playerOne not found");
@@ -194,7 +194,7 @@ export default function ComparePlayers() {
                 to={`/games/${lastGame.id}`}
               >
                 <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
-                  {formatDate(lastGame.createdAt)}
+                  {format(lastGame.createdAt, "do MMM yyyy")}
                 </div>
                 <div className="space-y-2">
                   <div
@@ -241,7 +241,7 @@ export default function ComparePlayers() {
                 {loaderData.highestScore.playerName}
               </div>
               <div className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                {formatDate(loaderData.highestScore.gameDate)}
+                {format(loaderData.highestScore.gameDate, "do MMM yyyy")}
               </div>
             </div>
           </Card>
@@ -281,7 +281,7 @@ export default function ComparePlayers() {
                 >
                   <div className="flex-1">
                     <div className="text-sm text-gray-600 dark:text-gray-400">
-                      {formatDate(game.createdAt)}
+                      {format(game.createdAt, "do MMM yyyy")}
                     </div>
                   </div>
                   <div className="flex-1 text-center font-medium dark:text-gray-100">
