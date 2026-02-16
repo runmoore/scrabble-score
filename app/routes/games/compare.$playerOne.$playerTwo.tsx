@@ -33,15 +33,17 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const playerOne = {
     won: 0,
+    wonLastFive: 0,
     name: playerOneName,
   };
 
   const playerTwo = {
     won: 0,
+    wonLastFive: 0,
     name: playerTwoName,
   };
 
-  for (const game of relevantGames) {
+  for (const [index, game] of relevantGames.entries()) {
     if (!game) continue;
 
     const p1 = game.players.find((player) => player.id === params.playerOne);
@@ -51,8 +53,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     if (p1.totalScore > p2.totalScore) {
       playerOne.won++;
+      if (index < 5) playerOne.wonLastFive++;
     } else if (p1.totalScore < p2.totalScore) {
       playerTwo.won++;
+      if (index < 5) playerTwo.wonLastFive++;
     }
   }
 
@@ -114,6 +118,34 @@ export default function ComparePlayers() {
             </div>
           </div>
         </div>
+
+        {/* Last 5 Games Card - Only show if more than 5 games played */}
+        {loaderData.relevantGames.length > 5 && (
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
+            <h2 className="mb-4 text-lg font-semibold dark:text-gray-100">
+              Last 5 Games
+            </h2>
+            <div className="flex items-center justify-between">
+              <div className="text-center">
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {loaderData.playerOne.name}
+                </div>
+                <div className="text-3xl font-bold text-green-primary dark:text-green-400">
+                  {loaderData.playerOne.wonLastFive}
+                </div>
+              </div>
+              <div className="text-2xl font-bold text-gray-400">-</div>
+              <div className="text-center">
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {loaderData.playerTwo.name}
+                </div>
+                <div className="text-3xl font-bold text-green-primary dark:text-green-400">
+                  {loaderData.playerTwo.wonLastFive}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Temporary: Keep existing games list */}
