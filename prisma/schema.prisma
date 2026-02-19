@@ -48,6 +48,7 @@ model Game {
   userId String
 
   completed Boolean? @default(false)
+  deletedAt DateTime?
 
   scores Score[]
 }

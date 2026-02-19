@@ -8,7 +8,12 @@ import {
 import { json, redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
-import { createGame, getGame, reopenGame } from "~/models/game.server";
+import {
+  createGame,
+  deleteGame,
+  getGame,
+  reopenGame,
+} from "~/models/game.server";
 import { getNextPlayerToPlay } from "~/game-utils";
 import { requireUserId } from "~/session.server";
 
@@ -83,6 +88,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     return redirect(`/games/${newGame.id}/play/${players[0]}`);
   }
+
+  if (formData.get("action") === "delete") {
+    const userId = await requireUserId(request);
+
+    await deleteGame({ id: gameId, userId });
+
+    return redirect("/games");
+  }
 };
 
 export default function GamePage() {
@@ -123,26 +136,38 @@ export default function GamePage() {
         </div>
       </div>
       {game.completed && (
-        <Form method="post" action="">
-          <div className="m mt-4 flex flex-col lg:flex-row lg:justify-around">
+        <>
+          <Form method="post" action="">
+            <div className="m mt-4 flex flex-col lg:flex-row lg:justify-around">
+              <button
+                type="submit"
+                className="mb-4 rounded bg-green-primary py-2 px-4 text-white hover:bg-green-secondary focus:bg-green-secondary"
+                name="action"
+                value="reopen"
+              >
+                Re-open game
+              </button>
+              <button
+                type="submit"
+                className="mb-4 rounded bg-red-primary py-2 px-4 text-white hover:bg-red-secondary focus:bg-red-secondary"
+                name="action"
+                value="rematch"
+              >
+                Rematch!
+              </button>
+            </div>
+          </Form>
+          <Form method="post" className="mt-4">
             <button
               type="submit"
-              className="mb-4 rounded bg-green-primary py-2 px-4 text-white hover:bg-green-secondary focus:bg-green-secondary"
+              className="w-full rounded bg-red-primary py-3 px-4 text-white hover:bg-red-secondary focus:bg-red-secondary"
               name="action"
-              value="reopen"
+              value="delete"
             >
-              Re-open game
+              Delete game
             </button>
-            <button
-              type="submit"
-              className="mb-4 rounded bg-red-primary py-2 px-4 text-white hover:bg-red-secondary focus:bg-red-secondary"
-              name="action"
-              value="rematch"
-            >
-              Rematch!
-            </button>
-          </div>
-        </Form>
+          </Form>
+        </>
       )}
     </>
   );

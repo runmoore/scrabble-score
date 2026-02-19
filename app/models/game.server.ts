@@ -28,7 +28,7 @@ export async function getGame({
   id: Game["id"];
 }): Promise<EnhancedGame | null> {
   const game = (await prisma.game.findFirst({
-    where: { id },
+    where: { id, deletedAt: null },
     select: {
       id: true,
       completed: true,
@@ -88,6 +88,7 @@ export function getAllGames({ userId }: { userId: User["id"] }) {
   return prisma.game.findMany({
     where: {
       userId,
+      deletedAt: null,
       // only return games with players
       // https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#filter-on-presence-of-related-records
       players: {
@@ -181,6 +182,19 @@ export function reopenGame(id: Game["id"]) {
   return prisma.game.update({
     data: { completed: false },
     where: { id },
+  });
+}
+
+export function deleteGame({
+  id,
+  userId,
+}: {
+  id: Game["id"];
+  userId: User["id"];
+}) {
+  return prisma.game.update({
+    data: { deletedAt: new Date() },
+    where: { id, userId },
   });
 }
 
