@@ -162,7 +162,7 @@ export default function GamePage() {
           <div className="mt-auto">
             <button
               type="button"
-              className="mt-4 w-full rounded bg-red-primary py-3 px-4 text-white"
+              className="mt-4 w-full rounded bg-red-primary py-3 px-4 text-white hover:bg-red-secondary focus:bg-red-secondary"
               onClick={() => dialogRef.current?.showModal()}
             >
               Delete game
