@@ -51,7 +51,7 @@ export default function GamesPage() {
           </button>
         </Form>
       </header>
-      <main className="h-full flex-col bg-white dark:bg-gray-900 sm:flex sm:flex-row">
+      <main className="flex h-full flex-col bg-white dark:bg-gray-900 sm:flex-row">
         {showMobileMenu && (
           <GamesMenu
             games={games}
@@ -63,7 +63,7 @@ export default function GamesPage() {
           className="hidden h-full w-80 border-r bg-gray-50 dark:border-gray-700 dark:bg-gray-800 sm:block"
           games={games}
         />
-        <div className="flex-1 px-2 py-6 sm:p-6">
+        <div className="flex flex-1 flex-col px-2 py-6 sm:p-6">
           <Outlet />
         </div>
       </main>
