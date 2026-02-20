@@ -6,6 +6,7 @@ import {
   useRouteError,
 } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
+import { useRef } from "react";
 import invariant from "tiny-invariant";
 
 import {
@@ -100,6 +101,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 export default function GamePage() {
   const { game, winners, topScore } = useLoaderData<typeof loader>();
+  const dialogRef = useRef<HTMLDialogElement>(null);
   let title = "Still Playing";
 
   if (game.completed) {
@@ -157,16 +159,51 @@ export default function GamePage() {
               </button>
             </div>
           </Form>
-          <Form method="post" className="mt-4">
-            <button
-              type="submit"
-              className="w-full rounded bg-red-primary py-3 px-4 text-white hover:bg-red-secondary focus:bg-red-secondary"
-              name="action"
-              value="delete"
-            >
-              Delete game
-            </button>
-          </Form>
+          <button
+            type="button"
+            className="mt-4 w-full rounded bg-red-primary py-3 px-4 text-white hover:bg-red-secondary"
+            onClick={() => dialogRef.current?.showModal()}
+          >
+            Delete game
+          </button>
+          <dialog
+            ref={dialogRef}
+            className="rounded-lg bg-white p-0 shadow-xl backdrop:bg-black/50 dark:bg-gray-800"
+            onClick={(e) => {
+              if (e.target === dialogRef.current) {
+                dialogRef.current.close();
+              }
+            }}
+          >
+            <div className="p-6">
+              <h3 className="mb-2 text-xl font-bold dark:text-gray-100">
+                Delete Game?
+              </h3>
+              <p className="mb-6 dark:text-gray-300">
+                Are you sure you want to delete this game? This action cannot be
+                undone.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  className="rounded bg-gray-200 py-2 px-4 text-gray-800 hover:bg-gray-300 focus:bg-gray-300"
+                  onClick={() => dialogRef.current?.close()}
+                >
+                  Cancel
+                </button>
+                <Form method="post">
+                  <button
+                    type="submit"
+                    className="rounded bg-red-primary py-2 px-4 text-white hover:bg-red-secondary focus:bg-red-secondary"
+                    name="action"
+                    value="delete"
+                  >
+                    Delete
+                  </button>
+                </Form>
+              </div>
+            </div>
+          </dialog>
         </>
       )}
     </>
