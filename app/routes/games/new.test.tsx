@@ -1,6 +1,5 @@
 import { loader, action } from "./new";
 import type { LoaderData } from "./new";
-import { redirect } from "@remix-run/server-runtime";
 
 import { getAllPlayers, createGame } from "~/models/game.server";
 
@@ -70,6 +69,7 @@ describe("start new game function", () => {
   });
 
   test("redirects to the play page after", () => {
-    expect(actionResponse).toEqual(redirect("/games/736/play/1"));
+    expect(actionResponse.status).toEqual(302);
+    expect(actionResponse.headers.get("Location")).toEqual("/games/736/play/1");
   });
 });

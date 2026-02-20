@@ -6,8 +6,6 @@ import {
   deleteGame,
 } from "~/models/game.server";
 
-import { redirect } from "@remix-run/server-runtime";
-
 vi.mock("~/session.server", () => {
   return {
     requireUserId: vi.fn().mockResolvedValue("xxx"),
@@ -106,7 +104,8 @@ describe("action function for reopen game", () => {
   });
 
   test("returns a redirect response", () => {
-    expect(actionResponse).toEqual(redirect("/games/123/play/1"));
+    expect(actionResponse.status).toEqual(302);
+    expect(actionResponse.headers.get("Location")).toEqual("/games/123/play/1");
   });
 
   test("should reopen the game", () => {
@@ -136,7 +135,8 @@ describe("action function for rematch game", () => {
   });
 
   test("returns a redirect response", () => {
-    expect(actionResponse).toEqual(redirect("/games/567/play/1"));
+    expect(actionResponse.status).toEqual(302);
+    expect(actionResponse.headers.get("Location")).toEqual("/games/567/play/1");
   });
 
   test("should create a new game", () => {
@@ -169,7 +169,8 @@ describe("action function for delete game", () => {
   });
 
   test("returns a redirect response", () => {
-    expect(actionResponse).toEqual(redirect("/games"));
+    expect(actionResponse.status).toEqual(302);
+    expect(actionResponse.headers.get("Location")).toEqual("/games");
   });
 
   test("should delete the game", () => {
