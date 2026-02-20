@@ -38,7 +38,7 @@ describe("game.server getGame", () => {
 
   test("calls prisma findFirst", () => {
     expect(prisma.game.findFirst).toHaveBeenCalledWith({
-      where: { id: "123" },
+      where: { id: "123", deletedAt: null },
       select: {
         id: true,
         completed: true,

@@ -6,9 +6,15 @@ import {
   useRouteError,
 } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
+import { useCallback, useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 
-import { createGame, getGame, reopenGame } from "~/models/game.server";
+import {
+  createGame,
+  deleteGame,
+  getGame,
+  reopenGame,
+} from "~/models/game.server";
 import { getNextPlayerToPlay } from "~/game-utils";
 import { requireUserId } from "~/session.server";
 
@@ -83,10 +89,97 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     return redirect(`/games/${newGame.id}/play/${players[0]}`);
   }
+
+  if (formData.get("action") === "delete") {
+    const userId = await requireUserId(request);
+
+    await deleteGame({ id: gameId, userId });
+
+    return redirect("/games");
+  }
 };
+
+const LONG_PRESS_DURATION = 3000;
+
+function LongPressDeleteButton({ onComplete }: { onComplete: () => void }) {
+  const [pressing, setPressing] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const startTimeRef = useRef<number | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  const stopPress = useCallback(() => {
+    setPressing(false);
+    setProgress(0);
+    startTimeRef.current = null;
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, []);
+
+  const animate = useCallback(() => {
+    if (startTimeRef.current === null) return;
+
+    const elapsed = Date.now() - startTimeRef.current;
+    const pct = Math.min(elapsed / LONG_PRESS_DURATION, 1);
+    setProgress(pct);
+
+    if (pct >= 1) {
+      stopPress();
+      onComplete();
+    } else {
+      rafRef.current = requestAnimationFrame(animate);
+    }
+  }, [onComplete, stopPress]);
+
+  const startPress = useCallback(() => {
+    setPressing(true);
+    startTimeRef.current = Date.now();
+    rafRef.current = requestAnimationFrame(animate);
+  }, [animate]);
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <button
+      type="button"
+      className="relative mt-4 w-full overflow-hidden rounded bg-red-primary py-3 px-4 text-white"
+      style={{
+        touchAction: "none",
+        WebkitTouchCallout: "none",
+      }}
+      onPointerDown={startPress}
+      onPointerUp={stopPress}
+      onPointerLeave={stopPress}
+      onPointerCancel={stopPress}
+      onContextMenu={(e) => e.preventDefault()}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onComplete();
+        }
+      }}
+    >
+      <span
+        className="absolute left-0 top-0 bottom-0 bg-red-secondary"
+        style={{ width: `${progress * 100}%` }}
+      />
+      <span className="relative">
+        {pressing ? "Hold to delete..." : "Hold to delete game"}
+      </span>
+    </button>
+  );
+}
 
 export default function GamePage() {
   const { game, winners, topScore } = useLoaderData<typeof loader>();
+  const dialogRef = useRef<HTMLDialogElement>(null);
   let title = "Still Playing";
 
   if (game.completed) {
@@ -101,7 +194,7 @@ export default function GamePage() {
   }
 
   return (
-    <>
+    <div className="flex flex-1 flex-col">
       <h2 className="text-3xl dark:text-gray-100">{title}</h2>
       <div className="my-8 flex justify-around dark:text-gray-200">
         <div>
@@ -123,28 +216,73 @@ export default function GamePage() {
         </div>
       </div>
       {game.completed && (
-        <Form method="post" action="">
-          <div className="m mt-4 flex flex-col lg:flex-row lg:justify-around">
-            <button
-              type="submit"
-              className="mb-4 rounded bg-green-primary py-2 px-4 text-white hover:bg-green-secondary focus:bg-green-secondary"
-              name="action"
-              value="reopen"
-            >
-              Re-open game
-            </button>
-            <button
-              type="submit"
-              className="mb-4 rounded bg-red-primary py-2 px-4 text-white hover:bg-red-secondary focus:bg-red-secondary"
-              name="action"
-              value="rematch"
-            >
-              Rematch!
-            </button>
+        <>
+          <Form method="post" action="">
+            <div className="m mt-4 flex flex-col lg:flex-row lg:justify-around">
+              <button
+                type="submit"
+                className="mb-4 rounded bg-green-primary py-2 px-4 text-white hover:bg-green-secondary focus:bg-green-secondary"
+                name="action"
+                value="reopen"
+              >
+                Re-open game
+              </button>
+              <button
+                type="submit"
+                className="mb-4 rounded bg-purple-primary py-2 px-4 text-white hover:bg-purple-secondary focus:bg-purple-secondary"
+                name="action"
+                value="rematch"
+              >
+                Rematch!
+              </button>
+            </div>
+          </Form>
+          <div className="mt-auto">
+            <LongPressDeleteButton
+              onComplete={() => dialogRef.current?.showModal()}
+            />
           </div>
-        </Form>
+          <dialog
+            ref={dialogRef}
+            className="rounded-lg bg-white p-0 shadow-xl backdrop:bg-black/50 dark:bg-gray-800"
+            onClick={(e) => {
+              if (e.target === dialogRef.current) {
+                dialogRef.current.close();
+              }
+            }}
+          >
+            <div className="p-6">
+              <h3 className="mb-2 text-xl font-bold dark:text-gray-100">
+                Delete Game?
+              </h3>
+              <p className="mb-6 dark:text-gray-300">
+                Are you sure you want to delete this game? This action cannot be
+                undone.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  className="rounded bg-gray-200 py-2 px-4 text-gray-800 hover:bg-gray-300 focus:bg-gray-300"
+                  onClick={() => dialogRef.current?.close()}
+                >
+                  Cancel
+                </button>
+                <Form method="post">
+                  <button
+                    type="submit"
+                    className="rounded bg-red-primary py-2 px-4 text-white hover:bg-red-secondary focus:bg-red-secondary"
+                    name="action"
+                    value="delete"
+                  >
+                    Delete
+                  </button>
+                </Form>
+              </div>
+            </div>
+          </dialog>
+        </>
       )}
-    </>
+    </div>
   );
 }
 

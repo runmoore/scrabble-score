@@ -1,5 +1,10 @@
 import { loader, action } from "./$gameId";
-import { getGame, reopenGame, createGame } from "~/models/game.server";
+import {
+  getGame,
+  reopenGame,
+  createGame,
+  deleteGame,
+} from "~/models/game.server";
 
 vi.mock("~/session.server", () => {
   return {
@@ -8,6 +13,7 @@ vi.mock("~/session.server", () => {
 });
 vi.mock("~/models/game.server", () => {
   return {
+    deleteGame: vi.fn(),
     reopenGame: vi.fn(),
     getGame: vi.fn().mockResolvedValue({
       id: 1,
@@ -137,6 +143,40 @@ describe("action function for rematch game", () => {
     expect(createGame).toHaveBeenCalledWith({
       userId: "xxx",
       players: [1, 2],
+    });
+  });
+});
+
+describe("action function for delete game", () => {
+  let actionResponse: any;
+
+  beforeEach(async () => {
+    const formData = new FormData();
+    formData.append("action", "delete");
+
+    actionResponse = await action({
+      request: new Request("https://url", {
+        method: "POST",
+        body: formData,
+      }),
+      params: { gameId: "123" },
+      context: {},
+    });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("returns a redirect response", () => {
+    expect(actionResponse.status).toEqual(302);
+    expect(actionResponse.headers.get("Location")).toEqual("/games");
+  });
+
+  test("should delete the game", () => {
+    expect(deleteGame).toHaveBeenCalledWith({
+      id: "123",
+      userId: "xxx",
     });
   });
 });
