@@ -6,7 +6,7 @@ import {
   useRouteError,
 } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import invariant from "tiny-invariant";
 
 import {
@@ -99,84 +99,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 };
 
-const LONG_PRESS_DURATION = 3000;
-
-function LongPressDeleteButton({ onComplete }: { onComplete: () => void }) {
-  const [pressing, setPressing] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const startTimeRef = useRef<number | null>(null);
-  const rafRef = useRef<number | null>(null);
-
-  const stopPress = useCallback(() => {
-    setPressing(false);
-    setProgress(0);
-    startTimeRef.current = null;
-    if (rafRef.current !== null) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-  }, []);
-
-  const animate = useCallback(() => {
-    if (startTimeRef.current === null) return;
-
-    const elapsed = Date.now() - startTimeRef.current;
-    const pct = Math.min(elapsed / LONG_PRESS_DURATION, 1);
-    setProgress(pct);
-
-    if (pct >= 1) {
-      stopPress();
-      onComplete();
-    } else {
-      rafRef.current = requestAnimationFrame(animate);
-    }
-  }, [onComplete, stopPress]);
-
-  const startPress = useCallback(() => {
-    setPressing(true);
-    startTimeRef.current = Date.now();
-    rafRef.current = requestAnimationFrame(animate);
-  }, [animate]);
-
-  useEffect(() => {
-    return () => {
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
-      }
-    };
-  }, []);
-
-  return (
-    <button
-      type="button"
-      className="relative mt-4 w-full overflow-hidden rounded bg-red-primary py-3 px-4 text-white"
-      style={{
-        touchAction: "none",
-        WebkitTouchCallout: "none",
-      }}
-      onPointerDown={startPress}
-      onPointerUp={stopPress}
-      onPointerLeave={stopPress}
-      onPointerCancel={stopPress}
-      onContextMenu={(e) => e.preventDefault()}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onComplete();
-        }
-      }}
-    >
-      <span
-        className="absolute left-0 top-0 bottom-0 bg-red-secondary"
-        style={{ width: `${progress * 100}%` }}
-      />
-      <span className="relative">
-        {pressing ? "Hold to delete..." : "Hold to delete game"}
-      </span>
-    </button>
-  );
-}
-
 export default function GamePage() {
   const { game, winners, topScore } = useLoaderData<typeof loader>();
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -238,9 +160,13 @@ export default function GamePage() {
             </div>
           </Form>
           <div className="mt-auto">
-            <LongPressDeleteButton
-              onComplete={() => dialogRef.current?.showModal()}
-            />
+            <button
+              type="button"
+              className="mt-4 w-full rounded bg-red-primary py-3 px-4 text-white hover:bg-red-secondary focus:bg-red-secondary"
+              onClick={() => dialogRef.current?.showModal()}
+            >
+              Delete game
+            </button>
           </div>
           <dialog
             ref={dialogRef}
