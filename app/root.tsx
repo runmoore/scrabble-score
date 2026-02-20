@@ -46,13 +46,7 @@ export default function App() {
         <Links />
         <link rel="manifest" href="/manifest.json"></link>
       </head>
-      <body
-        className="h-full select-none bg-white dark:bg-gray-900"
-        style={{
-          WebkitTouchCallout: "none",
-          WebkitTapHighlightColor: "transparent",
-        }}
-      >
+      <body className="h-full bg-white dark:bg-gray-900">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
