@@ -41,11 +41,15 @@ describe("Negative Score Functionality", () => {
 
   it("should integrate negative scores with complete game workflow", () => {
     // Player 1: Submit positive score
-    cy.findByRole("spinbutton", { name: /score/i }).type("15");
+    cy.findByRole("spinbutton", { name: /score/i })
+      .type("15")
+      .should("have.value", "15");
     cy.submitScore("");
 
     // Player 2: Submit negative score
-    cy.findByRole("spinbutton", { name: /score/i }).type("5");
+    cy.findByRole("spinbutton", { name: /score/i })
+      .type("5")
+      .should("have.value", "5");
     cy.toggleNegativeScoreSign();
     cy.submitScore("");
 
