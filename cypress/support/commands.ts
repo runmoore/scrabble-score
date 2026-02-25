@@ -44,7 +44,7 @@ declare global {
       // =============================================================================
 
       /**
-       * Creates a game with specified players
+       * Creates a game with specified players and a game type
        * @param players - Array of player names, or number to auto-generate
        * @example cy.createGameWithPlayers(['Alice', 'Bob'])
        * @example cy.createGameWithPlayers(3)
@@ -182,9 +182,20 @@ function createGameWithPlayers(players: string[] | number) {
   cy.findByRole("link", { name: /\+ new game/i }).click();
 
   // Wait for the new game form to be fully loaded
-  cy.findByRole("textbox", { name: /name/i })
+  cy.findByRole("textbox", { name: /game type name/i })
     .should("be.visible")
     .and("not.be.disabled");
+
+  // Add and select a game type
+  const gameTypeName = faker.word.noun();
+  cy.intercept("POST", "**/games/new**").as("addGameType");
+  cy.findByRole("textbox", { name: /game type name/i }).type(gameTypeName);
+  cy.findByRole("button", { name: /\+ add new game type/i }).click();
+  cy.wait("@addGameType");
+
+  cy.findByRole("radio", { name: new RegExp(gameTypeName, "i") })
+    .should("be.visible")
+    .check();
 
   // Add all players
   playerNames.forEach((playerName, index) => {
@@ -192,17 +203,17 @@ function createGameWithPlayers(players: string[] | number) {
     cy.intercept("POST", "**/games/new**").as(`addPlayer${index}`);
 
     // Wait for input to be ready, then interact with it
-    cy.findByRole("textbox", { name: /name/i })
+    cy.findByRole("textbox", { name: "name" })
       .should("be.visible")
       .and("not.be.disabled");
-    cy.findByRole("textbox", { name: /name/i }).clear();
-    cy.findByRole("textbox", { name: /name/i }).type(playerName);
+    cy.findByRole("textbox", { name: "name" }).clear();
+    cy.findByRole("textbox", { name: "name" }).type(playerName);
 
     cy.findByRole("button", { name: /\+ Add new player/i }).click();
     cy.wait(`@addPlayer${index}`);
 
     // Wait for the form to reset/reload after adding player
-    cy.findByRole("textbox", { name: /name/i }).should("have.value", "");
+    cy.findByRole("textbox", { name: "name" }).should("have.value", "");
   });
 
   // Select all players - wait for each checkbox to be available
