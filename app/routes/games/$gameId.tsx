@@ -84,8 +84,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const userId = await requireUserId(request);
 
     const players = game.players.map((player) => player.id);
+    const gameTypeId = game.gameType?.id ?? null;
 
-    const newGame = await createGame({ userId, players });
+    const newGame = await createGame({ userId, players, gameTypeId });
 
     return redirect(`/games/${newGame.id}/play/${players[0]}`);
   }
@@ -117,6 +118,11 @@ export default function GamePage() {
 
   return (
     <div className="flex flex-1 flex-col">
+      {game.gameType && (
+        <h2 className="mb-2 text-xl font-bold dark:text-gray-100">
+          {game.gameType.name}
+        </h2>
+      )}
       <h2 className="text-3xl dark:text-gray-100">{title}</h2>
       <div className="my-8 flex justify-around dark:text-gray-200">
         <div>

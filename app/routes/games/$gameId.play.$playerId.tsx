@@ -111,6 +111,11 @@ export default function Play() {
 
   return (
     <>
+      {game.gameType && (
+        <h2 className="mb-4 text-xl font-bold dark:text-gray-100">
+          {game.gameType.name}
+        </h2>
+      )}
       <div className="mb-8 flex flex-row gap-2 text-center md:gap-4">
         {game.players.map((player) => (
           <div

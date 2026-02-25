@@ -45,6 +45,7 @@ describe("game.server getGame", () => {
         createdAt: true,
         players: true,
         scores: true,
+        gameType: { select: { id: true, name: true } },
       },
     });
   });
