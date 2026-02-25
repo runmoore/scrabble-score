@@ -65,7 +65,7 @@ export async function getGame({
   return game;
 }
 
-export function createGame({
+export async function createGame({
   userId,
   players,
   gameTypeId,
@@ -74,6 +74,24 @@ export function createGame({
   players: string[];
   gameTypeId?: string | null;
 }) {
+  const ownedPlayers = await prisma.player.findMany({
+    where: { userId, id: { in: players } },
+    select: { id: true },
+  });
+  if (ownedPlayers.length !== players.length) {
+    throw new Error("One or more players do not belong to this user");
+  }
+
+  if (gameTypeId) {
+    const ownedGameType = await prisma.gameType.findFirst({
+      where: { userId, id: gameTypeId },
+      select: { id: true },
+    });
+    if (!ownedGameType) {
+      throw new Error("Game type does not belong to this user");
+    }
+  }
+
   return prisma.game.create({
     data: {
       players: {
