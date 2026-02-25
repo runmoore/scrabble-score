@@ -33,7 +33,7 @@ describe("Smoke Tests", () => {
   it("should support complete game workflow with shared commands", () => {
     cy.login();
 
-    // Use shared command to create game with players
+    // Use shared command to create game with players and game type
     cy.createGameWithPlayers(2).then((players) => {
       expect(players).to.have.length(2);
 

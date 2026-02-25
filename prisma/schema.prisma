@@ -14,9 +14,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  password Password?
-  games    Game[]
-  players  Player[]
+  password  Password?
+  games     Game[]
+  players   Player[]
+  gameTypes GameType[]
 }
 
 model Password {
@@ -37,6 +38,16 @@ model Player {
   userId String
 }
 
+model GameType {
+  id   String @id @default(cuid())
+  name String
+
+  games Game[]
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+}
+
 model Game {
   id String @id @default(cuid())
 
@@ -46,6 +57,9 @@ model Game {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
+
+  gameType   GameType? @relation(fields: [gameTypeId], references: [id])
+  gameTypeId String?
 
   completed Boolean? @default(false)
   deletedAt DateTime?

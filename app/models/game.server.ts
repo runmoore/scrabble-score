@@ -1,7 +1,7 @@
 import { prisma } from "~/db.server";
 
 import type { Game, Player, User, Score } from "@prisma/client";
-export type { Game, Player, User, Score } from "@prisma/client";
+export type { Game, GameType, Player, User, Score } from "@prisma/client";
 
 interface PlayerWithScores extends Player {
   scores: Score[];
@@ -20,6 +20,7 @@ type EnhancedGame = {
   scores: Score[];
   players: PlayerWithScores[];
   createdAt: Game["createdAt"];
+  gameType: { id: string; name: string } | null;
 };
 
 export async function getGame({
@@ -35,6 +36,7 @@ export async function getGame({
       players: true,
       scores: true,
       createdAt: true,
+      gameType: { select: { id: true, name: true } },
     },
   })) as EnhancedGame;
 
@@ -66,9 +68,11 @@ export async function getGame({
 export function createGame({
   userId,
   players,
+  gameTypeId,
 }: {
   userId: string;
   players: string[];
+  gameTypeId?: string | null;
 }) {
   return prisma.game.create({
     data: {
@@ -80,6 +84,7 @@ export function createGame({
           id: userId,
         },
       },
+      gameType: gameTypeId ? { connect: { id: gameTypeId } } : undefined,
     },
   });
 }
@@ -101,8 +106,35 @@ export function getAllGames({ userId }: { userId: User["id"] }) {
       createdAt: true,
       completed: true,
       scores: true,
+      gameType: { select: { id: true, name: true } },
     },
     orderBy: { createdAt: "desc" },
+  });
+}
+
+export function getAllGameTypes({ userId }: { userId: User["id"] }) {
+  return prisma.gameType.findMany({
+    where: { userId },
+    select: { id: true, name: true },
+  });
+}
+
+export function addGameType({
+  userId,
+  name,
+}: {
+  userId: User["id"];
+  name: string;
+}) {
+  return prisma.gameType.create({
+    data: {
+      name,
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+    },
   });
 }
 

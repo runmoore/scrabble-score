@@ -1,7 +1,11 @@
 import { loader, action } from "./new";
 import type { LoaderData } from "./new";
 
-import { getAllPlayers, createGame } from "~/models/game.server";
+import {
+  getAllPlayers,
+  getAllGameTypes,
+  createGame,
+} from "~/models/game.server";
 
 vi.mock("~/session.server", () => {
   return {
@@ -12,6 +16,9 @@ vi.mock("~/session.server", () => {
 vi.mock("~/models/game.server", () => {
   return {
     getAllPlayers: vi.fn().mockResolvedValue([{ name: "Eric" }]),
+    getAllGameTypes: vi
+      .fn()
+      .mockResolvedValue([{ id: "gt1", name: "Scrabble" }]),
     createGame: vi.fn().mockResolvedValue({ id: "736", players: [1] }),
   };
 });
@@ -34,10 +41,18 @@ describe("new lodaer function", () => {
     expect(getAllPlayers).toHaveBeenCalledWith({ userId: 123 });
   });
 
-  test("returns all players for that user", () => {
-    expect(data.length).toEqual(1);
+  test("makes a request for all game types for that user", () => {
+    expect(getAllGameTypes).toHaveBeenCalledWith({ userId: 123 });
+  });
 
-    expect(data[0].name).toEqual("Eric");
+  test("returns all players for that user", () => {
+    expect(data.players.length).toEqual(1);
+    expect(data.players[0].name).toEqual("Eric");
+  });
+
+  test("returns all game types for that user", () => {
+    expect(data.gameTypes.length).toEqual(1);
+    expect(data.gameTypes[0].name).toEqual("Scrabble");
   });
 });
 
@@ -65,6 +80,7 @@ describe("start new game function", () => {
     expect(createGame).toHaveBeenCalledWith({
       userId: 123,
       players: ["1", "2"],
+      gameTypeId: null,
     });
   });
 
