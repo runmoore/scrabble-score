@@ -82,6 +82,7 @@ function GamesMenu({
     createdAt: string;
     completed: Game["completed"];
     scores: any[];
+    gameType: { id: string; name: string } | null;
   }[];
   className?: string;
   onLinkClick?: () => void;
@@ -124,7 +125,12 @@ function GamesMenu({
                 }
               >
                 {game.completed ? "🏆" : "🎯"}{" "}
-                {format(new Date(game.createdAt), "PPP HH:mm")}
+                {game.gameType
+                  ? `${game.gameType.name} - ${format(
+                      new Date(game.createdAt),
+                      "PPP HH:mm"
+                    )}`
+                  : format(new Date(game.createdAt), "PPP HH:mm")}
               </NavLink>
             </li>
           ))}

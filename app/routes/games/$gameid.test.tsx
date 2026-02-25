@@ -143,6 +143,7 @@ describe("action function for rematch game", () => {
     expect(createGame).toHaveBeenCalledWith({
       userId: "xxx",
       players: [1, 2],
+      gameTypeId: null,
     });
   });
 });
