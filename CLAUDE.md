@@ -83,7 +83,11 @@ These commands must complete successfully before considering any task complete. 
 
 **Rationale**: Using established libraries reduces bugs, maintenance burden, and keeps code consistent with project standards.
 
-## Pull Request & Screenshot Workflow
+## Pull Request Guidelines
+
+**PR descriptions must focus on "why", not "what".** The reviewer can see what changed in the diff — what they need from the description is the motivation, context, and reasoning behind the change. Explain the problem being solved, the user need being addressed, or why the previous behavior was insufficient. Avoid restating the diff (e.g., listing files changed or functions added). The PR template's first section is "Why" — lead with that.
+
+### Screenshot Workflow
 
 When creating pull requests with visual changes:
 
