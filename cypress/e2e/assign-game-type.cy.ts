@@ -27,6 +27,7 @@ describe("Assign game type to existing game", () => {
 
     // The assignment UI should be replaced by the game type heading
     cy.findByText("Set game type:").should("not.exist");
+    cy.findByRole("heading", { name: "Scrabble" }).should("be.visible");
   });
 
   it("should assign an existing game type from the play screen", () => {
@@ -48,6 +49,7 @@ describe("Assign game type to existing game", () => {
 
     // The assignment UI should be replaced by the game type heading
     cy.findByText("Set game type:").should("not.exist");
+    cy.findByRole("heading", { name: "Sushi Go" }).should("be.visible");
   });
 
   it("should not show assignment UI when game already has a type", () => {
