@@ -44,10 +44,12 @@ declare global {
       // =============================================================================
 
       /**
-       * Creates a game with specified players and a game type
+       * Creates a game with specified players
        * @param players - Array of player names, or number to auto-generate
+       * @param options - Optional config: skipGameType to create without a game type
        * @example cy.createGameWithPlayers(['Alice', 'Bob'])
        * @example cy.createGameWithPlayers(3)
+       * @example cy.createGameWithPlayers(['Alice', 'Bob'], { skipGameType: true })
        */
       createGameWithPlayers: typeof createGameWithPlayers;
 
@@ -163,7 +165,10 @@ export const registerCommands = () => {
 // GAME-SPECIFIC COMMAND IMPLEMENTATIONS
 // =============================================================================
 
-function createGameWithPlayers(players: string[] | number) {
+function createGameWithPlayers(
+  players: string[] | number,
+  options: { skipGameType?: boolean } = {}
+) {
   let playerNames: string[];
 
   if (typeof players === "number") {
@@ -186,16 +191,18 @@ function createGameWithPlayers(players: string[] | number) {
     .should("be.visible")
     .and("not.be.disabled");
 
-  // Add and select a game type
-  const gameTypeName = faker.word.noun();
-  cy.intercept("POST", "**/games/new**").as("addGameType");
-  cy.findByRole("textbox", { name: /game type name/i }).type(gameTypeName);
-  cy.findByRole("button", { name: /\+ add new game type/i }).click();
-  cy.wait("@addGameType");
+  if (!options.skipGameType) {
+    // Add and select a game type
+    const gameTypeName = faker.word.noun();
+    cy.intercept("POST", "**/games/new**").as("addGameType");
+    cy.findByRole("textbox", { name: /game type name/i }).type(gameTypeName);
+    cy.findByRole("button", { name: /\+ add new game type/i }).click();
+    cy.wait("@addGameType");
 
-  cy.findByRole("radio", { name: new RegExp(gameTypeName, "i") })
-    .should("be.visible")
-    .check();
+    cy.findByRole("radio", { name: new RegExp(gameTypeName, "i") })
+      .should("be.visible")
+      .check();
+  }
 
   // Add all players
   playerNames.forEach((playerName, index) => {

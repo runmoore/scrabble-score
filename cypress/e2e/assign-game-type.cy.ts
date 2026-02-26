@@ -5,46 +5,6 @@ describe("Assign game type to existing game", () => {
     cy.cleanupUser();
   });
 
-  /**
-   * Helper: creates a game without selecting a game type.
-   * Adds players, selects them, and starts the game with N/A game type.
-   */
-  function createGameWithoutType(playerNames: string[]) {
-    cy.visit("/games");
-    cy.findByRole("link", { name: /\+ new game/i }).click();
-
-    // Add all players
-    playerNames.forEach((playerName, index) => {
-      cy.intercept("POST", "**/games/new**").as(`addPlayer${index}`);
-      cy.findByRole("textbox", { name: "name" })
-        .should("be.visible")
-        .and("not.be.disabled");
-      cy.findByRole("textbox", { name: "name" }).clear();
-      cy.findByRole("textbox", { name: "name" }).type(playerName);
-      cy.findByRole("button", { name: /\+ Add new player/i }).click();
-      cy.wait(`@addPlayer${index}`);
-      cy.findByRole("textbox", { name: "name" }).should("have.value", "");
-    });
-
-    // Select all players
-    playerNames.forEach((playerName) => {
-      cy.findByRole("checkbox", { name: playerName })
-        .should("be.visible")
-        .check();
-    });
-
-    // Start game without selecting a game type (N/A is default)
-    cy.intercept("POST", "**/games/new**").as("startGame");
-    cy.findByRole("button", { name: /start new game/i })
-      .should("not.be.disabled")
-      .click();
-    cy.wait("@startGame");
-
-    // Wait for play page
-    cy.url().should("include", /play/);
-    cy.findByRole("spinbutton", { name: /score/i }).should("be.visible");
-  }
-
   it("should assign an existing game type from the game summary page", () => {
     cy.login();
 
@@ -59,7 +19,7 @@ describe("Assign game type to existing game", () => {
     cy.wait("@completeGame");
 
     // Now create a second game WITHOUT a game type
-    createGameWithoutType(players);
+    cy.createGameWithPlayers(players, { skipGameType: true });
 
     // Submit a score and complete the game
     cy.submitScore("10");
@@ -72,7 +32,6 @@ describe("Assign game type to existing game", () => {
     cy.findByText("Set game type:").should("be.visible");
 
     // The game type from the first game should appear as a button
-    // Find any game type button and click it
     cy.get('button[name="gameTypeId"]').first().should("be.visible").click();
 
     // The game type heading should now appear
@@ -93,7 +52,7 @@ describe("Assign game type to existing game", () => {
     cy.wait("@completeGame");
 
     // Now create a second game WITHOUT a game type
-    createGameWithoutType(players);
+    cy.createGameWithPlayers(players, { skipGameType: true });
 
     // Should see "Set game type:" on the play screen
     cy.findByText("Set game type:").should("be.visible");
