@@ -53,6 +53,19 @@ declare global {
       createGameWithPlayers: typeof createGameWithPlayers;
 
       /**
+       * Completes the current game and waits for navigation to the summary page
+       * @example cy.completeGame()
+       */
+      completeGame: typeof completeGame;
+
+      /**
+       * Creates a game type via the new game page without starting a game
+       * @param name - The game type name to create
+       * @example cy.createGameType('Scrabble')
+       */
+      createGameType: typeof createGameType;
+
+      /**
        * Submits a score for the current player
        * @param score - Score to submit (can be positive or negative)
        * @example cy.submitScore('15')
@@ -151,6 +164,8 @@ export const registerCommands = () => {
 
   // Game-specific commands
   Cypress.Commands.add("createGameWithPlayers", createGameWithPlayers);
+  Cypress.Commands.add("completeGame", completeGame);
+  Cypress.Commands.add("createGameType", createGameType);
   Cypress.Commands.add("submitScore", submitScore);
   Cypress.Commands.add("checkButtonStates", checkButtonStates);
   Cypress.Commands.add("togglePlusScoreSign", togglePlusScoreSign);
@@ -239,6 +254,29 @@ function createGameWithPlayers(players: string[] | number, gameType?: string) {
 
   // Return player names for further use
   return cy.wrap(playerNames);
+}
+
+function completeGame() {
+  cy.intercept("POST", "**/play/**").as("completeGame");
+  cy.findByRole("button", { name: /complete game/i }).click();
+  cy.wait("@completeGame");
+}
+
+function createGameType(name: string) {
+  cy.visit("/games");
+  cy.findByRole("link", { name: /\+ new game/i }).click();
+
+  cy.findByRole("textbox", { name: /game type name/i })
+    .should("be.visible")
+    .and("not.be.disabled");
+
+  cy.intercept("POST", "**/games/new**").as("addGameType");
+  cy.findByRole("textbox", { name: /game type name/i }).type(name);
+  cy.findByRole("button", { name: /\+ add new game type/i }).click();
+  cy.wait("@addGameType");
+
+  // Verify the game type was created
+  cy.findByRole("radio", { name: new RegExp(name, "i") }).should("be.visible");
 }
 
 function submitScore(score: string) {

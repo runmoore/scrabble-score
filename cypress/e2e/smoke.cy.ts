@@ -41,10 +41,8 @@ describe("Smoke Tests", () => {
       cy.submitScore("5"); // Player 1: 5 points
       cy.submitScore("11"); // Player 2: 11 points
 
-      // Complete the game using intercept for reliability
-      cy.intercept("POST", "**/play/**").as("completeGame");
-      cy.findByRole("button", { name: /complete game/i }).click();
-      cy.wait("@completeGame");
+      // Complete the game
+      cy.completeGame();
 
       // Verify winner announcement (Player 2 with higher score)
       cy.findByText(`${players[1]} has won with a score of 11`).should(
