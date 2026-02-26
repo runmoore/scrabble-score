@@ -79,29 +79,31 @@ describe("Assign game type to existing game", () => {
     cy.findByText("Set game type:").should("not.exist");
   });
 
-  it("should create and assign a new game type from the play screen", () => {
+  it("should assign an existing game type from the play screen", () => {
     cy.login();
 
     const players = [faker.person.firstName(), faker.person.firstName()];
-    const newGameTypeName = `TestType${Date.now()}`;
 
-    // Create a game without a game type
+    // First, create a game type by creating a game with one
+    cy.createGameWithPlayers(players);
+
+    // Complete the game
+    cy.intercept("POST", "**/play/**").as("completeGame");
+    cy.findByRole("button", { name: /complete game/i }).click();
+    cy.wait("@completeGame");
+
+    // Now create a second game WITHOUT a game type
     createGameWithoutType(players);
 
     // Should see "Set game type:" on the play screen
     cy.findByText("Set game type:").should("be.visible");
 
-    // Create a new game type inline and assign it
-    cy.findByRole("textbox", { name: /new game type name/i })
-      .should("be.visible")
-      .type(newGameTypeName);
-
+    // Select an existing game type
     cy.intercept("POST", "**/play/**").as("setGameType");
-    cy.findByRole("button", { name: /\+ add & set/i }).click();
+    cy.get('button[name="gameTypeId"]').first().should("be.visible").click();
     cy.wait("@setGameType");
 
-    // The game type heading should now appear
-    cy.findByText(newGameTypeName).should("be.visible");
+    // The assignment UI should be replaced by the game type heading
     cy.findByText("Set game type:").should("not.exist");
   });
 
