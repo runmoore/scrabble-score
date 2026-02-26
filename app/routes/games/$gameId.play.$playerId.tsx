@@ -20,6 +20,7 @@ import { json } from "@remix-run/node";
 import { getNextPlayerToPlay } from "~/game-utils";
 import { requireUserId } from "~/session.server";
 import { useEffect, useState } from "react";
+import { GameTypeSection } from "~/components/GameTypeSection";
 
 export type LoaderData = typeof loader;
 
@@ -130,31 +131,7 @@ export default function Play() {
 
   return (
     <>
-      {game.gameType ? (
-        <h2 className="mb-4 text-xl font-bold dark:text-gray-100">
-          {game.gameType.name}
-        </h2>
-      ) : gameTypes.length > 0 ? (
-        <Form method="post" className="mb-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-medium dark:text-gray-300">
-              Set game type:
-            </span>
-            {gameTypes.map((gt) => (
-              <button
-                key={gt.id}
-                type="submit"
-                name="gameTypeId"
-                value={gt.id}
-                className="rounded bg-blue-primary px-3 py-1 text-sm text-white hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600"
-              >
-                {gt.name}
-              </button>
-            ))}
-          </div>
-          <input type="hidden" name="action" value="set-game-type" />
-        </Form>
-      ) : null}
+      <GameTypeSection gameType={game.gameType} gameTypes={gameTypes} />
       <div className="mb-8 flex flex-row gap-2 text-center md:gap-4">
         {game.players.map((player) => (
           <div

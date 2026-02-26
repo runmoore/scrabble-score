@@ -1,5 +1,3 @@
-import { faker } from "@faker-js/faker";
-
 describe("Assign game type to existing game", () => {
   afterEach(() => {
     cy.cleanupUser();
@@ -23,7 +21,9 @@ describe("Assign game type to existing game", () => {
     cy.findByText("Set game type:").should("be.visible");
 
     // Select the game type
-    cy.get('button[name="gameTypeId"]').first().should("be.visible").click();
+    cy.intercept("POST", "**/games/**").as("setGameType");
+    cy.findByRole("button", { name: "Scrabble" }).should("be.visible").click();
+    cy.wait("@setGameType");
 
     // The assignment UI should be replaced by the game type heading
     cy.findByText("Set game type:").should("not.exist");
@@ -43,7 +43,7 @@ describe("Assign game type to existing game", () => {
 
     // Select an existing game type
     cy.intercept("POST", "**/play/**").as("setGameType");
-    cy.get('button[name="gameTypeId"]').first().should("be.visible").click();
+    cy.findByRole("button", { name: "Sushi Go" }).should("be.visible").click();
     cy.wait("@setGameType");
 
     // The assignment UI should be replaced by the game type heading
