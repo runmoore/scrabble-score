@@ -5,10 +5,13 @@ import type {
 } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 import {
+  addGameType,
   addScore,
+  getAllGameTypes,
   getGame,
   completeGame,
   reopenGame,
+  setGameType,
 } from "~/models/game.server";
 
 import invariant from "tiny-invariant";
@@ -16,6 +19,7 @@ import invariant from "tiny-invariant";
 import type { EnhancedGame } from "~/models/game.server";
 import { json } from "@remix-run/node";
 import { getNextPlayerToPlay } from "~/game-utils";
+import { requireUserId } from "~/session.server";
 import { useEffect, useState } from "react";
 
 export type LoaderData = typeof loader;
@@ -35,7 +39,13 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     0
   );
 
-  return json({ game, playerId: params.playerId, topScore });
+  let gameTypes: { id: string; name: string }[] = [];
+  if (!game.gameType) {
+    const userId = await requireUserId(request);
+    gameTypes = await getAllGameTypes({ userId });
+  }
+
+  return json({ game, playerId: params.playerId, topScore, gameTypes });
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -70,6 +80,25 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     await reopenGame(gameId);
     return null;
   }
+
+  if (formData.get("action") === "set-game-type") {
+    const userId = await requireUserId(request);
+    const gameTypeId = formData.get("gameTypeId") as string;
+    if (gameTypeId) {
+      await setGameType({ id: gameId, userId, gameTypeId });
+    }
+    return json({});
+  }
+
+  if (formData.get("action") === "add-and-set-game-type") {
+    const userId = await requireUserId(request);
+    const name = formData.get("gameTypeName") as string;
+    if (name) {
+      const newGameType = await addGameType({ userId, name });
+      await setGameType({ id: gameId, userId, gameTypeId: newGameType.id });
+    }
+    return json({});
+  }
 };
 
 export default function Play() {
@@ -79,7 +108,8 @@ export default function Play() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
-  const { game, playerId, topScore } = useLoaderData<typeof loader>();
+  const { game, playerId, topScore, gameTypes } =
+    useLoaderData<typeof loader>();
 
   const player = game.players.find((p) => p.id === playerId);
 
@@ -111,10 +141,50 @@ export default function Play() {
 
   return (
     <>
-      {game.gameType && (
+      {game.gameType ? (
         <h2 className="mb-4 text-xl font-bold dark:text-gray-100">
           {game.gameType.name}
         </h2>
+      ) : (
+        <div className="mb-4">
+          <p className="mb-2 text-sm font-medium dark:text-gray-300">
+            Set game type:
+          </p>
+          {gameTypes.length > 0 && (
+            <Form method="post" className="mb-3">
+              <div className="mb-2 flex flex-wrap gap-2">
+                {gameTypes.map((gt) => (
+                  <button
+                    key={gt.id}
+                    type="submit"
+                    name="gameTypeId"
+                    value={gt.id}
+                    className="rounded bg-blue-primary px-3 py-1 text-sm text-white hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600"
+                  >
+                    {gt.name}
+                  </button>
+                ))}
+              </div>
+              <input type="hidden" name="action" value="set-game-type" />
+            </Form>
+          )}
+          <Form method="post" className="flex gap-2">
+            <input
+              name="gameTypeName"
+              aria-label="new game type name"
+              className="flex-1 rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              placeholder="New game type..."
+            />
+            <button
+              type="submit"
+              name="action"
+              value="add-and-set-game-type"
+              className="rounded bg-green-primary px-3 py-1 text-sm text-white hover:bg-green-secondary dark:bg-green-700 dark:hover:bg-green-600"
+            >
+              + Add & set
+            </button>
+          </Form>
+        </div>
       )}
       <div className="mb-8 flex flex-row gap-2 text-center md:gap-4">
         {game.players.map((player) => (

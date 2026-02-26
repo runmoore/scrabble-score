@@ -10,10 +10,13 @@ import { useRef } from "react";
 import invariant from "tiny-invariant";
 
 import {
+  addGameType,
   createGame,
   deleteGame,
+  getAllGameTypes,
   getGame,
   reopenGame,
+  setGameType,
 } from "~/models/game.server";
 import { getNextPlayerToPlay } from "~/game-utils";
 import { requireUserId } from "~/session.server";
@@ -34,7 +37,7 @@ function getNumberWithOrdinal(n: number) {
   return n + suffix;
 }
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.gameId, "gameId not found");
   const game = await getGame({ id: params.gameId });
 
@@ -58,7 +61,14 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   const winners = game.players.filter(
     ({ totalScore }) => totalScore === topScore
   );
-  return json({ game, winners, topScore });
+
+  let gameTypes: { id: string; name: string }[] = [];
+  if (!game.gameType) {
+    const userId = await requireUserId(request);
+    gameTypes = await getAllGameTypes({ userId });
+  }
+
+  return json({ game, winners, topScore, gameTypes });
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -91,6 +101,25 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return redirect(`/games/${newGame.id}/play/${players[0]}`);
   }
 
+  if (formData.get("action") === "set-game-type") {
+    const userId = await requireUserId(request);
+    const gameTypeId = formData.get("gameTypeId") as string;
+    if (gameTypeId) {
+      await setGameType({ id: gameId, userId, gameTypeId });
+    }
+    return json({});
+  }
+
+  if (formData.get("action") === "add-and-set-game-type") {
+    const userId = await requireUserId(request);
+    const name = formData.get("gameTypeName") as string;
+    if (name) {
+      const newGameType = await addGameType({ userId, name });
+      await setGameType({ id: gameId, userId, gameTypeId: newGameType.id });
+    }
+    return json({});
+  }
+
   if (formData.get("action") === "delete") {
     const userId = await requireUserId(request);
 
@@ -101,7 +130,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function GamePage() {
-  const { game, winners, topScore } = useLoaderData<typeof loader>();
+  const { game, winners, topScore, gameTypes } = useLoaderData<typeof loader>();
   const dialogRef = useRef<HTMLDialogElement>(null);
   let title = "Still Playing";
 
@@ -118,10 +147,50 @@ export default function GamePage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      {game.gameType && (
+      {game.gameType ? (
         <h2 className="mb-2 text-xl font-bold dark:text-gray-100">
           {game.gameType.name}
         </h2>
+      ) : (
+        <div className="mb-4">
+          <p className="mb-2 text-sm font-medium dark:text-gray-300">
+            Set game type:
+          </p>
+          {gameTypes.length > 0 && (
+            <Form method="post" className="mb-3">
+              <div className="mb-2 flex flex-wrap gap-2">
+                {gameTypes.map((gt) => (
+                  <button
+                    key={gt.id}
+                    type="submit"
+                    name="gameTypeId"
+                    value={gt.id}
+                    className="rounded bg-blue-primary px-3 py-1 text-sm text-white hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600"
+                  >
+                    {gt.name}
+                  </button>
+                ))}
+              </div>
+              <input type="hidden" name="action" value="set-game-type" />
+            </Form>
+          )}
+          <Form method="post" className="flex gap-2">
+            <input
+              name="gameTypeName"
+              aria-label="new game type name"
+              className="flex-1 rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              placeholder="New game type..."
+            />
+            <button
+              type="submit"
+              name="action"
+              value="add-and-set-game-type"
+              className="rounded bg-green-primary px-3 py-1 text-sm text-white hover:bg-green-secondary dark:bg-green-700 dark:hover:bg-green-600"
+            >
+              + Add & set
+            </button>
+          </Form>
+        </div>
       )}
       <h2 className="text-3xl dark:text-gray-100">{title}</h2>
       <div className="my-8 flex justify-around dark:text-gray-200">

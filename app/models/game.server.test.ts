@@ -1,4 +1,4 @@
-import { getGame } from "./game.server";
+import { getGame, setGameType } from "./game.server";
 import { prisma } from "~/db.server";
 
 import type { EnhancedGame } from "./game.server";
@@ -20,6 +20,7 @@ vi.mock("~/db.server", () => {
             { playerId: 2, points: 20 },
           ],
         }),
+        update: vi.fn().mockResolvedValue({ id: "123", gameTypeId: "gt-1" }),
       },
     },
   };
@@ -53,5 +54,24 @@ describe("game.server getGame", () => {
   test("returns the total score for each player", async () => {
     expect(result.players[0].totalScore).toEqual(11);
     expect(result.players[1].totalScore).toEqual(22);
+  });
+});
+
+describe("game.server setGameType", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("calls prisma update with gameTypeId and null guard", async () => {
+    await setGameType({
+      id: "game-1",
+      userId: "user-1",
+      gameTypeId: "gt-1",
+    });
+
+    expect(prisma.game.update).toHaveBeenCalledWith({
+      data: { gameTypeId: "gt-1" },
+      where: { id: "game-1", userId: "user-1", gameTypeId: null },
+    });
   });
 });

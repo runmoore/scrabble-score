@@ -1,10 +1,17 @@
 import { loader } from "./$gameId.play.$playerId";
 
+vi.mock("~/session.server", () => {
+  return {
+    requireUserId: vi.fn().mockResolvedValue("xxx"),
+  };
+});
 vi.mock("~/models/game.server", () => {
   return {
+    getAllGameTypes: vi.fn().mockResolvedValue([]),
     getGame: vi.fn().mockResolvedValue({
       id: 1,
       completed: false,
+      gameType: null,
       players: [
         { id: 1, totalScore: 11 },
         { id: 2, totalScore: 22 },
