@@ -24,24 +24,17 @@ The system SHALL allow a user to assign a game type to an existing game that cur
 
 ### Requirement: Game type assignment UI
 
-The system SHALL display a game type assignment section on both the game summary page and the play screen when the game has no game type. The section SHALL show the user's existing game types as selectable options and include an inline form to create a new game type, following the same pattern as the new game page.
+The system SHALL display a game type assignment section on both the game summary page and the play screen when the game has no game type and the user has at least one existing game type. The section SHALL show the label "Set game type:" followed by a button for each of the user's game types, all on a single line. The system SHALL NOT provide inline creation of new game types on these pages — new game types are created on the new game page only.
 
 #### Scenario: User has existing game types and views typeless game
 
 - **WHEN** a user with game types "Scrabble" and "Sushi Go" views a game with no game type
-- **THEN** the system SHALL display a "Set game type" section with selectable options for "Scrabble" and "Sushi Go"
-- **AND** an inline form to add a new game type
+- **THEN** the system SHALL display "Set game type:" followed by buttons for "Scrabble" and "Sushi Go" on the same line
 
 #### Scenario: User has no game types and views typeless game
 
 - **WHEN** a user with no game types views a game with no game type
-- **THEN** the system SHALL display only the inline "add new game type" form
-
-#### Scenario: User creates a new game type inline and assigns it
-
-- **WHEN** a user types "Molkky" in the new game type input and submits
-- **THEN** the system SHALL create the "Molkky" game type for the user
-- **AND** the game SHALL be updated to reference the new "Molkky" game type
+- **THEN** no assignment UI SHALL be displayed
 
 ### Requirement: Server function to set game type
 

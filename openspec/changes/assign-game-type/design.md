@@ -8,7 +8,7 @@ The existing codebase has:
 - Optional `gameTypeId` foreign key on `Game`
 - `getGame()` already includes `gameType` in its query
 - `getAllGameTypes()` to fetch user's game types
-- `addGameType()` to create new game types inline
+- `addGameType()` to create new game types (on the new game page)
 - Game type display on summary page, play screen, and games list (all handle null gracefully)
 
 ## Goals / Non-Goals
@@ -16,7 +16,7 @@ The existing codebase has:
 **Goals:**
 
 - Allow users to set a game type on existing typeless games from both the game summary and play screen
-- Support selecting from existing game types or creating a new one inline
+- Select from existing game types only (new types are created on the new game page)
 - One-way assignment only (set, not change or clear)
 
 **Non-Goals:**
@@ -51,14 +51,14 @@ The existing codebase has:
 
 **Rationale**: Avoids fetching unnecessary data for games that already have a type. The loader already fetches the game, so checking `gameType` is cheap. Both the summary page and play screen loaders need to be updated to optionally include game types.
 
-### 4. Inline game type creation flow
+### 4. No inline game type creation on summary/play pages
 
-**Choice**: Reuse the same pattern as `/games/new` — a separate form with text input and "Add new game type" button. After creation, auto-assign the newly created type to the game in one action.
+**Choice**: Only allow selecting from existing game types. New game types are created on the new game page.
 
-**Rationale**: Creating a type and then having to select it would be a poor UX. Since the user is explicitly creating a type for this game, we can combine creation + assignment into a single server action. This is a slight deviation from the new game page (which creates the type but requires manual selection) but is a better experience here.
+**Rationale**: Duplicating the creation form on the summary and play screens adds clutter without clear benefit. Users already have a dedicated place to create game types (the new game page). Keeping the assignment UI to just a label + buttons keeps it compact and focused.
 
 ## Risks / Trade-offs
 
 - **[Loader complexity]** → Both the summary and play screen loaders now conditionally fetch game types. Mitigation: simple null check, minimal overhead.
-- **[Action handlers growing]** → Both routes gain new action cases (`set-game-type`, `add-and-set-game-type`). Mitigation: each case is straightforward (2-3 lines of logic), acceptable complexity.
+- **[Action handlers growing]** → Both routes gain a new `set-game-type` action case. Mitigation: each case is straightforward (2-3 lines of logic), acceptable complexity.
 - **[One-way constraint]** → Users cannot undo a game type assignment. Mitigation: the assignment UI only appears for typeless games, so the constraint is clear. Changing/clearing game types is a separate future feature.
