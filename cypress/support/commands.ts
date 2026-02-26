@@ -46,10 +46,9 @@ declare global {
       /**
        * Creates a game with specified players
        * @param players - Array of player names, or number to auto-generate
-       * @param options - Optional config: skipGameType to create without a game type
-       * @example cy.createGameWithPlayers(['Alice', 'Bob'])
+       * @param gameType - Game type name to create and select. Omit for no game type.
+       * @example cy.createGameWithPlayers(['Alice', 'Bob'], 'Scrabble')
        * @example cy.createGameWithPlayers(3)
-       * @example cy.createGameWithPlayers(['Alice', 'Bob'], { skipGameType: true })
        */
       createGameWithPlayers: typeof createGameWithPlayers;
 
@@ -165,10 +164,7 @@ export const registerCommands = () => {
 // GAME-SPECIFIC COMMAND IMPLEMENTATIONS
 // =============================================================================
 
-function createGameWithPlayers(
-  players: string[] | number,
-  options: { skipGameType?: boolean } = {}
-) {
+function createGameWithPlayers(players: string[] | number, gameType?: string) {
   let playerNames: string[];
 
   if (typeof players === "number") {
@@ -191,15 +187,14 @@ function createGameWithPlayers(
     .should("be.visible")
     .and("not.be.disabled");
 
-  if (!options.skipGameType) {
+  if (gameType) {
     // Add and select a game type
-    const gameTypeName = faker.word.noun();
     cy.intercept("POST", "**/games/new**").as("addGameType");
-    cy.findByRole("textbox", { name: /game type name/i }).type(gameTypeName);
+    cy.findByRole("textbox", { name: /game type name/i }).type(gameType);
     cy.findByRole("button", { name: /\+ add new game type/i }).click();
     cy.wait("@addGameType");
 
-    cy.findByRole("radio", { name: new RegExp(gameTypeName, "i") })
+    cy.findByRole("radio", { name: new RegExp(gameType, "i") })
       .should("be.visible")
       .check();
   }

@@ -11,7 +11,7 @@ describe("Assign game type to existing game", () => {
     const players = [faker.person.firstName(), faker.person.firstName()];
 
     // First, create a game type by creating a game with one
-    cy.createGameWithPlayers(players);
+    cy.createGameWithPlayers(players, "Scrabble");
 
     // Complete the game
     cy.intercept("POST", "**/play/**").as("completeGame");
@@ -19,7 +19,7 @@ describe("Assign game type to existing game", () => {
     cy.wait("@completeGame");
 
     // Now create a second game WITHOUT a game type
-    cy.createGameWithPlayers(players, { skipGameType: true });
+    cy.createGameWithPlayers(players);
 
     // Submit a score and complete the game
     cy.submitScore("10");
@@ -44,7 +44,7 @@ describe("Assign game type to existing game", () => {
     const players = [faker.person.firstName(), faker.person.firstName()];
 
     // First, create a game type by creating a game with one
-    cy.createGameWithPlayers(players);
+    cy.createGameWithPlayers(players, "Sushi Go");
 
     // Complete the game
     cy.intercept("POST", "**/play/**").as("completeGame");
@@ -52,7 +52,7 @@ describe("Assign game type to existing game", () => {
     cy.wait("@completeGame");
 
     // Now create a second game WITHOUT a game type
-    cy.createGameWithPlayers(players, { skipGameType: true });
+    cy.createGameWithPlayers(players);
 
     // Should see "Set game type:" on the play screen
     cy.findByText("Set game type:").should("be.visible");
@@ -70,7 +70,7 @@ describe("Assign game type to existing game", () => {
     cy.login();
 
     // Create a game WITH a game type (using shared command)
-    cy.createGameWithPlayers(2);
+    cy.createGameWithPlayers(2, "Molkky");
 
     // On play screen, should NOT see "Set game type:"
     cy.findByText("Set game type:").should("not.exist");

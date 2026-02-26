@@ -34,7 +34,7 @@ describe("Smoke Tests", () => {
     cy.login();
 
     // Use shared command to create game with players and game type
-    cy.createGameWithPlayers(2).then((players) => {
+    cy.createGameWithPlayers(2, "Scrabble").then((players) => {
       expect(players).to.have.length(2);
 
       // Use shared command to submit scores
