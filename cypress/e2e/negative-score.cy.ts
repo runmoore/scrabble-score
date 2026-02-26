@@ -52,9 +52,7 @@ describe("Negative Score Functionality", () => {
     cy.submitScore("");
 
     // Complete the game
-    cy.intercept("POST", "**/play/**").as("completeGame");
-    cy.findByRole("button", { name: /complete game/i }).click();
-    cy.wait("@completeGame");
+    cy.completeGame();
 
     // Verify the player with positive score wins
     cy.findByText(/has won with a score of 15/i).should("be.visible");

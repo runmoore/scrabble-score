@@ -15,9 +15,11 @@ vi.mock("~/models/game.server", () => {
   return {
     deleteGame: vi.fn(),
     reopenGame: vi.fn(),
+    getAllGameTypes: vi.fn().mockResolvedValue([]),
     getGame: vi.fn().mockResolvedValue({
       id: 1,
       completed: false,
+      gameType: null,
       players: [
         { id: 1, name: "alice", totalScore: 5 },
         { id: 2, name: "nina", totalScore: 2 },
@@ -54,6 +56,7 @@ describe("loader function", () => {
     expect(data.game).toEqual({
       id: 1,
       completed: false,
+      gameType: null,
       players: [
         { id: 1, name: "alice", totalScore: 5, place: 1 },
         { id: 2, name: "nina", totalScore: 2, place: 2 },

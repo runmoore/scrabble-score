@@ -34,17 +34,15 @@ describe("Smoke Tests", () => {
     cy.login();
 
     // Use shared command to create game with players and game type
-    cy.createGameWithPlayers(2).then((players) => {
+    cy.createGameWithPlayers(2, "Scrabble").then((players) => {
       expect(players).to.have.length(2);
 
       // Use shared command to submit scores
       cy.submitScore("5"); // Player 1: 5 points
       cy.submitScore("11"); // Player 2: 11 points
 
-      // Complete the game using intercept for reliability
-      cy.intercept("POST", "**/play/**").as("completeGame");
-      cy.findByRole("button", { name: /complete game/i }).click();
-      cy.wait("@completeGame");
+      // Complete the game
+      cy.completeGame();
 
       // Verify winner announcement (Player 2 with higher score)
       cy.findByText(`${players[1]} has won with a score of 11`).should(

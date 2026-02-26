@@ -217,6 +217,21 @@ export function reopenGame(id: Game["id"]) {
   });
 }
 
+export function setGameType({
+  id,
+  userId,
+  gameTypeId,
+}: {
+  id: Game["id"];
+  userId: User["id"];
+  gameTypeId: string;
+}) {
+  return prisma.game.update({
+    data: { gameTypeId },
+    where: { id, userId, gameTypeId: null },
+  });
+}
+
 export function deleteGame({
   id,
   userId,

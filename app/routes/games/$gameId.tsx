@@ -12,11 +12,14 @@ import invariant from "tiny-invariant";
 import {
   createGame,
   deleteGame,
+  getAllGameTypes,
   getGame,
   reopenGame,
+  setGameType,
 } from "~/models/game.server";
 import { getNextPlayerToPlay } from "~/game-utils";
 import { requireUserId } from "~/session.server";
+import { GameTypeSection } from "~/components/GameTypeSection";
 
 const english_ordinal_rules = new Intl.PluralRules("en", { type: "ordinal" });
 const suffixes = {
@@ -34,7 +37,7 @@ function getNumberWithOrdinal(n: number) {
   return n + suffix;
 }
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.gameId, "gameId not found");
   const game = await getGame({ id: params.gameId });
 
@@ -58,7 +61,14 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   const winners = game.players.filter(
     ({ totalScore }) => totalScore === topScore
   );
-  return json({ game, winners, topScore });
+
+  let gameTypes: { id: string; name: string }[] = [];
+  if (!game.gameType) {
+    const userId = await requireUserId(request);
+    gameTypes = await getAllGameTypes({ userId });
+  }
+
+  return json({ game, winners, topScore, gameTypes });
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -91,6 +101,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return redirect(`/games/${newGame.id}/play/${players[0]}`);
   }
 
+  if (formData.get("action") === "set-game-type") {
+    const userId = await requireUserId(request);
+    const gameTypeId = formData.get("gameTypeId") as string;
+    if (gameTypeId) {
+      await setGameType({ id: gameId, userId, gameTypeId });
+    }
+    return json({});
+  }
+
   if (formData.get("action") === "delete") {
     const userId = await requireUserId(request);
 
@@ -101,7 +120,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function GamePage() {
-  const { game, winners, topScore } = useLoaderData<typeof loader>();
+  const { game, winners, topScore, gameTypes } = useLoaderData<typeof loader>();
   const dialogRef = useRef<HTMLDialogElement>(null);
   let title = "Still Playing";
 
@@ -118,11 +137,7 @@ export default function GamePage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      {game.gameType && (
-        <h2 className="mb-2 text-xl font-bold dark:text-gray-100">
-          {game.gameType.name}
-        </h2>
-      )}
+      <GameTypeSection gameType={game.gameType} gameTypes={gameTypes} />
       <h2 className="text-3xl dark:text-gray-100">{title}</h2>
       <div className="my-8 flex justify-around dark:text-gray-200">
         <div>

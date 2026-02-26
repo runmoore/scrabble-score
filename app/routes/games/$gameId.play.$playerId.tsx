@@ -6,9 +6,11 @@ import type {
 import { redirect } from "@remix-run/server-runtime";
 import {
   addScore,
+  getAllGameTypes,
   getGame,
   completeGame,
   reopenGame,
+  setGameType,
 } from "~/models/game.server";
 
 import invariant from "tiny-invariant";
@@ -16,7 +18,9 @@ import invariant from "tiny-invariant";
 import type { EnhancedGame } from "~/models/game.server";
 import { json } from "@remix-run/node";
 import { getNextPlayerToPlay } from "~/game-utils";
+import { requireUserId } from "~/session.server";
 import { useEffect, useState } from "react";
+import { GameTypeSection } from "~/components/GameTypeSection";
 
 export type LoaderData = typeof loader;
 
@@ -35,7 +39,13 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     0
   );
 
-  return json({ game, playerId: params.playerId, topScore });
+  let gameTypes: { id: string; name: string }[] = [];
+  if (!game.gameType) {
+    const userId = await requireUserId(request);
+    gameTypes = await getAllGameTypes({ userId });
+  }
+
+  return json({ game, playerId: params.playerId, topScore, gameTypes });
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -70,6 +80,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     await reopenGame(gameId);
     return null;
   }
+
+  if (formData.get("action") === "set-game-type") {
+    const userId = await requireUserId(request);
+    const gameTypeId = formData.get("gameTypeId") as string;
+    if (gameTypeId) {
+      await setGameType({ id: gameId, userId, gameTypeId });
+    }
+    return json({});
+  }
 };
 
 export default function Play() {
@@ -79,7 +98,8 @@ export default function Play() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
-  const { game, playerId, topScore } = useLoaderData<typeof loader>();
+  const { game, playerId, topScore, gameTypes } =
+    useLoaderData<typeof loader>();
 
   const player = game.players.find((p) => p.id === playerId);
 
@@ -111,11 +131,7 @@ export default function Play() {
 
   return (
     <>
-      {game.gameType && (
-        <h2 className="mb-4 text-xl font-bold dark:text-gray-100">
-          {game.gameType.name}
-        </h2>
-      )}
+      <GameTypeSection gameType={game.gameType} gameTypes={gameTypes} />
       <div className="mb-8 flex flex-row gap-2 text-center md:gap-4">
         {game.players.map((player) => (
           <div

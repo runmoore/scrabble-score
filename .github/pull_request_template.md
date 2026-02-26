@@ -1,6 +1,6 @@
-## Summary
+## Why
 
-<!-- Brief description of what changed and why -->
+<!-- Focus on the motivation and context behind this change. The reviewer can see _what_ changed in the diff — what they need from the description is _why_ it changed. What problem does this solve? What user need does it address? What was the previous behavior and why was it insufficient? -->
 
 ## Visual Changes
 

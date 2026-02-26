@@ -44,12 +44,26 @@ declare global {
       // =============================================================================
 
       /**
-       * Creates a game with specified players and a game type
+       * Creates a game with specified players
        * @param players - Array of player names, or number to auto-generate
-       * @example cy.createGameWithPlayers(['Alice', 'Bob'])
+       * @param gameType - Game type name to create and select. Omit for no game type.
+       * @example cy.createGameWithPlayers(['Alice', 'Bob'], 'Scrabble')
        * @example cy.createGameWithPlayers(3)
        */
       createGameWithPlayers: typeof createGameWithPlayers;
+
+      /**
+       * Completes the current game and waits for navigation to the summary page
+       * @example cy.completeGame()
+       */
+      completeGame: typeof completeGame;
+
+      /**
+       * Creates a game type via the new game page without starting a game
+       * @param name - The game type name to create
+       * @example cy.createGameType('Scrabble')
+       */
+      createGameType: typeof createGameType;
 
       /**
        * Submits a score for the current player
@@ -150,6 +164,8 @@ export const registerCommands = () => {
 
   // Game-specific commands
   Cypress.Commands.add("createGameWithPlayers", createGameWithPlayers);
+  Cypress.Commands.add("completeGame", completeGame);
+  Cypress.Commands.add("createGameType", createGameType);
   Cypress.Commands.add("submitScore", submitScore);
   Cypress.Commands.add("checkButtonStates", checkButtonStates);
   Cypress.Commands.add("togglePlusScoreSign", togglePlusScoreSign);
@@ -163,7 +179,7 @@ export const registerCommands = () => {
 // GAME-SPECIFIC COMMAND IMPLEMENTATIONS
 // =============================================================================
 
-function createGameWithPlayers(players: string[] | number) {
+function createGameWithPlayers(players: string[] | number, gameType?: string) {
   let playerNames: string[];
 
   if (typeof players === "number") {
@@ -186,16 +202,17 @@ function createGameWithPlayers(players: string[] | number) {
     .should("be.visible")
     .and("not.be.disabled");
 
-  // Add and select a game type
-  const gameTypeName = faker.word.noun();
-  cy.intercept("POST", "**/games/new**").as("addGameType");
-  cy.findByRole("textbox", { name: /game type name/i }).type(gameTypeName);
-  cy.findByRole("button", { name: /\+ add new game type/i }).click();
-  cy.wait("@addGameType");
+  if (gameType) {
+    // Add and select a game type
+    cy.intercept("POST", "**/games/new**").as("addGameType");
+    cy.findByRole("textbox", { name: /game type name/i }).type(gameType);
+    cy.findByRole("button", { name: /\+ add new game type/i }).click();
+    cy.wait("@addGameType");
 
-  cy.findByRole("radio", { name: new RegExp(gameTypeName, "i") })
-    .should("be.visible")
-    .check();
+    cy.findByRole("radio", { name: new RegExp(gameType, "i") })
+      .should("be.visible")
+      .check();
+  }
 
   // Add all players
   playerNames.forEach((playerName, index) => {
@@ -237,6 +254,29 @@ function createGameWithPlayers(players: string[] | number) {
 
   // Return player names for further use
   return cy.wrap(playerNames);
+}
+
+function completeGame() {
+  cy.intercept("POST", "**/play/**").as("completeGame");
+  cy.findByRole("button", { name: /complete game/i }).click();
+  cy.wait("@completeGame");
+}
+
+function createGameType(name: string) {
+  cy.visit("/games");
+  cy.findByRole("link", { name: /\+ new game/i }).click();
+
+  cy.findByRole("textbox", { name: /game type name/i })
+    .should("be.visible")
+    .and("not.be.disabled");
+
+  cy.intercept("POST", "**/games/new**").as("addGameType");
+  cy.findByRole("textbox", { name: /game type name/i }).type(name);
+  cy.findByRole("button", { name: /\+ add new game type/i }).click();
+  cy.wait("@addGameType");
+
+  // Verify the game type was created
+  cy.findByRole("radio", { name: new RegExp(name, "i") }).should("be.visible");
 }
 
 function submitScore(score: string) {
