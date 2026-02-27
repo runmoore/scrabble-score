@@ -37,7 +37,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const topScore = game.players.reduce(
     (max, current) => (current.totalScore > max ? current.totalScore : max),
-    0
+    -Infinity
   );
 
   let gameTypes: { id: string; name: string }[] = [];

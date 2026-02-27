@@ -101,7 +101,7 @@ const getWinnersNames = (game: {
 }) => {
   const topScore = game.players.reduce(
     (max, current) => (current.totalScore > max ? current.totalScore : max),
-    0
+    -Infinity
   );
 
   return game.players

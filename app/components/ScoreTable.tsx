@@ -23,7 +23,8 @@ export function ScoreTable({
         <div
           key={player.id}
           className={`flex min-w-0 flex-1 flex-col ${
-            player.totalScore === topScore && player.totalScore > 0
+            player.totalScore === topScore &&
+            players.some((p) => p.scores.length > 0)
               ? "rounded-md bg-yellow-100/80 dark:bg-yellow-900/40"
               : ""
           }`}
