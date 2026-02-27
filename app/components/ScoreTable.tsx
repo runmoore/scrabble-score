@@ -1,4 +1,4 @@
-interface ScoreTablePlayer {
+export interface ScoreTablePlayer {
   id: string;
   name: string;
   scores: { id: string; points: number }[];
