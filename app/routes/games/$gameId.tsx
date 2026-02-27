@@ -6,7 +6,7 @@ import {
   useRouteError,
 } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import invariant from "tiny-invariant";
 
 import {
@@ -20,6 +20,7 @@ import {
 import { getNextPlayerToPlay } from "~/game-utils";
 import { requireUserId } from "~/session.server";
 import { GameTypeSection } from "~/components/GameTypeSection";
+import { ScoreTable } from "~/components/ScoreTable";
 
 const english_ordinal_rules = new Intl.PluralRules("en", { type: "ordinal" });
 const suffixes = {
@@ -122,6 +123,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function GamePage() {
   const { game, winners, topScore, gameTypes } = useLoaderData<typeof loader>();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const [showScores, setShowScores] = useState(false);
   let title = "Still Playing";
 
   if (game.completed) {
@@ -158,6 +160,37 @@ export default function GamePage() {
           ))}
         </div>
       </div>
+      {game.completed && (
+        <div className="mb-6">
+          <button
+            type="button"
+            onClick={() => setShowScores((prev) => !prev)}
+            className="flex w-full items-center justify-center gap-2 rounded bg-gray-100 py-2 px-4 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+          >
+            <svg
+              className={`h-4 w-4 transition-transform ${
+                showScores ? "rotate-180" : ""
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+              />
+            </svg>
+            {showScores ? "Hide scores" : "Show scores"}
+          </button>
+          {showScores && (
+            <div className="mt-3">
+              <ScoreTable players={game.players} topScore={topScore} />
+            </div>
+          )}
+        </div>
+      )}
       {game.completed && (
         <>
           <Form method="post" action="">
