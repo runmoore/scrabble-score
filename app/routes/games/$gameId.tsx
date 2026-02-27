@@ -164,7 +164,7 @@ export default function GamePage() {
         <div className="mb-6">
           <button
             type="button"
-            onClick={() => setShowScores(!showScores)}
+            onClick={() => setShowScores((prev) => !prev)}
             className="flex w-full items-center justify-center gap-2 rounded bg-gray-100 py-2 px-4 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
           >
             <svg
