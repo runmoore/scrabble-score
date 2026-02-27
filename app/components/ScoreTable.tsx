@@ -1,4 +1,5 @@
 interface ScoreTablePlayer {
+  id: string;
   name: string;
   scores: { id: string; points: number }[];
   totalScore: number;
@@ -20,7 +21,7 @@ export function ScoreTable({
     <div className="flex flex-row gap-2 text-center md:gap-4">
       {players.map((player) => (
         <div
-          key={player.name}
+          key={player.id}
           className={`flex min-w-0 flex-1 flex-col ${
             player.totalScore === topScore && player.totalScore > 0
               ? "rounded-md bg-yellow-100/80 dark:bg-yellow-900/40"
