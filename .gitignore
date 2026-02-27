@@ -12,3 +12,6 @@ tsconfig.tsbuildinfo
 /cypress/videos
 /prisma/data.db
 /prisma/data.db-journal
+
+# Claude Code personal settings
+.claude/settings.json
