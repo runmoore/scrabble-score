@@ -1,10 +1,4 @@
-# Capability: Compare Page Game Type
-
-## Purpose
-
-Display game type information on the player comparison page so users can see which type of game was played in the All Games table, Last Game Played card, and Highest Game Score card.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Display game type on compare page
 

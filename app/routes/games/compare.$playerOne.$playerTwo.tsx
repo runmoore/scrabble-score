@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import { json, type LoaderFunctionArgs } from "@remix-run/server-runtime";
 import { format } from "date-fns";
 import invariant from "tiny-invariant";
@@ -12,6 +12,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.playerTwo, "playerTwo not found");
 
   const userId = await requireUserId(request);
+  const url = new URL(request.url);
+  const selectedTypeId = url.searchParams.get("type");
 
   const [playerOneName, playerTwoName, allGames] = await Promise.all([
     (await getPlayer({ id: params.playerOne, userId }))?.name,
@@ -19,7 +21,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     await getAllGames({ userId }),
   ]);
 
-  const relevantGames = (
+  const allRelevantGames = (
     await Promise.all(
       allGames
         .filter(
@@ -32,6 +34,20 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
       // flatMap to remove the nulls and be TS safe
     )
   ).flatMap((game) => (game ? [game] : []));
+
+  // Collect available game types from unfiltered games (sorted alphabetically)
+  const availableGameTypes = Array.from(
+    new Map(
+      allRelevantGames
+        .filter((game) => game.gameType)
+        .map((game) => [game.gameType!.id, game.gameType!])
+    ).values()
+  ).sort((a, b) => a.name.localeCompare(b.name));
+
+  // Filter by selected type if any
+  const relevantGames = selectedTypeId
+    ? allRelevantGames.filter((game) => game.gameType?.id === selectedTypeId)
+    : allRelevantGames;
 
   const playerOne = {
     won: 0,
@@ -97,7 +113,13 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     }
   }
 
-  return json({ playerOne, playerTwo, relevantGames, highestScore });
+  return json({
+    playerOne,
+    playerTwo,
+    relevantGames,
+    highestScore,
+    availableGameTypes,
+  });
 };
 
 const getWinnersNames = (game: {
@@ -121,12 +143,45 @@ const isDraw = (game: {
 
 export default function ComparePlayers() {
   const loaderData = useLoaderData<typeof loader>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedTypeId = searchParams.get("type");
+
+  const handlePillClick = (typeId: string) => {
+    setSearchParams((prev) => {
+      if (prev.get("type") === typeId) {
+        prev.delete("type");
+      } else {
+        prev.set("type", typeId);
+      }
+      return prev;
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Title */}
       <h1 className="text-3xl font-bold dark:text-gray-100">
         {loaderData.playerOne.name} vs {loaderData.playerTwo.name}
       </h1>
+
+      {/* Game Type Filter Pills */}
+      {loaderData.availableGameTypes.length > 0 && (
+        <div className="flex gap-2 overflow-x-auto">
+          {loaderData.availableGameTypes.map((gt) => (
+            <button
+              key={gt.id}
+              onClick={() => handlePillClick(gt.id)}
+              className={`shrink-0 rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+                selectedTypeId === gt.id
+                  ? "bg-blue-primary text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+              }`}
+            >
+              {gt.name}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Card Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
