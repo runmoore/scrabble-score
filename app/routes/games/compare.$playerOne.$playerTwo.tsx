@@ -50,11 +50,13 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     playerName: string;
     gameId: string;
     gameDate: Date | string;
+    gameTypeName: string | null;
   } = {
     score: 0,
     playerName: "",
     gameId: "",
     gameDate: "",
+    gameTypeName: null,
   };
 
   for (const [index, game] of relevantGames.entries()) {
@@ -81,6 +83,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         playerName: p1.name,
         gameId: game.id,
         gameDate: game.createdAt,
+        gameTypeName: game.gameType?.name ?? null,
       };
     }
     if (p2.totalScore > highestScore.score) {
@@ -89,6 +92,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         playerName: p2.name,
         gameId: game.id,
         gameDate: game.createdAt,
+        gameTypeName: game.gameType?.name ?? null,
       };
     }
   }
@@ -195,6 +199,9 @@ export default function ComparePlayers() {
               >
                 <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
                   {format(lastGame.createdAt, "do MMM yyyy")}
+                  {lastGame.gameType?.name && (
+                    <span> &middot; {lastGame.gameType.name}</span>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <div
@@ -242,6 +249,9 @@ export default function ComparePlayers() {
               </div>
               <div className="mt-1 text-sm text-gray-600 dark:text-gray-400">
                 {format(loaderData.highestScore.gameDate, "do MMM yyyy")}
+                {loaderData.highestScore.gameTypeName && (
+                  <span> &middot; {loaderData.highestScore.gameTypeName}</span>
+                )}
               </div>
             </div>
           </Card>
@@ -283,6 +293,9 @@ export default function ComparePlayers() {
                     <div className="text-sm text-gray-600 dark:text-gray-400">
                       {format(game.createdAt, "do MMM yyyy")}
                     </div>
+                  </div>
+                  <div className="flex-1 text-center text-sm text-gray-600 dark:text-gray-400">
+                    {game.gameType?.name}
                   </div>
                   <div className="flex-1 text-center font-medium dark:text-gray-100">
                     {winner}
