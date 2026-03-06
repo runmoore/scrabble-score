@@ -3,7 +3,7 @@ import { json, type LoaderFunctionArgs } from "@remix-run/server-runtime";
 import { format } from "date-fns";
 import invariant from "tiny-invariant";
 import { Card } from "~/components/Card";
-import type { PlayerWithScores } from "~/models/game.server";
+import type { GameType, PlayerWithScores } from "~/models/game.server";
 import { getAllGames, getGame, getPlayer } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 
@@ -36,12 +36,14 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   ).flatMap((game) => (game ? [game] : []));
 
   // Collect available game types from unfiltered games (sorted alphabetically)
-  const availableGameTypes = Array.from(
-    new Map(
-      allRelevantGames
-        .filter((game) => game.gameType)
-        .map((game) => [game.gameType!.id, game.gameType!])
-    ).values()
+  const availableGameTypes = Object.values(
+    allRelevantGames.reduce<Record<string, Pick<GameType, "id" | "name">>>(
+      (acc, game) => {
+        if (game.gameType) acc[game.gameType.id] = game.gameType;
+        return acc;
+      },
+      {}
+    )
   ).sort((a, b) => a.name.localeCompare(b.name));
 
   // Filter by selected type if any
