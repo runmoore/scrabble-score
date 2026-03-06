@@ -149,13 +149,13 @@ export default function ComparePlayers() {
   const selectedTypeId = searchParams.get("type");
 
   const handlePillClick = (typeId: string) => {
-    setSearchParams((prev) => {
-      if (prev.get("type") === typeId) {
-        prev.delete("type");
+    setSearchParams((params) => {
+      if (params.get("type") === typeId) {
+        params.delete("type");
       } else {
-        prev.set("type", typeId);
+        params.set("type", typeId);
       }
-      return prev;
+      return params;
     });
   };
 
