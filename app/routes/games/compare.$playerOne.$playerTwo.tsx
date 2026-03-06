@@ -283,30 +283,23 @@ export default function ComparePlayers() {
                 <Link
                   key={game.id}
                   to={`/games/${game.id}`}
-                  className={`flex items-center justify-between p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                  className={`flex items-center p-4 transition-colors hover:bg-blue-50 dark:hover:bg-blue-900/30 ${
                     index % 2 === 0
                       ? "bg-white dark:bg-gray-900"
                       : "bg-gray-50 dark:bg-gray-800"
                   }`}
                 >
-                  <div className="flex-1">
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      {format(game.createdAt, "do MMM yyyy")}
-                    </div>
+                  <div className="w-[28%] text-sm text-gray-600 dark:text-gray-400">
+                    {format(game.createdAt, "do MMM yyyy")}
                   </div>
-                  <div className="flex-1 text-center text-sm text-gray-600 dark:text-gray-400">
+                  <div className="w-[20%] truncate text-center text-sm text-gray-600 dark:text-gray-400">
                     {game.gameType?.name}
                   </div>
-                  <div className="flex-1 text-center font-medium dark:text-gray-100">
+                  <div className="w-[22%] truncate text-center font-medium dark:text-gray-100">
                     {winner}
                   </div>
-                  <div className="flex-1 text-center text-gray-600 dark:text-gray-400">
+                  <div className="w-[30%] text-center text-gray-600 dark:text-gray-400">
                     {score}
-                  </div>
-                  <div className="flex-1 text-right">
-                    <span className="text-sm text-blue-primary hover:underline dark:text-blue-400">
-                      View
-                    </span>
                   </div>
                 </Link>
               );
