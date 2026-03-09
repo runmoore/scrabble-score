@@ -157,27 +157,23 @@ describe("game.server getTopGameTypes", () => {
   });
 
   test("returns game types ranked by count", async () => {
-    vi.mocked(prisma.game.groupBy).mockResolvedValueOnce([
-      { gameTypeId: "gt-1", _count: { id: 5 } },
-      { gameTypeId: "gt-2", _count: { id: 3 } },
-    ] as any);
     vi.mocked(prisma.gameType.findMany).mockResolvedValueOnce([
-      { id: "gt-1", name: "Scrabble", userId: "user-1" },
-      { id: "gt-2", name: "Words", userId: "user-1" },
-    ]);
+      { id: "gt-1", name: "Scrabble", userId: "user-1", _count: { games: 5 } },
+      { id: "gt-2", name: "Words", userId: "user-1", _count: { games: 3 } },
+      { id: "gt-3", name: "Empty", userId: "user-1", _count: { games: 0 } },
+    ] as any);
 
     const result = await getTopGameTypes({ userId: "user-1", limit: 3 });
 
-    expect(prisma.game.groupBy).toHaveBeenCalledWith({
-      by: ["gameTypeId"],
-      where: {
-        userId: "user-1",
-        deletedAt: null,
-        gameTypeId: { not: null },
+    expect(prisma.gameType.findMany).toHaveBeenCalledWith({
+      where: { userId: "user-1" },
+      select: {
+        id: true,
+        name: true,
+        _count: {
+          select: { games: { where: { deletedAt: null } } },
+        },
       },
-      _count: { id: true },
-      orderBy: { _count: { id: "desc" } },
-      take: 3,
     });
 
     expect(result).toEqual([
@@ -186,8 +182,7 @@ describe("game.server getTopGameTypes", () => {
     ]);
   });
 
-  test("returns empty array when no games have game types", async () => {
-    vi.mocked(prisma.game.groupBy).mockResolvedValueOnce([] as any);
+  test("returns empty array when no game types have games", async () => {
     vi.mocked(prisma.gameType.findMany).mockResolvedValueOnce([]);
 
     const result = await getTopGameTypes({ userId: "user-1" });

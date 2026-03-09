@@ -237,34 +237,26 @@ export async function getTopGameTypes({
   userId: User["id"];
   limit?: number;
 }) {
-  const results = await prisma.game.groupBy({
-    by: ["gameTypeId"],
-    where: {
-      userId,
-      deletedAt: null,
-      gameTypeId: { not: null },
-    },
-    _count: { id: true },
-    orderBy: { _count: { id: "desc" } },
-    take: limit,
-  });
-
-  const gameTypeIds = results
-    .map((r) => r.gameTypeId)
-    .filter((id): id is string => id !== null);
-
   const gameTypes = await prisma.gameType.findMany({
-    where: { id: { in: gameTypeIds } },
-    select: { id: true, name: true },
+    where: { userId },
+    select: {
+      id: true,
+      name: true,
+      _count: {
+        select: { games: { where: { deletedAt: null } } },
+      },
+    },
   });
 
-  const gameTypeMap = new Map(gameTypes.map((gt) => [gt.id, gt.name]));
-
-  return results.map((r) => ({
-    gameTypeId: r.gameTypeId!,
-    name: gameTypeMap.get(r.gameTypeId!) ?? "Unknown",
-    count: r._count.id,
-  }));
+  return gameTypes
+    .map((gt) => ({
+      gameTypeId: gt.id,
+      name: gt.name,
+      count: gt._count.games,
+    }))
+    .filter((gt) => gt.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit);
 }
 
 export async function getTopPlayers({
