@@ -6,6 +6,7 @@ import {
   deleteGame,
 } from "~/models/game.server";
 
+vi.mock("~/db.server", () => ({ prisma: {} }));
 vi.mock("~/session.server", () => {
   return {
     requireUserId: vi.fn().mockResolvedValue("xxx"),
