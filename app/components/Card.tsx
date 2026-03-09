@@ -1,3 +1,4 @@
+import { Link } from "@remix-run/react";
 import type { ReactNode } from "react";
 
 interface CardProps {
@@ -32,12 +33,12 @@ export function Card({
 
   if (asLink && to) {
     return (
-      <a
-        href={to}
+      <Link
+        to={to}
         className={`${cardClasses} block transition-shadow hover:shadow-lg`}
       >
         {content}
-      </a>
+      </Link>
     );
   }
 
