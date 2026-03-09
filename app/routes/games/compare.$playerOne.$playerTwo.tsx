@@ -29,20 +29,16 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         game.players.find((player) => player.id === params.playerTwo)
     )
     .map((game) => {
-      const players = game.players
-        .map((player) => {
-          const playerScores = game.scores.filter(
-            (s) => s.playerId === player.id
-          );
-          return {
-            ...player,
-            scores: playerScores,
-            totalScore: playerScores.reduce((sum, s) => sum + s.points, 0),
-            place: 0,
-          };
-        })
-        .sort((a, b) => b.totalScore - a.totalScore)
-        .map((player, index) => ({ ...player, place: index + 1 }));
+      const players = game.players.map((player) => {
+        const playerScores = game.scores.filter(
+          (s) => s.playerId === player.id
+        );
+        return {
+          ...player,
+          scores: playerScores,
+          totalScore: playerScores.reduce((sum, s) => sum + s.points, 0),
+        };
+      });
 
       return {
         id: game.id,
