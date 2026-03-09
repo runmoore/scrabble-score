@@ -3,19 +3,17 @@ import { useLoaderData } from "@remix-run/react";
 
 import ComparePage, { loader } from "./compare";
 
-// ── Mocks ──────────────────────────────────────────────────────────
+const p1 = { id: "p1", name: "Alice" };
+const p2 = { id: "p2", name: "Bob" };
+const p3 = { id: "p3", name: "Carol" };
+const p4 = { id: "p4", name: "Dave" };
+const p5 = { id: "p5", name: "Eve" };
 
 vi.mock("~/session.server", () => ({
   requireUserId: vi.fn().mockResolvedValue("user1"),
 }));
 
-const mockGetAllPlayers = vi.fn().mockResolvedValue([
-  { id: "p1", name: "Alice" },
-  { id: "p2", name: "Bob" },
-  { id: "p3", name: "Carol" },
-  { id: "p4", name: "Dave" },
-  { id: "p5", name: "Eve" },
-]);
+const mockGetAllPlayers = vi.fn().mockResolvedValue([p1, p2, p3, p4, p5]);
 
 const mockGetAllGames = vi.fn().mockResolvedValue([]);
 
@@ -33,8 +31,6 @@ vi.mock("@remix-run/react", () => ({
   ),
   useLoaderData: vi.fn(),
 }));
-
-// ── Helpers ────────────────────────────────────────────────────────
 
 const callLoader = () =>
   loader({
@@ -60,14 +56,6 @@ function makeGame(
     scores: [],
   };
 }
-
-const p1 = { id: "p1", name: "Alice" };
-const p2 = { id: "p2", name: "Bob" };
-const p3 = { id: "p3", name: "Carol" };
-const p4 = { id: "p4", name: "Dave" };
-const p5 = { id: "p5", name: "Eve" };
-
-// ── Loader Tests ───────────────────────────────────────────────────
 
 describe("compare loader – matchup aggregation", () => {
   test("returns matchups for multiple pairs ordered by game count", async () => {
@@ -103,10 +91,9 @@ describe("compare loader – matchup aggregation", () => {
     const data = await (await callLoader()).json();
 
     expect(data.matchups).toHaveLength(3);
-    expect(data.matchups[0].gameCount).toBe(4); // p1-p2
-    expect(data.matchups[1].gameCount).toBe(3); // p3-p4
-    expect(data.matchups[2].gameCount).toBe(2); // p1-p3
-    // p2-p4 pair (1 game) should be excluded
+    expect(data.matchups[0].gameCount).toBe(4);
+    expect(data.matchups[1].gameCount).toBe(3);
+    expect(data.matchups[2].gameCount).toBe(2);
   });
 
   test("only counts completed games", async () => {
@@ -125,8 +112,8 @@ describe("compare loader – matchup aggregation", () => {
   test("only counts 2-player games", async () => {
     mockGetAllGames.mockResolvedValueOnce([
       makeGame("g1", [p1, p2]),
-      makeGame("g2", [p1, p2, p3]), // 3-player — excluded
-      makeGame("g3", [p1]), // 1-player — excluded
+      makeGame("g2", [p1, p2, p3]),
+      makeGame("g3", [p1]),
     ]);
 
     const data = await (await callLoader()).json();
@@ -177,8 +164,8 @@ describe("compare loader – matchup aggregation", () => {
 
   test("canonical pair key treats A-vs-B same as B-vs-A", async () => {
     mockGetAllGames.mockResolvedValueOnce([
-      makeGame("g1", [p2, p1]), // reversed order
-      makeGame("g2", [p1, p2]), // normal order
+      makeGame("g1", [p2, p1]),
+      makeGame("g2", [p1, p2]),
     ]);
 
     const data = await (await callLoader()).json();
@@ -187,8 +174,6 @@ describe("compare loader – matchup aggregation", () => {
     expect(data.matchups[0].gameCount).toBe(2);
   });
 });
-
-// ── Component Render Tests ─────────────────────────────────────────
 
 describe("ComparePage component", () => {
   function renderPage(matchups: any[] = []) {
@@ -271,7 +256,6 @@ describe("ComparePage component", () => {
     ]);
 
     expect(screen.getByText("2 games")).toBeInTheDocument();
-    // Only the game count paragraph should exist within the card, not a game types paragraph
     const card = screen.getByText("Alice vs Bob").closest("a");
     const paragraphs = card?.querySelectorAll("p");
     expect(paragraphs).toHaveLength(1);
