@@ -42,15 +42,13 @@ export function assignPlaces(players: PlayerWithScores[]): PlayerWithPlace[] {
     a.totalScore >= b.totalScore ? -1 : 1
   );
 
-  return sorted.map((player, i) => ({
-    ...player,
-    place:
-      i === 0
-        ? 1
-        : player.totalScore === sorted[i - 1].totalScore
-        ? (sorted[i - 1] as PlayerWithPlace).place
-        : i + 1,
-  }));
+  let currentPlace = 1;
+  return sorted.map((player, i) => {
+    if (i > 0 && player.totalScore !== sorted[i - 1].totalScore) {
+      currentPlace = i + 1;
+    }
+    return { ...player, place: currentPlace };
+  });
 }
 
 export async function getGame({

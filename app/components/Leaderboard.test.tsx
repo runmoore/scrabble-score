@@ -47,8 +47,8 @@ describe("Leaderboard", () => {
 
     render(<Leaderboard players={players} />);
 
-    expect(screen.getByText(/1st/).textContent).toContain("🏆");
-    expect(screen.getByText(/2nd/).textContent).not.toContain("🏆");
+    expect(screen.getByText(/1st/)).toHaveTextContent("🏆");
+    expect(screen.getByText(/2nd/)).not.toHaveTextContent("🏆");
   });
 
   it("shows trophy emoji for tied first-place players", () => {
@@ -63,8 +63,8 @@ describe("Leaderboard", () => {
     const firstPlaceElements = screen.getAllByText(/1st/);
     expect(firstPlaceElements).toHaveLength(2);
     firstPlaceElements.forEach((el) => {
-      expect(el.textContent).toContain("🏆");
+      expect(el).toHaveTextContent("🏆");
     });
-    expect(screen.getByText(/3rd/).textContent).not.toContain("🏆");
+    expect(screen.getByText(/3rd/)).not.toHaveTextContent("🏆");
   });
 });

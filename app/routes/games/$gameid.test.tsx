@@ -12,7 +12,7 @@ vi.mock("~/session.server", () => {
   };
 });
 vi.mock("~/models/game.server", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("~/models/game.server")>();
+  const actual = await importOriginal();
   return {
     assignPlaces: actual.assignPlaces,
     deleteGame: vi.fn(),
