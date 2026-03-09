@@ -230,6 +230,65 @@ export function setGameType({
   });
 }
 
+export async function getTopGameTypes({
+  userId,
+  limit = 3,
+}: {
+  userId: User["id"];
+  limit?: number;
+}) {
+  const gameTypes = await prisma.gameType.findMany({
+    where: { userId },
+    select: {
+      id: true,
+      name: true,
+      _count: {
+        select: { games: { where: { deletedAt: null } } },
+      },
+    },
+  });
+
+  return gameTypes
+    .map((gt) => ({
+      gameTypeId: gt.id,
+      name: gt.name,
+      count: gt._count.games,
+    }))
+    .filter((gt) => gt.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit);
+}
+
+export async function getTopPlayers({
+  userId,
+  limit = 3,
+}: {
+  userId: User["id"];
+  limit?: number;
+}) {
+  const players = await prisma.player.findMany({
+    where: { userId },
+    select: {
+      id: true,
+      name: true,
+      games: {
+        where: { deletedAt: null },
+        select: { id: true },
+      },
+    },
+  });
+
+  return players
+    .map((p) => ({
+      playerId: p.id,
+      name: p.name,
+      count: p.games.length,
+    }))
+    .filter((p) => p.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit);
+}
+
 export function deleteGame({
   id,
   userId,
