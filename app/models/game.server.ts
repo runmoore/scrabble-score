@@ -6,7 +6,7 @@ export type { Game, GameType, Player, User, Score } from "@prisma/client";
 interface PlayerWithScores extends Player {
   scores: Score[];
   totalScore: number;
-  place: number;
+  place?: number;
 }
 
 type EnhancedGame = {
@@ -28,23 +28,29 @@ function enrichPlayerScores(
       ...player,
       scores: playerScores,
       totalScore: playerScores.reduce((sum, s) => sum + s.points, 0),
-      place: 0,
     };
   });
 }
 
-export function assignPlaces(players: PlayerWithScores[]): void {
-  players.sort((a, b) => (a.totalScore >= b.totalScore ? -1 : 1));
+type PlayerWithPlace = PlayerWithScores & { place: number };
+type RankedGame = Omit<EnhancedGame, "players"> & {
+  players: PlayerWithPlace[];
+};
 
-  for (const [i, player] of players.entries()) {
-    if (i === 0) {
-      player.place = 1;
-    } else if (player.totalScore === players[i - 1].totalScore) {
-      player.place = players[i - 1].place;
-    } else {
-      player.place = i + 1;
-    }
-  }
+export function assignPlaces(players: PlayerWithScores[]): PlayerWithPlace[] {
+  const sorted = [...players].sort((a, b) =>
+    a.totalScore >= b.totalScore ? -1 : 1
+  );
+
+  return sorted.map((player, i) => ({
+    ...player,
+    place:
+      i === 0
+        ? 1
+        : player.totalScore === sorted[i - 1].totalScore
+        ? (sorted[i - 1] as PlayerWithPlace).place
+        : i + 1,
+  }));
 }
 
 export async function getGame({
@@ -77,7 +83,7 @@ export async function getLastCompletedGame({
   userId,
 }: {
   userId: User["id"];
-}): Promise<EnhancedGame | null> {
+}): Promise<RankedGame | null> {
   const game = (await prisma.game.findFirst({
     where: { userId, completed: true, deletedAt: null, players: { some: {} } },
     select: {
@@ -95,10 +101,10 @@ export async function getLastCompletedGame({
     return null;
   }
 
-  game.players = enrichPlayerScores(game.players, game.scores);
-  assignPlaces(game.players);
-
-  return game;
+  return {
+    ...game,
+    players: assignPlaces(enrichPlayerScores(game.players, game.scores)),
+  };
 }
 
 export function createGame({

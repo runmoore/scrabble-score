@@ -74,12 +74,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     throw new Response("Not Found", { status: 404 });
   }
 
-  assignPlaces(game.players);
+  const players = assignPlaces(game.players);
 
-  const topScore = game.players[0].totalScore;
-  const winners = game.players.filter(
-    ({ totalScore }) => totalScore === topScore
-  );
+  const topScore = players[0].totalScore;
+  const winners = players.filter(({ totalScore }) => totalScore === topScore);
 
   let gameTypes: { id: string; name: string }[] = [];
   if (!game.gameType) {
@@ -87,7 +85,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     gameTypes = await getAllGameTypes({ userId });
   }
 
-  return json({ game, winners, topScore, gameTypes });
+  return json({ game: { ...game, players }, winners, topScore, gameTypes });
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
