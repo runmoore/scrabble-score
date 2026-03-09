@@ -1,31 +1,4 @@
-# Capability: Completed Game Scores
-
-## Purpose
-
-Provide a reusable score table component and an expandable scores view on the completed game page, allowing users to review the full turn-by-turn score breakdown after a game ends.
-
-## Requirements
-
-### Requirement: Reusable score table component
-
-The system SHALL provide a reusable `ScoreTable` component that renders a columnar score breakdown for a list of players. Each player column SHALL display the player's name, their individual turn scores in order, and a bold total row separated by top and bottom borders. The leading player(s) SHALL be highlighted with a yellow background when their total exceeds zero. Empty turn slots SHALL be padded so all columns have equal height.
-
-#### Scenario: Score table renders all players with scores
-
-- **WHEN** the ScoreTable component is rendered with players who have scores
-- **THEN** each player is shown in a column with their name, individual scores, and total
-- **AND** the leading player's column has a yellow highlight
-
-#### Scenario: Score table pads uneven turn counts
-
-- **WHEN** players have different numbers of turns (e.g., Player A has 5 scores, Player B has 4)
-- **THEN** the player with fewer turns has blank padding rows so all columns are the same height
-
-#### Scenario: Score table truncates long player names
-
-- **WHEN** a player name is too long to fit the column width
-- **THEN** the name is truncated with ellipsis
-- **AND** the full name is available via the element's title attribute
+## ADDED Requirements
 
 ### Requirement: Reusable Leaderboard component
 
@@ -46,6 +19,8 @@ The system SHALL provide a reusable `Leaderboard` component that displays player
 
 - **WHEN** two or more players have the same top score
 - **THEN** all tied players show the same ordinal place and trophy emoji
+
+## MODIFIED Requirements
 
 ### Requirement: Expandable scores section on completed game page
 
@@ -79,13 +54,3 @@ The completed game page SHALL include a toggle button that shows or hides the fu
 - **WHEN** the completed game page renders the player standings
 - **THEN** the standings are rendered using the shared Leaderboard component
 - **AND** the visual output is identical to the current inline implementation
-
-### Requirement: Play page uses shared ScoreTable component
-
-The play page SHALL use the same ScoreTable component to render its score breakdown, replacing the current inline implementation. The visual output SHALL remain identical to the existing behavior.
-
-#### Scenario: Play page renders scores via ScoreTable
-
-- **WHEN** a user is on the active play page
-- **THEN** the score table is rendered using the shared ScoreTable component
-- **AND** the display is visually identical to the current inline implementation
