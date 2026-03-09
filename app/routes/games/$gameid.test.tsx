@@ -6,17 +6,13 @@ import {
   deleteGame,
 } from "~/models/game.server";
 
-vi.mock("~/db.server", () => ({ prisma: {} }));
 vi.mock("~/session.server", () => {
   return {
     requireUserId: vi.fn().mockResolvedValue("xxx"),
   };
 });
-vi.mock("~/models/game.server", async (importOriginal) => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports -- generic is required here or actual becomes unknown
-  const actual = await importOriginal<typeof import("~/models/game.server")>();
+vi.mock("~/models/game.server", () => {
   return {
-    assignPlaces: actual.assignPlaces,
     deleteGame: vi.fn(),
     reopenGame: vi.fn(),
     getAllGameTypes: vi.fn().mockResolvedValue([]),

@@ -10,7 +10,6 @@ import { useState, useRef } from "react";
 import invariant from "tiny-invariant";
 
 import {
-  assignPlaces,
   createGame,
   deleteGame,
   getAllGameTypes,
@@ -18,7 +17,7 @@ import {
   reopenGame,
   setGameType,
 } from "~/models/game.server";
-import { getNextPlayerToPlay } from "~/game-utils";
+import { assignPlaces, getNextPlayerToPlay } from "~/game-utils";
 import { requireUserId } from "~/session.server";
 import { GameTypeSection } from "~/components/GameTypeSection";
 import { Leaderboard } from "~/components/Leaderboard";

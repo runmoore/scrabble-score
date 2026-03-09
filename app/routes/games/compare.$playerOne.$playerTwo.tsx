@@ -3,8 +3,9 @@ import { json, type LoaderFunctionArgs } from "@remix-run/server-runtime";
 import { format } from "date-fns";
 import invariant from "tiny-invariant";
 import { Card } from "~/components/Card";
-import type { GameType, PlayerWithScores } from "~/models/game.server";
+import type { GameType } from "~/models/game.server";
 import { getAllGames, getPlayer } from "~/models/game.server";
+import { enrichPlayerScores, type PlayerWithScores } from "~/game-utils";
 import { requireUserId } from "~/session.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -28,27 +29,14 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         game.players.find((player) => player.id === params.playerOne) &&
         game.players.find((player) => player.id === params.playerTwo)
     )
-    .map((game) => {
-      const players = game.players.map((player) => {
-        const playerScores = game.scores.filter(
-          (s) => s.playerId === player.id
-        );
-        return {
-          ...player,
-          scores: playerScores,
-          totalScore: playerScores.reduce((sum, s) => sum + s.points, 0),
-        };
-      });
-
-      return {
-        id: game.id,
-        completed: game.completed,
-        scores: game.scores,
-        players,
-        createdAt: game.createdAt,
-        gameType: game.gameType,
-      };
-    });
+    .map((game) => ({
+      id: game.id,
+      completed: game.completed,
+      scores: game.scores,
+      players: enrichPlayerScores(game.players, game.scores),
+      createdAt: game.createdAt,
+      gameType: game.gameType,
+    }));
 
   // Collect available game types from unfiltered games (sorted alphabetically)
   const availableGameTypes = Object.values(

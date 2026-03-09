@@ -1,55 +1,13 @@
 import { prisma } from "~/db.server";
+import {
+  assignPlaces,
+  enrichPlayerScores,
+  type EnhancedGame,
+  type RankedGame,
+} from "~/game-utils";
 
-import type { Game, Player, User, Score } from "@prisma/client";
+import type { Game, Player, User } from "@prisma/client";
 export type { Game, GameType, Player, User, Score } from "@prisma/client";
-
-interface PlayerWithScores extends Player {
-  scores: Score[];
-  totalScore: number;
-  place?: number;
-}
-
-type EnhancedGame = {
-  id: Game["id"];
-  completed: Game["completed"];
-  scores: Score[];
-  players: PlayerWithScores[];
-  createdAt: Game["createdAt"];
-  gameType: { id: string; name: string } | null;
-};
-
-function enrichPlayerScores(
-  players: Player[],
-  scores: Score[]
-): PlayerWithScores[] {
-  return players.map((player) => {
-    const playerScores = scores.filter((s) => s.playerId === player.id);
-    return {
-      ...player,
-      scores: playerScores,
-      totalScore: playerScores.reduce((sum, s) => sum + s.points, 0),
-    };
-  });
-}
-
-type PlayerWithPlace = PlayerWithScores & { place: number };
-type RankedGame = Omit<EnhancedGame, "players"> & {
-  players: PlayerWithPlace[];
-};
-
-export function assignPlaces(players: PlayerWithScores[]): PlayerWithPlace[] {
-  const sorted = [...players].sort((a, b) =>
-    a.totalScore >= b.totalScore ? -1 : 1
-  );
-
-  let currentPlace = 1;
-  return sorted.map((player, i) => {
-    if (i > 0 && player.totalScore !== sorted[i - 1].totalScore) {
-      currentPlace = i + 1;
-    }
-    return { ...player, place: currentPlace };
-  });
-}
 
 export async function getGame({
   id,
@@ -284,5 +242,3 @@ export function deleteGame({
     where: { id, userId },
   });
 }
-
-export type { EnhancedGame, PlayerWithScores };

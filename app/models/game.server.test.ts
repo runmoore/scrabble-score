@@ -1,7 +1,7 @@
 import { getGame, getLastCompletedGame, setGameType } from "./game.server";
 import { prisma } from "~/db.server";
 
-import type { EnhancedGame } from "./game.server";
+import type { EnhancedGame } from "~/game-utils";
 
 vi.mock("~/db.server", () => {
   return {
