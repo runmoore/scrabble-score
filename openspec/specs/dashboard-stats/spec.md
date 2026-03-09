@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD
+Surface gameplay patterns on the dashboard by showing the most popular game types and most active players, each ranked by game count.
 
 ## Requirements
 
