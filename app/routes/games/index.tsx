@@ -33,7 +33,14 @@ export default function Games() {
 
   return (
     <div>
-      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <Link
+        to="new"
+        className="mb-6 hidden rounded bg-blue-500 py-2 px-4 text-center text-white hover:bg-blue-600 focus:bg-blue-400 dark:bg-blue-700 dark:hover:bg-blue-600 sm:block"
+      >
+        New Game
+      </Link>
+
+      <div className="mb-6 grid grid-cols-1 gap-4 pb-20 sm:pb-0 md:grid-cols-2 lg:grid-cols-3">
         {inProgressGames.map((game) => {
           const nextPlayer = getNextPlayerToPlay(game);
           const playerTotals = game.players.map((player) => ({
@@ -161,9 +168,9 @@ export default function Games() {
 
       <Link
         to="new"
-        className="block rounded bg-blue-500 py-2 px-4 text-center text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200 dark:bg-blue-700 dark:hover:bg-blue-600"
+        className="fixed bottom-6 right-4 z-10 rounded-full bg-blue-500 px-5 py-3 text-lg font-semibold text-white shadow-lg hover:bg-blue-600 focus:bg-blue-400 dark:bg-blue-700 dark:hover:bg-blue-600 sm:hidden"
       >
-        New Game
+        + New Game
       </Link>
     </div>
   );
