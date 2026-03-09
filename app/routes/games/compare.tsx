@@ -4,12 +4,15 @@ import { Form, useLoaderData } from "@remix-run/react";
 import React, { useState } from "react";
 
 import { Card } from "~/components/Card";
+import type { Player } from "~/models/game.server";
 import { getAllGames, getAllPlayers } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 
+type PlayerSummary = Pick<Player, "id" | "name">;
+
 type Matchup = {
-  playerOne: { id: string; name: string };
-  playerTwo: { id: string; name: string };
+  playerOne: PlayerSummary;
+  playerTwo: PlayerSummary;
   gameCount: number;
   gameTypes: string[];
 };
@@ -24,8 +27,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const pairMap = new Map<
     string,
     {
-      playerOne: { id: string; name: string };
-      playerTwo: { id: string; name: string };
+      playerOne: PlayerSummary;
+      playerTwo: PlayerSummary;
       gameCount: number;
       gameTypes: Set<string>;
     }
@@ -117,6 +120,7 @@ export default function ComparePage() {
               title={`${matchup.playerOne.name} vs ${matchup.playerTwo.name}`}
               asLink
               to={`/games/compare/${matchup.playerOne.id}/${matchup.playerTwo.id}`}
+              accent
             >
               <p className="dark:text-gray-300">
                 {matchup.gameCount === 1

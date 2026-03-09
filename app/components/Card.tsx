@@ -5,11 +5,23 @@ interface CardProps {
   children: ReactNode;
   asLink?: boolean;
   to?: string;
+  accent?: boolean;
 }
 
-export function Card({ title, children, asLink = false, to }: CardProps) {
-  const cardClasses =
-    "rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800";
+export function Card({
+  title,
+  children,
+  asLink = false,
+  to,
+  accent = false,
+}: CardProps) {
+  const cardClasses = [
+    "rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800",
+    accent &&
+      "border-l-4 border-l-blue-primary hover:bg-blue-50 dark:hover:bg-blue-900/30",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const content = (
     <>
