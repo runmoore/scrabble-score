@@ -65,6 +65,61 @@ export async function getGame({
   return game;
 }
 
+export async function getLastCompletedGame({
+  userId,
+}: {
+  userId: User["id"];
+}): Promise<EnhancedGame | null> {
+  const game = (await prisma.game.findFirst({
+    where: { userId, completed: true, deletedAt: null, players: { some: {} } },
+    select: {
+      id: true,
+      completed: true,
+      players: true,
+      scores: true,
+      createdAt: true,
+      gameType: { select: { id: true, name: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  })) as EnhancedGame;
+
+  if (!game) {
+    return null;
+  }
+
+  for (let i = 0; i < game.players.length; i++) {
+    const player: PlayerWithScores = {
+      ...game.players[i],
+      scores: [],
+      totalScore: 0,
+    };
+
+    player.scores = game.scores
+      .filter((score) => score.playerId === player.id)
+      .map((score) => score);
+
+    player.totalScore = player.scores.reduce(
+      (total, current) => (total += current.points),
+      0
+    );
+    game.players[i] = player;
+  }
+
+  game.players.sort((a, b) => (a.totalScore >= b.totalScore ? -1 : 1));
+
+  for (const [i, player] of game.players.entries()) {
+    if (i === 0) {
+      player.place = 1;
+    } else if (player.totalScore === game.players[i - 1].totalScore) {
+      player.place = game.players[i - 1].place;
+    } else {
+      player.place = i + 1;
+    }
+  }
+
+  return game;
+}
+
 export function createGame({
   userId,
   players,

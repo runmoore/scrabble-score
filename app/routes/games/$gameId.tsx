@@ -20,6 +20,7 @@ import {
 import { getNextPlayerToPlay } from "~/game-utils";
 import { requireUserId } from "~/session.server";
 import { GameTypeSection } from "~/components/GameTypeSection";
+import { Leaderboard } from "~/components/Leaderboard";
 import { ScoreTable, type ScoreTablePlayer } from "~/components/ScoreTable";
 
 function CollapsibleScores({
@@ -62,22 +63,6 @@ function CollapsibleScores({
       )}
     </div>
   );
-}
-
-const english_ordinal_rules = new Intl.PluralRules("en", { type: "ordinal" });
-const suffixes = {
-  zero: "",
-  one: "st",
-  two: "nd",
-  few: "rd",
-  many: "",
-  other: "th",
-};
-
-function getNumberWithOrdinal(n: number) {
-  const category = english_ordinal_rules.select(n);
-  const suffix = suffixes[category];
-  return n + suffix;
 }
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -182,24 +167,8 @@ export default function GamePage() {
     <div className="flex flex-1 flex-col">
       <GameTypeSection gameType={game.gameType} gameTypes={gameTypes} />
       <h2 className="text-3xl dark:text-gray-100">{title}</h2>
-      <div className="my-8 flex justify-around dark:text-gray-200">
-        <div>
-          {game.players.map((p) => (
-            <p key={p.id}>
-              {getNumberWithOrdinal(p.place)} {p.place === 1 && "🏆"}
-            </p>
-          ))}
-        </div>
-        <div>
-          {game.players.map((p) => (
-            <p key={p.id}>{p.name}</p>
-          ))}
-        </div>
-        <div>
-          {game.players.map((p) => (
-            <p key={p.id}>{p.totalScore}</p>
-          ))}
-        </div>
+      <div className="my-8">
+        <Leaderboard players={game.players} />
       </div>
       {game.completed && (
         <CollapsibleScores
