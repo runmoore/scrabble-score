@@ -27,6 +27,10 @@ vi.mock("~/models/game.server", () => {
         completed: false,
         gameType: gameTypeA,
         players,
+        scores: [
+          { playerId: "p1", points: 100 },
+          { playerId: "p2", points: 80 },
+        ],
       },
       {
         id: "g2",
@@ -34,6 +38,10 @@ vi.mock("~/models/game.server", () => {
         completed: false,
         gameType: gameTypeB,
         players,
+        scores: [
+          { playerId: "p1", points: 90 },
+          { playerId: "p2", points: 110 },
+        ],
       },
       {
         id: "g3",
@@ -41,6 +49,10 @@ vi.mock("~/models/game.server", () => {
         completed: false,
         gameType: gameTypeA,
         players,
+        scores: [
+          { playerId: "p1", points: 120 },
+          { playerId: "p2", points: 95 },
+        ],
       },
       {
         id: "g4",
@@ -48,57 +60,12 @@ vi.mock("~/models/game.server", () => {
         completed: false,
         gameType: null,
         players,
+        scores: [
+          { playerId: "p1", points: 70 },
+          { playerId: "p2", points: 85 },
+        ],
       },
     ]),
-    getGame: vi.fn().mockImplementation(({ id }: { id: string }) => {
-      const enhancedGames: Record<string, object> = {
-        g1: {
-          id: "g1",
-          createdAt: new Date().toISOString(),
-          completed: false,
-          gameType: gameTypeA,
-          scores: [],
-          players: [
-            { id: "p1", name: "Alice", totalScore: 100, scores: [] },
-            { id: "p2", name: "Bob", totalScore: 80, scores: [] },
-          ],
-        },
-        g2: {
-          id: "g2",
-          createdAt: new Date().toISOString(),
-          completed: false,
-          gameType: gameTypeB,
-          scores: [],
-          players: [
-            { id: "p1", name: "Alice", totalScore: 90, scores: [] },
-            { id: "p2", name: "Bob", totalScore: 110, scores: [] },
-          ],
-        },
-        g3: {
-          id: "g3",
-          createdAt: new Date().toISOString(),
-          completed: false,
-          gameType: gameTypeA,
-          scores: [],
-          players: [
-            { id: "p1", name: "Alice", totalScore: 120, scores: [] },
-            { id: "p2", name: "Bob", totalScore: 95, scores: [] },
-          ],
-        },
-        g4: {
-          id: "g4",
-          createdAt: new Date().toISOString(),
-          completed: false,
-          gameType: null,
-          scores: [],
-          players: [
-            { id: "p1", name: "Alice", totalScore: 70, scores: [] },
-            { id: "p2", name: "Bob", totalScore: 85, scores: [] },
-          ],
-        },
-      };
-      return enhancedGames[id] ?? null;
-    }),
   };
 });
 

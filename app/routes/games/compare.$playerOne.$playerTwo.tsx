@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import invariant from "tiny-invariant";
 import { Card } from "~/components/Card";
 import type { GameType, PlayerWithScores } from "~/models/game.server";
-import { getAllGames, getGame, getPlayer } from "~/models/game.server";
+import { getAllGames, getPlayer } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -21,19 +21,38 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     await getAllGames({ userId }),
   ]);
 
-  const allRelevantGames = (
-    await Promise.all(
-      allGames
-        .filter(
-          (game) =>
-            game.players.length === 2 &&
-            game.players.find((player) => player.id === params.playerOne) &&
-            game.players.find((player) => player.id === params.playerTwo)
-        )
-        .map((game) => getGame({ id: game.id }))
-      // flatMap to remove the nulls and be TS safe
+  const allRelevantGames = allGames
+    .filter(
+      (game) =>
+        game.players.length === 2 &&
+        game.players.find((player) => player.id === params.playerOne) &&
+        game.players.find((player) => player.id === params.playerTwo)
     )
-  ).flatMap((game) => (game ? [game] : []));
+    .map((game) => {
+      const players = game.players
+        .map((player) => {
+          const playerScores = game.scores.filter(
+            (s) => s.playerId === player.id
+          );
+          return {
+            ...player,
+            scores: playerScores,
+            totalScore: playerScores.reduce((sum, s) => sum + s.points, 0),
+            place: 0,
+          };
+        })
+        .sort((a, b) => b.totalScore - a.totalScore)
+        .map((player, index) => ({ ...player, place: index + 1 }));
+
+      return {
+        id: game.id,
+        completed: game.completed,
+        scores: game.scores,
+        players,
+        createdAt: game.createdAt,
+        gameType: game.gameType,
+      };
+    });
 
   // Collect available game types from unfiltered games (sorted alphabetically)
   const availableGameTypes = Object.values(
