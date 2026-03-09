@@ -84,19 +84,25 @@ export default function Games() {
         <Card title="Most Popular Games">
           {topGameTypes.length > 0 ? (
             <ol className="space-y-1">
-              {topGameTypes.map((gt, i) => (
-                <li
-                  key={gt.gameTypeId}
-                  className="flex justify-between text-sm dark:text-gray-300"
-                >
-                  <span>
-                    {i + 1}. {gt.name}
-                  </span>
-                  <span className="font-medium">
-                    {gt.count} {gt.count === 1 ? "game" : "games"}
-                  </span>
-                </li>
-              ))}
+              {topGameTypes.map((gt, i, arr) => {
+                const rank =
+                  i === 0 || arr[i - 1].count !== gt.count
+                    ? i + 1
+                    : arr.findIndex((x) => x.count === gt.count) + 1;
+                return (
+                  <li
+                    key={gt.gameTypeId}
+                    className="flex justify-between text-sm dark:text-gray-300"
+                  >
+                    <span>
+                      {rank}. {gt.name}
+                    </span>
+                    <span className="font-medium">
+                      {gt.count} {gt.count === 1 ? "game" : "games"}
+                    </span>
+                  </li>
+                );
+              })}
             </ol>
           ) : (
             <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -108,19 +114,25 @@ export default function Games() {
         <Card title="Most Active Players">
           {topPlayers.length > 0 ? (
             <ol className="space-y-1">
-              {topPlayers.map((p, i) => (
-                <li
-                  key={p.playerId}
-                  className="flex justify-between text-sm dark:text-gray-300"
-                >
-                  <span>
-                    {i + 1}. {p.name}
-                  </span>
-                  <span className="font-medium">
-                    {p.count} {p.count === 1 ? "game" : "games"}
-                  </span>
-                </li>
-              ))}
+              {topPlayers.map((p, i, arr) => {
+                const rank =
+                  i === 0 || arr[i - 1].count !== p.count
+                    ? i + 1
+                    : arr.findIndex((x) => x.count === p.count) + 1;
+                return (
+                  <li
+                    key={p.playerId}
+                    className="flex justify-between text-sm dark:text-gray-300"
+                  >
+                    <span>
+                      {rank}. {p.name}
+                    </span>
+                    <span className="font-medium">
+                      {p.count} {p.count === 1 ? "game" : "games"}
+                    </span>
+                  </li>
+                );
+              })}
             </ol>
           ) : (
             <p className="text-sm text-gray-500 dark:text-gray-400">
