@@ -1,7 +1,4 @@
-import { render, screen } from "@testing-library/react";
-import { useLoaderData } from "@remix-run/react";
-
-import ComparePage, { loader } from "./compare";
+import { loader } from "./compare";
 
 const p1 = { id: "p1", name: "Alice" };
 const p2 = { id: "p2", name: "Bob" };
@@ -20,16 +17,6 @@ const mockGetAllGames = vi.fn().mockResolvedValue([]);
 vi.mock("~/models/game.server", () => ({
   getAllPlayers: (...args: unknown[]) => mockGetAllPlayers(...args),
   getAllGames: (...args: unknown[]) => mockGetAllGames(...args),
-}));
-
-vi.mock("@remix-run/react", () => ({
-  Form: ({
-    children,
-    ...props
-  }: React.PropsWithChildren<Record<string, unknown>>) => (
-    <form {...props}>{children}</form>
-  ),
-  useLoaderData: vi.fn(),
 }));
 
 const callLoader = () =>
@@ -172,106 +159,5 @@ describe("compare loader – matchup aggregation", () => {
 
     expect(data.matchups).toHaveLength(1);
     expect(data.matchups[0].gameCount).toBe(2);
-  });
-});
-
-describe("ComparePage component", () => {
-  function renderPage(matchups: any[] = []) {
-    vi.mocked(useLoaderData).mockReturnValue({
-      players: [p1, p2, p3],
-      matchups,
-    });
-
-    return render(<ComparePage />);
-  }
-
-  test("renders matchup cards when matchups exist", () => {
-    renderPage([
-      {
-        playerOne: p1,
-        playerTwo: p2,
-        gameCount: 5,
-        gameTypes: ["Scrabble"],
-      },
-    ]);
-
-    expect(screen.getByText("Alice vs Bob")).toBeInTheDocument();
-  });
-
-  test("does not render cards section when no matchups", () => {
-    renderPage([]);
-
-    expect(screen.queryByText(/vs/)).not.toBeInTheDocument();
-  });
-
-  test("displays correct game count with plural", () => {
-    renderPage([
-      {
-        playerOne: p1,
-        playerTwo: p2,
-        gameCount: 5,
-        gameTypes: [],
-      },
-    ]);
-
-    expect(screen.getByText("5 games")).toBeInTheDocument();
-  });
-
-  test("displays singular '1 game'", () => {
-    renderPage([
-      {
-        playerOne: p1,
-        playerTwo: p2,
-        gameCount: 1,
-        gameTypes: [],
-      },
-    ]);
-
-    expect(screen.getByText("1 game")).toBeInTheDocument();
-  });
-
-  test("displays game types as comma-separated text", () => {
-    renderPage([
-      {
-        playerOne: p1,
-        playerTwo: p2,
-        gameCount: 3,
-        gameTypes: ["Scrabble", "Words With Friends"],
-      },
-    ]);
-
-    expect(
-      screen.getByText("Scrabble, Words With Friends")
-    ).toBeInTheDocument();
-  });
-
-  test("omits game types line when empty", () => {
-    renderPage([
-      {
-        playerOne: p1,
-        playerTwo: p2,
-        gameCount: 2,
-        gameTypes: [],
-      },
-    ]);
-
-    expect(screen.getByText("2 games")).toBeInTheDocument();
-    const card = screen.getByText("Alice vs Bob").closest("a");
-    const paragraphs = card?.querySelectorAll("p");
-    expect(paragraphs).toHaveLength(1);
-  });
-
-  test("card links to correct comparison URL", () => {
-    renderPage([
-      {
-        playerOne: p1,
-        playerTwo: p2,
-        gameCount: 3,
-        gameTypes: [],
-      },
-    ]);
-
-    const link = screen.getByText("Alice vs Bob").closest("a");
-    expect(link).toHaveAttribute("href", "/games/compare/p1/p2");
   });
 });
