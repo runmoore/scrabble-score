@@ -6,11 +6,6 @@ export type { Game, GameType, Player, User, Score } from "@prisma/client";
 interface PlayerWithScores extends Player {
   scores: Score[];
   totalScore: number;
-}
-
-interface PlayerWithScores extends Player {
-  scores: Score[];
-  totalScore: number;
   place: number;
 }
 
@@ -22,6 +17,35 @@ type EnhancedGame = {
   createdAt: Game["createdAt"];
   gameType: { id: string; name: string } | null;
 };
+
+function enrichPlayerScores(
+  players: Player[],
+  scores: Score[]
+): PlayerWithScores[] {
+  return players.map((player) => {
+    const playerScores = scores.filter((s) => s.playerId === player.id);
+    return {
+      ...player,
+      scores: playerScores,
+      totalScore: playerScores.reduce((sum, s) => sum + s.points, 0),
+      place: 0,
+    };
+  });
+}
+
+export function assignPlaces(players: PlayerWithScores[]): void {
+  players.sort((a, b) => (a.totalScore >= b.totalScore ? -1 : 1));
+
+  for (const [i, player] of players.entries()) {
+    if (i === 0) {
+      player.place = 1;
+    } else if (player.totalScore === players[i - 1].totalScore) {
+      player.place = players[i - 1].place;
+    } else {
+      player.place = i + 1;
+    }
+  }
+}
 
 export async function getGame({
   id,
@@ -44,23 +68,7 @@ export async function getGame({
     return null;
   }
 
-  for (let i = 0; i < game.players.length; i++) {
-    const player: PlayerWithScores = {
-      ...game.players[i],
-      scores: [],
-      totalScore: 0,
-    };
-
-    player.scores = game.scores
-      .filter((score) => score.playerId === player.id)
-      .map((score) => score);
-
-    player.totalScore = player.scores.reduce(
-      (total, current) => (total += current.points),
-      0
-    );
-    game.players[i] = player;
-  }
+  game.players = enrichPlayerScores(game.players, game.scores);
 
   return game;
 }
@@ -87,35 +95,8 @@ export async function getLastCompletedGame({
     return null;
   }
 
-  for (let i = 0; i < game.players.length; i++) {
-    const player: PlayerWithScores = {
-      ...game.players[i],
-      scores: [],
-      totalScore: 0,
-    };
-
-    player.scores = game.scores
-      .filter((score) => score.playerId === player.id)
-      .map((score) => score);
-
-    player.totalScore = player.scores.reduce(
-      (total, current) => (total += current.points),
-      0
-    );
-    game.players[i] = player;
-  }
-
-  game.players.sort((a, b) => (a.totalScore >= b.totalScore ? -1 : 1));
-
-  for (const [i, player] of game.players.entries()) {
-    if (i === 0) {
-      player.place = 1;
-    } else if (player.totalScore === game.players[i - 1].totalScore) {
-      player.place = game.players[i - 1].place;
-    } else {
-      player.place = i + 1;
-    }
-  }
+  game.players = enrichPlayerScores(game.players, game.scores);
+  assignPlaces(game.players);
 
   return game;
 }

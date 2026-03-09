@@ -11,8 +11,10 @@ vi.mock("~/session.server", () => {
     requireUserId: vi.fn().mockResolvedValue("xxx"),
   };
 });
-vi.mock("~/models/game.server", () => {
+vi.mock("~/models/game.server", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("~/models/game.server")>();
   return {
+    assignPlaces: actual.assignPlaces,
     deleteGame: vi.fn(),
     reopenGame: vi.fn(),
     getAllGameTypes: vi.fn().mockResolvedValue([]),

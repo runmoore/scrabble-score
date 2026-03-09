@@ -10,6 +10,7 @@ import { useState, useRef } from "react";
 import invariant from "tiny-invariant";
 
 import {
+  assignPlaces,
   createGame,
   deleteGame,
   getAllGameTypes,
@@ -73,17 +74,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     throw new Response("Not Found", { status: 404 });
   }
 
-  game.players.sort((a, b) => (a.totalScore >= b.totalScore ? -1 : 1));
-
-  for (const [i, player] of game.players.entries()) {
-    if (i === 0) {
-      player.place = 1;
-    } else if (player.totalScore === game.players[i - 1].totalScore) {
-      player.place = game.players[i - 1].place;
-    } else {
-      player.place = i + 1;
-    }
-  }
+  assignPlaces(game.players);
 
   const topScore = game.players[0].totalScore;
   const winners = game.players.filter(
