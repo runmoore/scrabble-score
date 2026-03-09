@@ -162,8 +162,8 @@ describe("game.server getTopGameTypes", () => {
       { gameTypeId: "gt-2", _count: { id: 3 } },
     ] as any);
     vi.mocked(prisma.gameType.findMany).mockResolvedValueOnce([
-      { id: "gt-1", name: "Scrabble" },
-      { id: "gt-2", name: "Words" },
+      { id: "gt-1", name: "Scrabble", userId: "user-1" },
+      { id: "gt-2", name: "Words", userId: "user-1" },
     ]);
 
     const result = await getTopGameTypes({ userId: "user-1", limit: 3 });
