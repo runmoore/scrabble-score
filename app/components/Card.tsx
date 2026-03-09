@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import type { ReactNode } from "react";
 
 interface CardProps {
@@ -15,13 +16,13 @@ export function Card({
   to,
   accent = false,
 }: CardProps) {
-  const cardClasses = [
+  const cardClasses = classNames(
     "rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800",
-    accent &&
-      "border-l-4 border-l-blue-primary hover:bg-blue-50 dark:hover:bg-blue-900/30",
-  ]
-    .filter(Boolean)
-    .join(" ");
+    {
+      "border-l-4 border-l-blue-primary hover:bg-blue-50 dark:hover:bg-blue-900/30":
+        accent,
+    },
+  );
 
   const content = (
     <>
