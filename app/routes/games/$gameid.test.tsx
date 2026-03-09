@@ -12,7 +12,8 @@ vi.mock("~/session.server", () => {
   };
 });
 vi.mock("~/models/game.server", async (importOriginal) => {
-  const actual = await importOriginal();
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  const actual = await importOriginal<typeof import("~/models/game.server")>();
   return {
     assignPlaces: actual.assignPlaces,
     deleteGame: vi.fn(),
