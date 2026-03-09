@@ -3,7 +3,11 @@ import { json } from "@remix-run/node";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { formatDistanceToNow, format } from "date-fns";
 import { getNextPlayerToPlay } from "~/game-utils";
-import { getLastCompletedGame } from "~/models/game.server";
+import {
+  getLastCompletedGame,
+  getTopGameTypes,
+  getTopPlayers,
+} from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 import { Card } from "~/components/Card";
 import { Leaderboard } from "~/components/Leaderboard";
@@ -11,13 +15,18 @@ import type { loader as gamesLoader } from "~/routes/games";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
-  const lastCompletedGame = await getLastCompletedGame({ userId });
-  return json({ lastCompletedGame });
+  const [lastCompletedGame, topGameTypes, topPlayers] = await Promise.all([
+    getLastCompletedGame({ userId }),
+    getTopGameTypes({ userId, limit: 3 }),
+    getTopPlayers({ userId, limit: 3 }),
+  ]);
+  return json({ lastCompletedGame, topGameTypes, topPlayers });
 };
 
 export default function Games() {
   const { games } = useRouteLoaderData<typeof gamesLoader>("routes/games")!;
-  const { lastCompletedGame } = useLoaderData<typeof loader>();
+  const { lastCompletedGame, topGameTypes, topPlayers } =
+    useLoaderData<typeof loader>();
 
   const inProgressGames = games.filter((g) => !g.completed);
   const completedGameCount = games.filter((g) => g.completed).length;
@@ -70,6 +79,54 @@ export default function Games() {
           <p className="text-3xl font-bold text-blue-primary dark:text-blue-400">
             {completedGameCount}
           </p>
+        </Card>
+
+        <Card title="Most Popular Games">
+          {topGameTypes.length > 0 ? (
+            <ol className="space-y-1">
+              {topGameTypes.map((gt, i) => (
+                <li
+                  key={gt.gameTypeId}
+                  className="flex justify-between text-sm dark:text-gray-300"
+                >
+                  <span>
+                    {i + 1}. {gt.name}
+                  </span>
+                  <span className="font-medium">
+                    {gt.count} {gt.count === 1 ? "game" : "games"}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              No game types used yet
+            </p>
+          )}
+        </Card>
+
+        <Card title="Most Active Players">
+          {topPlayers.length > 0 ? (
+            <ol className="space-y-1">
+              {topPlayers.map((p, i) => (
+                <li
+                  key={p.playerId}
+                  className="flex justify-between text-sm dark:text-gray-300"
+                >
+                  <span>
+                    {i + 1}. {p.name}
+                  </span>
+                  <span className="font-medium">
+                    {p.count} {p.count === 1 ? "game" : "games"}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              No games played yet
+            </p>
+          )}
         </Card>
 
         {lastCompletedGame && (

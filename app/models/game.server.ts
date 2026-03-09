@@ -230,6 +230,73 @@ export function setGameType({
   });
 }
 
+export async function getTopGameTypes({
+  userId,
+  limit = 3,
+}: {
+  userId: User["id"];
+  limit?: number;
+}) {
+  const results = await prisma.game.groupBy({
+    by: ["gameTypeId"],
+    where: {
+      userId,
+      deletedAt: null,
+      gameTypeId: { not: null },
+    },
+    _count: { id: true },
+    orderBy: { _count: { id: "desc" } },
+    take: limit,
+  });
+
+  const gameTypeIds = results
+    .map((r) => r.gameTypeId)
+    .filter((id): id is string => id !== null);
+
+  const gameTypes = await prisma.gameType.findMany({
+    where: { id: { in: gameTypeIds } },
+    select: { id: true, name: true },
+  });
+
+  const gameTypeMap = new Map(gameTypes.map((gt) => [gt.id, gt.name]));
+
+  return results.map((r) => ({
+    gameTypeId: r.gameTypeId!,
+    name: gameTypeMap.get(r.gameTypeId!) ?? "Unknown",
+    count: r._count.id,
+  }));
+}
+
+export async function getTopPlayers({
+  userId,
+  limit = 3,
+}: {
+  userId: User["id"];
+  limit?: number;
+}) {
+  const players = await prisma.player.findMany({
+    where: { userId },
+    select: {
+      id: true,
+      name: true,
+      games: {
+        where: { deletedAt: null },
+        select: { id: true },
+      },
+    },
+  });
+
+  return players
+    .map((p) => ({
+      playerId: p.id,
+      name: p.name,
+      count: p.games.length,
+    }))
+    .filter((p) => p.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit);
+}
+
 export function deleteGame({
   id,
   userId,
