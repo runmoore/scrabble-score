@@ -15,7 +15,7 @@ import {
 
 import invariant from "tiny-invariant";
 
-import type { EnhancedGame } from "~/models/game.server";
+import type { EnhancedGame } from "~/game-utils";
 import { json } from "@remix-run/node";
 import { getNextPlayerToPlay } from "~/game-utils";
 import { requireUserId } from "~/session.server";

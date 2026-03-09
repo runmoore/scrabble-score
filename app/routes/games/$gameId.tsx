@@ -17,9 +17,10 @@ import {
   reopenGame,
   setGameType,
 } from "~/models/game.server";
-import { getNextPlayerToPlay } from "~/game-utils";
+import { assignPlaces, getNextPlayerToPlay } from "~/game-utils";
 import { requireUserId } from "~/session.server";
 import { GameTypeSection } from "~/components/GameTypeSection";
+import { Leaderboard } from "~/components/Leaderboard";
 import { ScoreTable, type ScoreTablePlayer } from "~/components/ScoreTable";
 
 function CollapsibleScores({
@@ -64,22 +65,6 @@ function CollapsibleScores({
   );
 }
 
-const english_ordinal_rules = new Intl.PluralRules("en", { type: "ordinal" });
-const suffixes = {
-  zero: "",
-  one: "st",
-  two: "nd",
-  few: "rd",
-  many: "",
-  other: "th",
-};
-
-function getNumberWithOrdinal(n: number) {
-  const category = english_ordinal_rules.select(n);
-  const suffix = suffixes[category];
-  return n + suffix;
-}
-
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.gameId, "gameId not found");
   const game = await getGame({ id: params.gameId });
@@ -88,22 +73,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     throw new Response("Not Found", { status: 404 });
   }
 
-  game.players.sort((a, b) => (a.totalScore >= b.totalScore ? -1 : 1));
+  const players = assignPlaces(game.players);
 
-  for (const [i, player] of game.players.entries()) {
-    if (i === 0) {
-      player.place = 1;
-    } else if (player.totalScore === game.players[i - 1].totalScore) {
-      player.place = game.players[i - 1].place;
-    } else {
-      player.place = i + 1;
-    }
-  }
-
-  const topScore = game.players[0].totalScore;
-  const winners = game.players.filter(
-    ({ totalScore }) => totalScore === topScore
-  );
+  const topScore = players[0].totalScore;
+  const winners = players.filter(({ totalScore }) => totalScore === topScore);
 
   let gameTypes: { id: string; name: string }[] = [];
   if (!game.gameType) {
@@ -111,7 +84,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     gameTypes = await getAllGameTypes({ userId });
   }
 
-  return json({ game, winners, topScore, gameTypes });
+  return json({ game: { ...game, players }, winners, topScore, gameTypes });
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -182,24 +155,8 @@ export default function GamePage() {
     <div className="flex flex-1 flex-col">
       <GameTypeSection gameType={game.gameType} gameTypes={gameTypes} />
       <h2 className="text-3xl dark:text-gray-100">{title}</h2>
-      <div className="my-8 flex justify-around dark:text-gray-200">
-        <div>
-          {game.players.map((p) => (
-            <p key={p.id}>
-              {getNumberWithOrdinal(p.place)} {p.place === 1 && "🏆"}
-            </p>
-          ))}
-        </div>
-        <div>
-          {game.players.map((p) => (
-            <p key={p.id}>{p.name}</p>
-          ))}
-        </div>
-        <div>
-          {game.players.map((p) => (
-            <p key={p.id}>{p.totalScore}</p>
-          ))}
-        </div>
+      <div className="my-8">
+        <Leaderboard players={game.players} />
       </div>
       {game.completed && (
         <CollapsibleScores

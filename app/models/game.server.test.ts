@@ -1,7 +1,7 @@
-import { getGame, setGameType } from "./game.server";
+import { getGame, getLastCompletedGame, setGameType } from "./game.server";
 import { prisma } from "~/db.server";
 
-import type { EnhancedGame } from "./game.server";
+import type { EnhancedGame } from "~/game-utils";
 
 vi.mock("~/db.server", () => {
   return {
@@ -54,6 +54,68 @@ describe("game.server getGame", () => {
   test("returns the total score for each player", async () => {
     expect(result.players[0].totalScore).toEqual(11);
     expect(result.players[1].totalScore).toEqual(22);
+  });
+});
+
+describe("game.server getLastCompletedGame", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("queries for last completed game and returns with computed totals and places", async () => {
+    vi.mocked(prisma.game.findFirst).mockResolvedValueOnce({
+      id: "456",
+      completed: true,
+      createdAt: new Date("2026-01-01"),
+      gameType: { id: "gt-1", name: "Scrabble" },
+      players: [
+        { id: "p1", name: "Alice" },
+        { id: "p2", name: "Bob" },
+      ],
+      scores: [
+        { playerId: "p1", points: 30 },
+        { playerId: "p2", points: 50 },
+        { playerId: "p1", points: 20 },
+        { playerId: "p2", points: 10 },
+      ],
+    } as any);
+
+    const result = await getLastCompletedGame({ userId: "user-1" });
+
+    expect(prisma.game.findFirst).toHaveBeenCalledWith({
+      where: {
+        userId: "user-1",
+        completed: true,
+        deletedAt: null,
+        players: { some: {} },
+      },
+      select: {
+        id: true,
+        completed: true,
+        createdAt: true,
+        players: true,
+        scores: true,
+        gameType: { select: { id: true, name: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    expect(result).not.toBeNull();
+    // Bob has 60, Alice has 50 — Bob should be first
+    expect(result!.players[0].name).toBe("Bob");
+    expect(result!.players[0].totalScore).toBe(60);
+    expect(result!.players[0].place).toBe(1);
+    expect(result!.players[1].name).toBe("Alice");
+    expect(result!.players[1].totalScore).toBe(50);
+    expect(result!.players[1].place).toBe(2);
+  });
+
+  test("returns null when no completed games exist", async () => {
+    vi.mocked(prisma.game.findFirst).mockResolvedValueOnce(null);
+
+    const result = await getLastCompletedGame({ userId: "user-1" });
+
+    expect(result).toBeNull();
   });
 });
 

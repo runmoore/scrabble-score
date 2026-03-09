@@ -1,27 +1,13 @@
 import { prisma } from "~/db.server";
+import {
+  assignPlaces,
+  enrichPlayerScores,
+  type EnhancedGame,
+  type RankedGame,
+} from "~/game-utils";
 
-import type { Game, Player, User, Score } from "@prisma/client";
+import type { Game, Player, User } from "@prisma/client";
 export type { Game, GameType, Player, User, Score } from "@prisma/client";
-
-interface PlayerWithScores extends Player {
-  scores: Score[];
-  totalScore: number;
-}
-
-interface PlayerWithScores extends Player {
-  scores: Score[];
-  totalScore: number;
-  place: number;
-}
-
-type EnhancedGame = {
-  id: Game["id"];
-  completed: Game["completed"];
-  scores: Score[];
-  players: PlayerWithScores[];
-  createdAt: Game["createdAt"];
-  gameType: { id: string; name: string } | null;
-};
 
 export async function getGame({
   id,
@@ -44,25 +30,37 @@ export async function getGame({
     return null;
   }
 
-  for (let i = 0; i < game.players.length; i++) {
-    const player: PlayerWithScores = {
-      ...game.players[i],
-      scores: [],
-      totalScore: 0,
-    };
-
-    player.scores = game.scores
-      .filter((score) => score.playerId === player.id)
-      .map((score) => score);
-
-    player.totalScore = player.scores.reduce(
-      (total, current) => (total += current.points),
-      0
-    );
-    game.players[i] = player;
-  }
+  game.players = enrichPlayerScores(game.players, game.scores);
 
   return game;
+}
+
+export async function getLastCompletedGame({
+  userId,
+}: {
+  userId: User["id"];
+}): Promise<RankedGame | null> {
+  const game = (await prisma.game.findFirst({
+    where: { userId, completed: true, deletedAt: null, players: { some: {} } },
+    select: {
+      id: true,
+      completed: true,
+      players: true,
+      scores: true,
+      createdAt: true,
+      gameType: { select: { id: true, name: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  })) as EnhancedGame;
+
+  if (!game) {
+    return null;
+  }
+
+  return {
+    ...game,
+    players: assignPlaces(enrichPlayerScores(game.players, game.scores)),
+  };
 }
 
 export function createGame({
@@ -244,5 +242,3 @@ export function deleteGame({
     where: { id, userId },
   });
 }
-
-export type { EnhancedGame, PlayerWithScores };
