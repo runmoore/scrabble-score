@@ -113,170 +113,172 @@ export default function NewGamePage() {
     "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200";
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col gap-6">
+    <div className="mx-auto flex max-w-lg flex-col gap-6 lg:max-w-4xl">
       <Form method="post" id="new-game-form" className="hidden" />
-      <Card title="Game Type">
-        {gameTypes.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            <div className="mb-2">
-              <input
-                id="gameType-none"
-                type="radio"
-                name="gameTypeId"
-                value=""
-                defaultChecked
-                form="new-game-form"
-                className="peer sr-only"
-              />
-              <label
-                htmlFor="gameType-none"
-                className={`${pillBase} ${pillUnselected} peer-checked:bg-blue-primary peer-checked:text-white`}
-              >
-                N/A
-              </label>
-            </div>
-            {gameTypes.map((gt) => (
-              <div key={gt.id}>
+      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:items-start">
+        <Card title="Game Type">
+          {gameTypes.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              <div className="mb-2">
                 <input
-                  id={`gameType-${gt.id}`}
+                  id="gameType-none"
                   type="radio"
                   name="gameTypeId"
-                  value={gt.id}
+                  value=""
+                  defaultChecked
                   form="new-game-form"
                   className="peer sr-only"
                 />
                 <label
-                  htmlFor={`gameType-${gt.id}`}
+                  htmlFor="gameType-none"
                   className={`${pillBase} ${pillUnselected} peer-checked:bg-blue-primary peer-checked:text-white`}
                 >
-                  {gt.name}
+                  N/A
                 </label>
               </div>
-            ))}
-          </div>
-        )}
-        {gameTypes.length === 0 && (
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            No game types yet.
-          </p>
-        )}
-        <div className="mt-3">
-          {showAddGameType ? (
-            <gameTypeFetcher.Form
-              method="post"
-              key={`game-type-${gameTypes.length}`}
-            >
-              <div className="flex items-center gap-2">
-                <input
-                  name="gameTypeName"
-                  aria-label="game type name"
-                  className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  name="action"
-                  value="add-game-type"
-                  className="rounded-lg bg-green-primary px-3 py-2 text-sm text-white hover:bg-green-secondary"
-                >
-                  Add
-                </button>
-              </div>
-              {gameTypeFetcher.data?.errors && (
-                <span className="mt-1 block text-sm text-red-500 dark:text-red-400">
-                  {gameTypeFetcher.data.errors}
-                </span>
-              )}
-            </gameTypeFetcher.Form>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setShowAddGameType(true)}
-              className="text-sm font-medium text-blue-primary hover:underline dark:text-blue-400"
-            >
-              + Add game type
-            </button>
+              {gameTypes.map((gt) => (
+                <div key={gt.id}>
+                  <input
+                    id={`gameType-${gt.id}`}
+                    type="radio"
+                    name="gameTypeId"
+                    value={gt.id}
+                    form="new-game-form"
+                    className="peer sr-only"
+                  />
+                  <label
+                    htmlFor={`gameType-${gt.id}`}
+                    className={`${pillBase} ${pillUnselected} peer-checked:bg-blue-primary peer-checked:text-white`}
+                  >
+                    {gt.name}
+                  </label>
+                </div>
+              ))}
+            </div>
           )}
-        </div>
-      </Card>
+          {gameTypes.length === 0 && (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              No game types yet.
+            </p>
+          )}
+          <div className="mt-3">
+            {showAddGameType ? (
+              <gameTypeFetcher.Form
+                method="post"
+                key={`game-type-${gameTypes.length}`}
+              >
+                <div className="flex items-center gap-2">
+                  <input
+                    name="gameTypeName"
+                    aria-label="game type name"
+                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    name="action"
+                    value="add-game-type"
+                    className="rounded-lg bg-green-primary px-3 py-2 text-sm text-white hover:bg-green-secondary"
+                  >
+                    Add
+                  </button>
+                </div>
+                {gameTypeFetcher.data?.errors && (
+                  <span className="mt-1 block text-sm text-red-500 dark:text-red-400">
+                    {gameTypeFetcher.data.errors}
+                  </span>
+                )}
+              </gameTypeFetcher.Form>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowAddGameType(true)}
+                className="text-sm font-medium text-blue-primary hover:underline dark:text-blue-400"
+              >
+                + Add game type
+              </button>
+            )}
+          </div>
+        </Card>
 
-      <Card title="Players">
-        {players.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {players.map((p) => (
-              <div key={p.id} className="mb-2">
-                <input
-                  id={p.id}
-                  type="checkbox"
-                  name="players"
-                  value={p.id}
-                  onChange={onPlayerChange}
-                  form="new-game-form"
-                  className="peer sr-only"
-                />
-                <label
-                  htmlFor={p.id}
-                  className={`${pillBase} ${pillUnselected} peer-checked:bg-purple-primary peer-checked:text-white`}
-                >
-                  {p.name}
-                </label>
-              </div>
-            ))}
-          </div>
-        )}
-        {players.length === 0 && (
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            No players yet. Add at least 2 to start a game.
-          </p>
-        )}
-        <div className="mt-3">
-          {showAddPlayer ? (
-            <playerFetcher.Form method="post" key={players.length}>
-              <div className="flex items-center gap-2">
-                <input
-                  name="name"
-                  aria-label="name"
-                  className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  name="action"
-                  value="add-player"
-                  className="rounded-lg bg-green-primary px-3 py-2 text-sm text-white hover:bg-green-secondary"
-                >
-                  Add
-                </button>
-              </div>
-              {playerFetcher.data?.errors && (
-                <span className="mt-1 block text-sm text-red-500 dark:text-red-400">
-                  {playerFetcher.data.errors}
-                </span>
-              )}
-            </playerFetcher.Form>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setShowAddPlayer(true)}
-              className="text-sm font-medium text-blue-primary hover:underline dark:text-blue-400"
-            >
-              + Add player
-            </button>
+        <Card title="Players">
+          {players.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {players.map((p) => (
+                <div key={p.id} className="mb-2">
+                  <input
+                    id={p.id}
+                    type="checkbox"
+                    name="players"
+                    value={p.id}
+                    onChange={onPlayerChange}
+                    form="new-game-form"
+                    className="peer sr-only"
+                  />
+                  <label
+                    htmlFor={p.id}
+                    className={`${pillBase} ${pillUnselected} peer-checked:bg-purple-primary peer-checked:text-white`}
+                  >
+                    {p.name}
+                  </label>
+                </div>
+              ))}
+            </div>
           )}
-        </div>
-        <button
-          type="submit"
-          name="action"
-          value="start-new-game"
-          form="new-game-form"
-          className="mt-6 w-full rounded-lg bg-green-primary py-3 px-4 text-sm font-semibold text-white transition-colors hover:bg-green-secondary disabled:bg-gray-200 disabled:text-gray-400 dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
-          disabled={selectedPlayers.length < 2}
-        >
-          {selectedPlayers.length >= 2
-            ? `Start Game (${selectedPlayers.length} players)`
-            : "Select at least 2 players"}
-        </button>
-      </Card>
+          {players.length === 0 && (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              No players yet. Add at least 2 to start a game.
+            </p>
+          )}
+          <div className="mt-3">
+            {showAddPlayer ? (
+              <playerFetcher.Form method="post" key={players.length}>
+                <div className="flex items-center gap-2">
+                  <input
+                    name="name"
+                    aria-label="name"
+                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    name="action"
+                    value="add-player"
+                    className="rounded-lg bg-green-primary px-3 py-2 text-sm text-white hover:bg-green-secondary"
+                  >
+                    Add
+                  </button>
+                </div>
+                {playerFetcher.data?.errors && (
+                  <span className="mt-1 block text-sm text-red-500 dark:text-red-400">
+                    {playerFetcher.data.errors}
+                  </span>
+                )}
+              </playerFetcher.Form>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowAddPlayer(true)}
+                className="text-sm font-medium text-blue-primary hover:underline dark:text-blue-400"
+              >
+                + Add player
+              </button>
+            )}
+          </div>
+        </Card>
+      </div>
+      <button
+        type="submit"
+        name="action"
+        value="start-new-game"
+        form="new-game-form"
+        className="w-full rounded-lg bg-green-primary py-3 px-4 text-sm font-semibold text-white transition-colors hover:bg-green-secondary disabled:bg-gray-200 disabled:text-gray-400 dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
+        disabled={selectedPlayers.length < 2}
+      >
+        {selectedPlayers.length >= 2
+          ? `Start Game (${selectedPlayers.length} players)`
+          : "Select at least 2 players"}
+      </button>
     </div>
   );
 }
