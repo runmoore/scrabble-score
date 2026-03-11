@@ -279,7 +279,11 @@ function createGameType(name: string) {
 
   cy.intercept("POST", "**/games/new**").as("addGameType");
   cy.findByRole("textbox", { name: /game type name/i }).type(name);
-  cy.findByRole("button", { name: /^add$/i }).first().click();
+  cy.findByRole("textbox", { name: /game type name/i })
+    .parents("form")
+    .within(() => {
+      cy.findByRole("button", { name: /^add$/i }).click();
+    });
   cy.wait("@addGameType");
 
   // Verify the game type was created
