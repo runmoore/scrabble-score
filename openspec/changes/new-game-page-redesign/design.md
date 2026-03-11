@@ -52,7 +52,21 @@ The current implementation uses unstyled native form controls. The rest of the a
 
 **Why over separate column**: The current two-column layout (`lg:flex-row`) wastes space on mobile and separates the "add" action from the context where it's needed. Placing "+ Add player" directly below the player pills makes the workflow more intuitive: see players → notice one missing → add it right there.
 
-### 4. Color assignments for pill states
+### 4. Hidden form + `useFetcher` to avoid nested `<form>` elements
+
+**Choice**: Use a hidden `<Form id="new-game-form">` for the main game submission, with radio/checkbox inputs and the start button associated via the HTML `form` attribute. Use `useFetcher` for the add-player and add-game-type forms so they render as sibling `<form>` elements rather than nested children.
+
+**Context (discovered during implementation)**: The original design assumed the collapsible add-forms (Decision 3) could live inside a single wrapping `<Form>`. In practice, this creates nested `<form>` elements — the outer game-start form containing inner add-player and add-game-type forms. Nested `<form>` is invalid HTML: browsers flatten the nesting during SSR, then React's hydration sees a DOM mismatch and throws errors (#418, #423).
+
+**Why this approach over alternatives**:
+
+- **Single `<Form>` with nested `<Form>`s** (original plan): Invalid HTML, causes React hydration errors.
+- **All actions via one form with different submit buttons**: Would work but conflates the add-player/add-game-type actions with the start-game action in a single form. The `action` field already disambiguates on the server, but having separate forms keeps concerns cleanly separated and allows `useFetcher` to handle the add actions without a full page navigation.
+- **All actions via `useFetcher`**: The start-game action needs to redirect to the play page, which `useFetcher` doesn't do natively (fetchers don't navigate). Keeping the main form as a Remix `<Form>` preserves the redirect behaviour.
+
+**Trade-off**: The `form` HTML attribute pattern is less common and slightly harder to follow than a simple wrapping `<Form>`. The hidden form element with `className="hidden"` also has a potential no-JS concern (documented in `future-no-js-hidden-form.md`).
+
+### 5. Color assignments for pill states
 
 **Choice**:
 
