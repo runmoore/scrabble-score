@@ -108,7 +108,7 @@ export default function NewGamePage() {
   };
 
   const pillBase =
-    "cursor-pointer select-none rounded-full px-4 py-2 text-sm font-medium transition-colors";
+    "cursor-pointer select-none rounded-full px-4 py-2 text-sm font-medium transition-colors [-webkit-tap-highlight-color:transparent]";
   const pillUnselected =
     "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200";
 
