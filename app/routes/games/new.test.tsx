@@ -5,6 +5,8 @@ import {
   getAllPlayers,
   getAllGameTypes,
   createGame,
+  addPlayer,
+  addGameType,
 } from "~/models/game.server";
 
 vi.mock("~/session.server", () => {
@@ -20,6 +22,8 @@ vi.mock("~/models/game.server", () => {
       .fn()
       .mockResolvedValue([{ id: "gt1", name: "Scrabble" }]),
     createGame: vi.fn().mockResolvedValue({ id: "736", players: [1] }),
+    addPlayer: vi.fn().mockResolvedValue({ id: "p1", name: "Alice" }),
+    addGameType: vi.fn().mockResolvedValue({ id: "gt2", name: "Words" }),
   };
 });
 
@@ -87,5 +91,99 @@ describe("start new game function", () => {
   test("redirects to the play page after", () => {
     expect(actionResponse.status).toEqual(302);
     expect(actionResponse.headers.get("Location")).toEqual("/games/736/play/1");
+  });
+});
+
+function makeRequest(params: Record<string, string>) {
+  const body = new URLSearchParams(params);
+  return new Request("https://url", { method: "POST", body });
+}
+
+describe("add-player action", () => {
+  test("returns error for empty name", async () => {
+    const response = await action({
+      request: makeRequest({ action: "add-player", name: "" }),
+      params: {},
+      context: {},
+    });
+    const data = await response.json();
+    expect(data.errors).toBe("empty name");
+    expect(addPlayer).not.toHaveBeenCalled();
+  });
+
+  test("returns error for whitespace-only name", async () => {
+    const response = await action({
+      request: makeRequest({ action: "add-player", name: "   " }),
+      params: {},
+      context: {},
+    });
+    const data = await response.json();
+    expect(data.errors).toBe("empty name");
+    expect(addPlayer).not.toHaveBeenCalled();
+  });
+
+  test("trims whitespace from valid name", async () => {
+    await action({
+      request: makeRequest({ action: "add-player", name: "  Alice  " }),
+      params: {},
+      context: {},
+    });
+    expect(addPlayer).toHaveBeenCalledWith({ userId: 123, name: "Alice" });
+  });
+
+  test("returns empty errors on success", async () => {
+    const response = await action({
+      request: makeRequest({ action: "add-player", name: "Bob" }),
+      params: {},
+      context: {},
+    });
+    const data = await response.json();
+    expect(data.errors).toBe("");
+  });
+});
+
+describe("add-game-type action", () => {
+  test("returns error for empty name", async () => {
+    const response = await action({
+      request: makeRequest({ action: "add-game-type", gameTypeName: "" }),
+      params: {},
+      context: {},
+    });
+    const data = await response.json();
+    expect(data.errors).toBe("empty game type name");
+    expect(addGameType).not.toHaveBeenCalled();
+  });
+
+  test("returns error for whitespace-only name", async () => {
+    const response = await action({
+      request: makeRequest({ action: "add-game-type", gameTypeName: "   " }),
+      params: {},
+      context: {},
+    });
+    const data = await response.json();
+    expect(data.errors).toBe("empty game type name");
+    expect(addGameType).not.toHaveBeenCalled();
+  });
+
+  test("trims whitespace from valid name", async () => {
+    await action({
+      request: makeRequest({
+        action: "add-game-type",
+        gameTypeName: "  Words  ",
+      }),
+      params: {},
+      context: {},
+    });
+    expect(addGameType).toHaveBeenCalledWith({ userId: 123, name: "Words" });
+  });
+
+  test("returns empty errors on success", async () => {
+    const response = await action({
+      request: makeRequest({ action: "add-game-type", gameTypeName: "Words" }),
+      params: {},
+      context: {},
+    });
+    const data = await response.json();
+    expect(data.errors).toBe("");
   });
 });

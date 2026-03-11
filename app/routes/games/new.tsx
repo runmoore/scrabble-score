@@ -1,11 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import {
-  Form,
-  useActionData,
-  useFetcher,
-  useLoaderData,
-} from "@remix-run/react";
+import { Form, useFetcher, useLoaderData } from "@remix-run/react";
 
 import {
   addGameType,
@@ -16,7 +11,7 @@ import {
 } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 import type { GameType, Player } from "~/models/game.server";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "~/components/Card";
 
 export type LoaderData = {
@@ -54,7 +49,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
 
     case "add-player": {
-      const name = formData.get("name") as string;
+      const name = (formData.get("name") as string)?.trim();
       if (!name) {
         return json({ errors: "empty name" });
       }
@@ -64,7 +59,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
 
     case "add-game-type": {
-      const name = formData.get("gameTypeName") as string;
+      const name = (formData.get("gameTypeName") as string)?.trim();
       if (!name) {
         return json({ errors: "empty game type name" });
       }
@@ -80,14 +75,25 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function NewGamePage() {
-  const actionData = useActionData<typeof action>();
   const { players, gameTypes } = useLoaderData<typeof loader>();
 
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
   const [showAddGameType, setShowAddGameType] = useState(false);
   const [showAddPlayer, setShowAddPlayer] = useState(false);
-  const gameTypeFetcher = useFetcher();
-  const playerFetcher = useFetcher();
+  const gameTypeFetcher = useFetcher<{ errors: string }>();
+  const playerFetcher = useFetcher<{ errors: string }>();
+
+  useEffect(() => {
+    if (playerFetcher.data?.errors === "") {
+      setShowAddPlayer(false);
+    }
+  }, [playerFetcher.data]);
+
+  useEffect(() => {
+    if (gameTypeFetcher.data?.errors === "") {
+      setShowAddGameType(false);
+    }
+  }, [gameTypeFetcher.data]);
 
   const onPlayerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -157,25 +163,30 @@ export default function NewGamePage() {
         <div className="mt-3">
           {showAddGameType ? (
             <gameTypeFetcher.Form
-              className="flex items-center gap-2"
               method="post"
               key={`game-type-${gameTypes.length}`}
-              onSubmit={() => setShowAddGameType(false)}
             >
-              <input
-                name="gameTypeName"
-                aria-label="game type name"
-                className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                autoFocus
-              />
-              <button
-                type="submit"
-                name="action"
-                value="add-game-type"
-                className="rounded-lg bg-green-primary px-3 py-2 text-sm text-white hover:bg-green-secondary"
-              >
-                Add
-              </button>
+              <div className="flex items-center gap-2">
+                <input
+                  name="gameTypeName"
+                  aria-label="game type name"
+                  className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                  autoFocus
+                />
+                <button
+                  type="submit"
+                  name="action"
+                  value="add-game-type"
+                  className="rounded-lg bg-green-primary px-3 py-2 text-sm text-white hover:bg-green-secondary"
+                >
+                  Add
+                </button>
+              </div>
+              {gameTypeFetcher.data?.errors && (
+                <span className="mt-1 block text-sm text-red-500 dark:text-red-400">
+                  {gameTypeFetcher.data.errors}
+                </span>
+              )}
             </gameTypeFetcher.Form>
           ) : (
             <button
@@ -220,29 +231,28 @@ export default function NewGamePage() {
         )}
         <div className="mt-3">
           {showAddPlayer ? (
-            <playerFetcher.Form
-              className="flex items-center gap-2"
-              method="post"
-              key={players.length}
-              onSubmit={() => setShowAddPlayer(false)}
-            >
-              <input
-                name="name"
-                aria-label="name"
-                className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                autoFocus
-              />
-              <span className="text-red-500 dark:text-red-400">
-                {actionData?.errors}
-              </span>
-              <button
-                type="submit"
-                name="action"
-                value="add-player"
-                className="rounded-lg bg-green-primary px-3 py-2 text-sm text-white hover:bg-green-secondary"
-              >
-                Add
-              </button>
+            <playerFetcher.Form method="post" key={players.length}>
+              <div className="flex items-center gap-2">
+                <input
+                  name="name"
+                  aria-label="name"
+                  className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                  autoFocus
+                />
+                <button
+                  type="submit"
+                  name="action"
+                  value="add-player"
+                  className="rounded-lg bg-green-primary px-3 py-2 text-sm text-white hover:bg-green-secondary"
+                >
+                  Add
+                </button>
+              </div>
+              {playerFetcher.data?.errors && (
+                <span className="mt-1 block text-sm text-red-500 dark:text-red-400">
+                  {playerFetcher.data.errors}
+                </span>
+              )}
             </playerFetcher.Form>
           ) : (
             <button
