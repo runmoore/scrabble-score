@@ -198,24 +198,30 @@ function createGameWithPlayers(players: string[] | number, gameType?: string) {
   cy.findByRole("link", { name: /\+ new game/i }).click();
 
   // Wait for the new game form to be fully loaded
-  cy.findByRole("textbox", { name: /game type name/i })
-    .should("be.visible")
-    .and("not.be.disabled");
+  cy.findByRole("heading", { name: /players/i }).should("be.visible");
 
   if (gameType) {
+    // Reveal the add game type form
+    cy.findByRole("button", { name: /\+ add game type/i }).click();
+
     // Add and select a game type
     cy.intercept("POST", "**/games/new**").as("addGameType");
-    cy.findByRole("textbox", { name: /game type name/i }).type(gameType);
-    cy.findByRole("button", { name: /\+ add new game type/i }).click();
+    cy.findByRole("textbox", { name: /game type name/i })
+      .should("be.visible")
+      .type(gameType);
+    cy.findByRole("button", { name: /^add$/i }).first().click();
     cy.wait("@addGameType");
 
-    cy.findByRole("radio", { name: new RegExp(gameType, "i") })
+    cy.findByText(new RegExp(`^${gameType}$`, "i"))
       .should("be.visible")
-      .check();
+      .click();
   }
 
   // Add all players
   playerNames.forEach((playerName, index) => {
+    // Reveal the add player form
+    cy.findByRole("button", { name: /\+ add player/i }).click();
+
     // Set up intercept before the action that will trigger it
     cy.intercept("POST", "**/games/new**").as(`addPlayer${index}`);
 
@@ -226,23 +232,21 @@ function createGameWithPlayers(players: string[] | number, gameType?: string) {
     cy.findByRole("textbox", { name: "name" }).clear();
     cy.findByRole("textbox", { name: "name" }).type(playerName);
 
-    cy.findByRole("button", { name: /\+ Add new player/i }).click();
+    cy.findByRole("button", { name: /^add$/i }).last().click();
     cy.wait(`@addPlayer${index}`);
 
-    // Wait for the form to reset/reload after adding player
-    cy.findByRole("textbox", { name: "name" }).should("have.value", "");
+    // Wait for the new player pill to appear
+    cy.findByRole("checkbox", { name: playerName }).should("exist");
   });
 
-  // Select all players - wait for each checkbox to be available
+  // Select all players by clicking their pill labels
   playerNames.forEach((playerName) => {
-    cy.findByRole("checkbox", { name: playerName })
-      .should("be.visible")
-      .check();
+    cy.findByText(playerName).should("be.visible").click();
   });
 
   // Start the game - set up intercept before clicking
   cy.intercept("POST", "**/games/new**").as("startGame");
-  cy.findByRole("button", { name: /start new game/i })
+  cy.findByRole("button", { name: /start game/i })
     .should("not.be.disabled")
     .click();
   cy.wait("@startGame");
@@ -266,17 +270,24 @@ function createGameType(name: string) {
   cy.visit("/games");
   cy.findByRole("link", { name: /\+ new game/i }).click();
 
+  // Reveal the add game type form
+  cy.findByRole("button", { name: /\+ add game type/i }).click();
+
   cy.findByRole("textbox", { name: /game type name/i })
     .should("be.visible")
     .and("not.be.disabled");
 
   cy.intercept("POST", "**/games/new**").as("addGameType");
   cy.findByRole("textbox", { name: /game type name/i }).type(name);
-  cy.findByRole("button", { name: /\+ add new game type/i }).click();
+  cy.findByRole("textbox", { name: /game type name/i })
+    .parents("form")
+    .within(() => {
+      cy.findByRole("button", { name: /^add$/i }).click();
+    });
   cy.wait("@addGameType");
 
   // Verify the game type was created
-  cy.findByRole("radio", { name: new RegExp(name, "i") }).should("be.visible");
+  cy.findByRole("radio", { name: new RegExp(name, "i") }).should("exist");
 }
 
 function submitScore(score: string) {
