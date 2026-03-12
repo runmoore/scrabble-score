@@ -18,6 +18,7 @@ import { requireUserId } from "~/session.server";
 import type { GameType, Player } from "~/models/game.server";
 import { useEffect, useState } from "react";
 import { Card } from "~/components/Card";
+import { PillToggle } from "~/components/PillToggle";
 
 export type LoaderData = {
   players: { id: Player["id"]; name: Player["name"] }[];
@@ -135,11 +136,6 @@ export default function NewGamePage() {
     }
   };
 
-  const pillBase =
-    "cursor-pointer select-none rounded-full px-4 py-2 text-sm font-medium transition-colors [-webkit-tap-highlight-color:transparent]";
-  const pillUnselected =
-    "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200";
-
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-6 lg:max-w-4xl">
       <Form method="post" id="new-game-form" className="hidden" />
@@ -147,40 +143,29 @@ export default function NewGamePage() {
         <Card title="Game Type">
           {gameTypes.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              <div className="mb-2">
-                <input
-                  id="gameType-none"
+              <PillToggle
+                id="gameType-none"
+                type="radio"
+                name="gameTypeId"
+                value=""
+                color="blue"
+                form="new-game-form"
+                defaultChecked
+              >
+                N/A
+              </PillToggle>
+              {gameTypes.map((gt) => (
+                <PillToggle
+                  key={gt.id}
+                  id={`gameType-${gt.id}`}
                   type="radio"
                   name="gameTypeId"
-                  value=""
-                  defaultChecked
+                  value={gt.id}
+                  color="blue"
                   form="new-game-form"
-                  className="peer sr-only"
-                />
-                <label
-                  htmlFor="gameType-none"
-                  className={`${pillBase} ${pillUnselected} peer-checked:bg-blue-primary peer-checked:text-white`}
                 >
-                  N/A
-                </label>
-              </div>
-              {gameTypes.map((gt) => (
-                <div key={gt.id}>
-                  <input
-                    id={`gameType-${gt.id}`}
-                    type="radio"
-                    name="gameTypeId"
-                    value={gt.id}
-                    form="new-game-form"
-                    className="peer sr-only"
-                  />
-                  <label
-                    htmlFor={`gameType-${gt.id}`}
-                    className={`${pillBase} ${pillUnselected} peer-checked:bg-blue-primary peer-checked:text-white`}
-                  >
-                    {gt.name}
-                  </label>
-                </div>
+                  {gt.name}
+                </PillToggle>
               ))}
             </div>
           )}
@@ -233,23 +218,18 @@ export default function NewGamePage() {
           {players.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {players.map((p) => (
-                <div key={p.id} className="mb-2">
-                  <input
-                    id={p.id}
-                    type="checkbox"
-                    name="players"
-                    value={p.id}
-                    onChange={onPlayerChange}
-                    form="new-game-form"
-                    className="peer sr-only"
-                  />
-                  <label
-                    htmlFor={p.id}
-                    className={`${pillBase} ${pillUnselected} peer-checked:bg-purple-primary peer-checked:text-white`}
-                  >
-                    {p.name}
-                  </label>
-                </div>
+                <PillToggle
+                  key={p.id}
+                  id={p.id}
+                  type="checkbox"
+                  name="players"
+                  value={p.id}
+                  color="purple"
+                  form="new-game-form"
+                  onChange={onPlayerChange}
+                >
+                  {p.name}
+                </PillToggle>
               ))}
             </div>
           )}
