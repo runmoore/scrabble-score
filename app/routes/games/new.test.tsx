@@ -99,6 +99,44 @@ function makeRequest(params: Record<string, string>) {
   return new Request("https://url", { method: "POST", body });
 }
 
+describe("start-new-game validation", () => {
+  beforeEach(() => {
+    vi.mocked(createGame).mockClear();
+  });
+
+  test("returns 400 JSON error when fewer than 2 players submitted", async () => {
+    const body = new URLSearchParams();
+    body.set("action", "start-new-game");
+    body.append("players", "1");
+
+    const response = await action({
+      request: new Request("https://url", { method: "POST", body }),
+      params: {},
+      context: {},
+    });
+
+    expect(response.status).toEqual(400);
+    const data = await response.json();
+    expect(data.errors).toBe("You must select at least 2 players to play");
+    expect(createGame).not.toHaveBeenCalled();
+  });
+
+  test("returns 400 JSON error when no players submitted", async () => {
+    const body = new URLSearchParams();
+    body.set("action", "start-new-game");
+
+    const response = await action({
+      request: new Request("https://url", { method: "POST", body }),
+      params: {},
+      context: {},
+    });
+
+    expect(response.status).toEqual(400);
+    const data = await response.json();
+    expect(data.errors).toBe("You must select at least 2 players to play");
+  });
+});
+
 describe("add-player action", () => {
   test("returns error for empty name", async () => {
     const response = await action({

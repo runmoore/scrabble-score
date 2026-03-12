@@ -1,6 +1,11 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useFetcher, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useFetcher,
+  useLoaderData,
+} from "@remix-run/react";
 
 import {
   addGameType,
@@ -40,7 +45,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const gameTypeId = (formData.get("gameTypeId") as string) || null;
 
       if (players.length < 2) {
-        throw new Error(`You must select at least 2 players to play`);
+        return json(
+          { errors: "You must select at least 2 players to play" },
+          { status: 400 }
+        );
       }
 
       const game = await createGame({ userId, players, gameTypeId });
@@ -76,12 +84,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function NewGamePage() {
   const { players, gameTypes } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
 
+  const [hydrated, setHydrated] = useState(false);
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
   const [showAddGameType, setShowAddGameType] = useState(false);
   const [showAddPlayer, setShowAddPlayer] = useState(false);
   const gameTypeFetcher = useFetcher<{ errors: string }>();
   const playerFetcher = useFetcher<{ errors: string }>();
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   useEffect(() => {
     if (playerFetcher.data?.errors === "") {
@@ -267,18 +281,28 @@ export default function NewGamePage() {
           </div>
         </Card>
       </div>
-      <button
-        type="submit"
-        name="action"
-        value="start-new-game"
-        form="new-game-form"
-        className="w-full rounded-lg bg-green-primary py-3 px-4 text-sm font-semibold text-white transition-colors hover:bg-green-secondary disabled:bg-gray-200 disabled:text-gray-400 dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
-        disabled={selectedPlayers.length < 2}
-      >
-        {selectedPlayers.length >= 2
-          ? `Start Game (${selectedPlayers.length} players)`
-          : "Select at least 2 players"}
-      </button>
+      <div>
+        <button
+          type="submit"
+          name="action"
+          value="start-new-game"
+          form="new-game-form"
+          className={`w-full rounded-lg py-3 px-4 text-sm font-semibold text-white transition-colors ${
+            hydrated && selectedPlayers.length < 2
+              ? "bg-green-primary opacity-50"
+              : "bg-green-primary hover:bg-green-secondary"
+          }`}
+        >
+          {selectedPlayers.length >= 2
+            ? `Start Game (${selectedPlayers.length} players)`
+            : "Start Game"}
+        </button>
+        {actionData?.errors && (
+          <p className="mt-2 text-center text-sm text-red-500 dark:text-red-400">
+            {actionData.errors}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
