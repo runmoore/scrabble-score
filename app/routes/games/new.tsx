@@ -18,6 +18,7 @@ import { requireUserId } from "~/session.server";
 import type { GameType, Player } from "~/models/game.server";
 import { useEffect, useState } from "react";
 import { Card } from "~/components/Card";
+import { PillToggle } from "~/components/PillToggle";
 
 export type LoaderData = {
   players: { id: Player["id"]; name: Player["name"] }[];
@@ -135,11 +136,6 @@ export default function NewGamePage() {
     }
   };
 
-  const pillBase =
-    "cursor-pointer select-none rounded-full px-4 py-2 text-sm font-medium transition-colors [-webkit-tap-highlight-color:transparent]";
-  const pillUnselected =
-    "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200";
-
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-6 lg:max-w-4xl">
       <Form method="post" id="new-game-form" className="hidden" />
@@ -148,38 +144,30 @@ export default function NewGamePage() {
           {gameTypes.length > 0 && (
             <div className="flex flex-wrap gap-2">
               <div className="mb-2">
-                <input
+                <PillToggle
                   id="gameType-none"
                   type="radio"
                   name="gameTypeId"
                   value=""
-                  defaultChecked
+                  color="blue"
                   form="new-game-form"
-                  className="peer sr-only"
-                />
-                <label
-                  htmlFor="gameType-none"
-                  className={`${pillBase} ${pillUnselected} peer-checked:bg-blue-primary peer-checked:text-white`}
+                  defaultChecked
                 >
                   N/A
-                </label>
+                </PillToggle>
               </div>
               {gameTypes.map((gt) => (
-                <div key={gt.id}>
-                  <input
+                <div key={gt.id} className="mb-2">
+                  <PillToggle
                     id={`gameType-${gt.id}`}
                     type="radio"
                     name="gameTypeId"
                     value={gt.id}
+                    color="blue"
                     form="new-game-form"
-                    className="peer sr-only"
-                  />
-                  <label
-                    htmlFor={`gameType-${gt.id}`}
-                    className={`${pillBase} ${pillUnselected} peer-checked:bg-blue-primary peer-checked:text-white`}
                   >
                     {gt.name}
-                  </label>
+                  </PillToggle>
                 </div>
               ))}
             </div>
@@ -234,21 +222,17 @@ export default function NewGamePage() {
             <div className="flex flex-wrap gap-2">
               {players.map((p) => (
                 <div key={p.id} className="mb-2">
-                  <input
+                  <PillToggle
                     id={p.id}
                     type="checkbox"
                     name="players"
                     value={p.id}
-                    onChange={onPlayerChange}
+                    color="purple"
                     form="new-game-form"
-                    className="peer sr-only"
-                  />
-                  <label
-                    htmlFor={p.id}
-                    className={`${pillBase} ${pillUnselected} peer-checked:bg-purple-primary peer-checked:text-white`}
+                    onChange={onPlayerChange}
                   >
                     {p.name}
-                  </label>
+                  </PillToggle>
                 </div>
               ))}
             </div>
