@@ -143,29 +143,32 @@ export default function NewGamePage() {
         <Card title="Game Type">
           {gameTypes.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              <PillToggle
-                id="gameType-none"
-                type="radio"
-                name="gameTypeId"
-                value=""
-                color="blue"
-                form="new-game-form"
-                defaultChecked
-              >
-                N/A
-              </PillToggle>
-              {gameTypes.map((gt) => (
+              <div className="mb-2">
                 <PillToggle
-                  key={gt.id}
-                  id={`gameType-${gt.id}`}
+                  id="gameType-none"
                   type="radio"
                   name="gameTypeId"
-                  value={gt.id}
+                  value=""
                   color="blue"
                   form="new-game-form"
+                  defaultChecked
                 >
-                  {gt.name}
+                  N/A
                 </PillToggle>
+              </div>
+              {gameTypes.map((gt) => (
+                <div key={gt.id} className="mb-2">
+                  <PillToggle
+                    id={`gameType-${gt.id}`}
+                    type="radio"
+                    name="gameTypeId"
+                    value={gt.id}
+                    color="blue"
+                    form="new-game-form"
+                  >
+                    {gt.name}
+                  </PillToggle>
+                </div>
               ))}
             </div>
           )}
@@ -218,18 +221,19 @@ export default function NewGamePage() {
           {players.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {players.map((p) => (
-                <PillToggle
-                  key={p.id}
-                  id={p.id}
-                  type="checkbox"
-                  name="players"
-                  value={p.id}
-                  color="purple"
-                  form="new-game-form"
-                  onChange={onPlayerChange}
-                >
-                  {p.name}
-                </PillToggle>
+                <div key={p.id} className="mb-2">
+                  <PillToggle
+                    id={p.id}
+                    type="checkbox"
+                    name="players"
+                    value={p.id}
+                    color="purple"
+                    form="new-game-form"
+                    onChange={onPlayerChange}
+                  >
+                    {p.name}
+                  </PillToggle>
+                </div>
               ))}
             </div>
           )}

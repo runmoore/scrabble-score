@@ -34,7 +34,7 @@ export function PillToggle({
   children,
 }: PillToggleProps) {
   return (
-    <div>
+    <>
       <input
         id={id}
         type={type}
@@ -51,6 +51,6 @@ export function PillToggle({
       >
         {children}
       </label>
-    </div>
+    </>
   );
 }
