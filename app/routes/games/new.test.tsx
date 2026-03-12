@@ -138,6 +138,10 @@ describe("start-new-game validation", () => {
 });
 
 describe("add-player action", () => {
+  beforeEach(() => {
+    vi.mocked(addPlayer).mockClear();
+  });
+
   test("returns error for empty name", async () => {
     const response = await action({
       request: makeRequest({ action: "add-player", name: "" }),
@@ -169,6 +173,28 @@ describe("add-player action", () => {
     expect(addPlayer).toHaveBeenCalledWith({ userId: 123, name: "Alice" });
   });
 
+  test("returns error for duplicate name", async () => {
+    const response = await action({
+      request: makeRequest({ action: "add-player", name: "Eric" }),
+      params: {},
+      context: {},
+    });
+    const data = await response.json();
+    expect(data.errors).toBe("player name already exists");
+    expect(addPlayer).not.toHaveBeenCalled();
+  });
+
+  test("returns error for duplicate name with different casing", async () => {
+    const response = await action({
+      request: makeRequest({ action: "add-player", name: "eric" }),
+      params: {},
+      context: {},
+    });
+    const data = await response.json();
+    expect(data.errors).toBe("player name already exists");
+    expect(addPlayer).not.toHaveBeenCalled();
+  });
+
   test("returns empty errors on success", async () => {
     const response = await action({
       request: makeRequest({ action: "add-player", name: "Bob" }),
@@ -181,6 +207,10 @@ describe("add-player action", () => {
 });
 
 describe("add-game-type action", () => {
+  beforeEach(() => {
+    vi.mocked(addGameType).mockClear();
+  });
+
   test("returns error for empty name", async () => {
     const response = await action({
       request: makeRequest({ action: "add-game-type", gameTypeName: "" }),
@@ -213,6 +243,34 @@ describe("add-game-type action", () => {
       context: {},
     });
     expect(addGameType).toHaveBeenCalledWith({ userId: 123, name: "Words" });
+  });
+
+  test("returns error for duplicate name", async () => {
+    const response = await action({
+      request: makeRequest({
+        action: "add-game-type",
+        gameTypeName: "Scrabble",
+      }),
+      params: {},
+      context: {},
+    });
+    const data = await response.json();
+    expect(data.errors).toBe("game type name already exists");
+    expect(addGameType).not.toHaveBeenCalled();
+  });
+
+  test("returns error for duplicate name with different casing", async () => {
+    const response = await action({
+      request: makeRequest({
+        action: "add-game-type",
+        gameTypeName: "scrabble",
+      }),
+      params: {},
+      context: {},
+    });
+    const data = await response.json();
+    expect(data.errors).toBe("game type name already exists");
+    expect(addGameType).not.toHaveBeenCalled();
   });
 
   test("returns empty errors on success", async () => {

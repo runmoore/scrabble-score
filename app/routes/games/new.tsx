@@ -61,6 +61,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       if (!name) {
         return json({ errors: "empty name" });
       }
+      const existingPlayers = await getAllPlayers({ userId });
+      if (
+        existingPlayers.some((p) => p.name.toLowerCase() === name.toLowerCase())
+      ) {
+        return json({ errors: "player name already exists" });
+      }
       await addPlayer({ userId, name });
 
       return json({ errors: "" });
@@ -70,6 +76,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const name = (formData.get("gameTypeName") as string)?.trim();
       if (!name) {
         return json({ errors: "empty game type name" });
+      }
+      const existingGameTypes = await getAllGameTypes({ userId });
+      if (
+        existingGameTypes.some(
+          (gt) => gt.name.toLowerCase() === name.toLowerCase()
+        )
+      ) {
+        return json({ errors: "game type name already exists" });
       }
       await addGameType({ userId, name });
 
