@@ -118,7 +118,7 @@ export default function Games() {
           )}
         </Card>
 
-        <Card title="Most Active Players">
+        <Card title="Most Active Players" asLink to="/games/players">
           {topPlayers.length > 0 ? (
             <ol className="space-y-1">
               {topPlayers.map((p, i, arr) => {

@@ -90,6 +90,13 @@ function GamesMenu({
   return (
     <div className={className}>
       <NavLink
+        to="players"
+        className="block border-b p-4 text-xl text-blue-500 dark:border-gray-700 dark:text-blue-400"
+        onClick={() => onLinkClick()}
+      >
+        Players
+      </NavLink>
+      <NavLink
         to="compare"
         className="block border-b p-4 text-xl text-blue-500 dark:border-gray-700 dark:text-blue-400"
         onClick={() => onLinkClick()}
