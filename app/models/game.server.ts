@@ -289,6 +289,32 @@ export async function getTopPlayers({
     .slice(0, limit);
 }
 
+export async function getAllPlayersWithGameCount({
+  userId,
+}: {
+  userId: User["id"];
+}) {
+  const players = await prisma.player.findMany({
+    where: { userId },
+    select: {
+      id: true,
+      name: true,
+      _count: {
+        select: { games: { where: { deletedAt: null } } },
+      },
+    },
+  });
+
+  return players
+    .map((p) => ({
+      playerId: p.id,
+      name: p.name,
+      count: p._count.games,
+    }))
+    .filter((p) => p.count > 0)
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+}
+
 export function getPlayerGames({
   playerId,
   userId,

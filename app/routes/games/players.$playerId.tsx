@@ -7,6 +7,7 @@ import { Card } from "~/components/Card";
 import type { GameType } from "~/models/game.server";
 import { getPlayer, getPlayerGames } from "~/models/game.server";
 import { enrichPlayerScores, assignPlaces } from "~/game-utils";
+import { getNumberWithOrdinal } from "~/components/Leaderboard";
 import { requireUserId } from "~/session.server";
 
 interface GameTypeStats {
@@ -98,7 +99,7 @@ function computeStats(
         if (thisPlayer.totalScore > highestScore) {
           highestScore = thisPlayer.totalScore;
           highestScoreGameId = game.id;
-          highestScoreGameDate = game.createdAt as unknown as string;
+          highestScoreGameDate = new Date(game.createdAt).toISOString();
         }
       }
 
@@ -134,7 +135,7 @@ function computeStats(
       if (thisPlayer.totalScore > highestScore) {
         highestScore = thisPlayer.totalScore;
         highestScoreGameId = game.id;
-        highestScoreGameDate = game.createdAt as unknown as string;
+        highestScoreGameDate = new Date(game.createdAt).toISOString();
       }
     }
     averageScore = gamesPlayed > 0 ? Math.round(totalScore / gamesPlayed) : 0;
@@ -188,12 +189,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     ...stats,
   });
 };
-
-function getOrdinal(n: number): string {
-  const s = ["th", "st", "nd", "rd"];
-  const v = n % 100;
-  return n + (s[(v - 20) % 10] || s[v] || s[0]);
-}
 
 export default function PlayerDetail() {
   const data = useLoaderData<typeof loader>();
@@ -371,7 +366,11 @@ export default function PlayerDetail() {
                 <div className="w-[30%] text-center text-sm">
                   {game.completed ? (
                     <span className="text-gray-700 dark:text-gray-300">
-                      {getOrdinal(game.place!)} of {game.playerCount}
+                      {game.place != null
+                        ? `${getNumberWithOrdinal(game.place)} of ${
+                            game.playerCount
+                          }`
+                        : "—"}
                     </span>
                   ) : (
                     <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
