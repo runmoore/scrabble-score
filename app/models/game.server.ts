@@ -152,7 +152,7 @@ export function getPlayer({
 }) {
   return prisma.player.findFirst({
     where: { id, userId },
-    select: { name: true },
+    select: { id: true, name: true },
   });
 }
 
@@ -287,6 +287,57 @@ export async function getTopPlayers({
     .filter((p) => p.count > 0)
     .sort((a, b) => b.count - a.count)
     .slice(0, limit);
+}
+
+export async function getAllPlayersWithGameCount({
+  userId,
+}: {
+  userId: User["id"];
+}) {
+  const players = await prisma.player.findMany({
+    where: { userId },
+    select: {
+      id: true,
+      name: true,
+      _count: {
+        select: { games: { where: { deletedAt: null } } },
+      },
+    },
+  });
+
+  return players
+    .map((p) => ({
+      playerId: p.id,
+      name: p.name,
+      count: p._count.games,
+    }))
+    .filter((p) => p.count > 0)
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+}
+
+export function getPlayerGames({
+  playerId,
+  userId,
+}: {
+  playerId: string;
+  userId: string;
+}) {
+  return prisma.game.findMany({
+    where: {
+      userId,
+      deletedAt: null,
+      players: { some: { id: playerId } },
+    },
+    select: {
+      id: true,
+      players: true,
+      createdAt: true,
+      completed: true,
+      scores: true,
+      gameType: { select: { id: true, name: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
 }
 
 export function deleteGame({
