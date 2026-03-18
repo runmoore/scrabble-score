@@ -1,4 +1,4 @@
-import { loader } from "./players.$playerId";
+import { loader, isOutrightWinner } from "./players.$playerId";
 
 vi.mock("~/session.server", () => ({
   requireUserId: vi.fn().mockResolvedValue("user-1"),
@@ -56,6 +56,32 @@ const callLoader = (
     context: {},
   });
 };
+
+describe("isOutrightWinner", () => {
+  test("returns true when player is sole first place", () => {
+    const player = { place: 1 };
+    const allPlayers = [{ place: 1 }, { place: 2 }, { place: 3 }];
+    expect(isOutrightWinner(player, allPlayers)).toBe(true);
+  });
+
+  test("returns false when player is tied for first", () => {
+    const player = { place: 1 };
+    const allPlayers = [{ place: 1 }, { place: 1 }, { place: 3 }];
+    expect(isOutrightWinner(player, allPlayers)).toBe(false);
+  });
+
+  test("returns false when player is not first", () => {
+    const player = { place: 2 };
+    const allPlayers = [{ place: 1 }, { place: 2 }];
+    expect(isOutrightWinner(player, allPlayers)).toBe(false);
+  });
+
+  test("returns false when place is undefined", () => {
+    const player = {};
+    const allPlayers = [{ place: 1 }, {}];
+    expect(isOutrightWinner(player, allPlayers)).toBe(false);
+  });
+});
 
 describe("players.$playerId loader", () => {
   afterEach(() => {
