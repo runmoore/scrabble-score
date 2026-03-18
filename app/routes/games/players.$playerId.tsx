@@ -50,6 +50,16 @@ function collectAvailableGameTypes(
   ).sort((a, b) => a.name.localeCompare(b.name));
 }
 
+interface TypeAccumulator {
+  name: string;
+  wins: number;
+  totalScore: number;
+  highestScore: number;
+  highestScoreGameId: string;
+  highestScoreGameDate: string;
+  count: number;
+}
+
 function computeAggregateStats(
   completedGames: EnrichedGame[],
   playerId: string,
@@ -57,87 +67,67 @@ function computeAggregateStats(
 ) {
   const gamesPlayed = completedGames.length;
   let wins = 0;
+  let totalScore = 0;
+  let highestScore = -Infinity;
+  let highestScoreGameId = "";
+  let highestScoreGameDate = "";
+  const typeAccumulators = new Map<string, TypeAccumulator>();
 
   for (const game of completedGames) {
     const thisPlayer = game.players.find((p) => p.id === playerId);
     if (!thisPlayer) continue;
-    if (isOutrightWinner(thisPlayer, game.players)) {
-      wins++;
+
+    const isWin = isOutrightWinner(thisPlayer, game.players);
+    if (isWin) wins++;
+
+    totalScore += thisPlayer.totalScore;
+    if (thisPlayer.totalScore > highestScore) {
+      highestScore = thisPlayer.totalScore;
+      highestScoreGameId = game.id;
+      highestScoreGameDate = new Date(game.createdAt).toISOString();
+    }
+
+    const typeId = game.gameType?.id;
+    if (typeId && !selectedTypeId) {
+      const acc = typeAccumulators.get(typeId) ?? {
+        name: game.gameType!.name,
+        wins: 0,
+        totalScore: 0,
+        highestScore: -Infinity,
+        highestScoreGameId: "",
+        highestScoreGameDate: "",
+        count: 0,
+      };
+      acc.count++;
+      acc.totalScore += thisPlayer.totalScore;
+      if (isWin) acc.wins++;
+      if (thisPlayer.totalScore > acc.highestScore) {
+        acc.highestScore = thisPlayer.totalScore;
+        acc.highestScoreGameId = game.id;
+        acc.highestScoreGameDate = new Date(game.createdAt).toISOString();
+      }
+      typeAccumulators.set(typeId, acc);
     }
   }
 
   const winRate = gamesPlayed > 0 ? Math.round((wins / gamesPlayed) * 100) : 0;
+  const averageScore =
+    selectedTypeId && gamesPlayed > 0
+      ? Math.round(totalScore / gamesPlayed)
+      : 0;
 
-  // Per game type stats (for "All" view)
-  const perTypeStats: GameTypeStats[] = [];
-  if (!selectedTypeId) {
-    const typeGroups = new Map<string | null, EnrichedGame[]>();
-    for (const game of completedGames) {
-      const key = game.gameType?.id ?? null;
-      if (key === null) continue;
-      const group = typeGroups.get(key) ?? [];
-      group.push(game);
-      typeGroups.set(key, group);
-    }
-
-    for (const [typeId, games] of typeGroups) {
-      let typeWins = 0;
-      let totalScore = 0;
-      let highestScore = -Infinity;
-      let highestScoreGameId = "";
-      let highestScoreGameDate = "";
-
-      for (const game of games) {
-        const thisPlayer = game.players.find((p) => p.id === playerId);
-        if (!thisPlayer) continue;
-        totalScore += thisPlayer.totalScore;
-        if (isOutrightWinner(thisPlayer, game.players)) {
-          typeWins++;
-        }
-        if (thisPlayer.totalScore > highestScore) {
-          highestScore = thisPlayer.totalScore;
-          highestScoreGameId = game.id;
-          highestScoreGameDate = new Date(game.createdAt).toISOString();
-        }
-      }
-
-      const typeName = games[0]?.gameType?.name ?? "Unknown";
-
-      perTypeStats.push({
-        gameTypeId: typeId,
-        gameTypeName: typeName,
-        gamesPlayed: games.length,
-        wins: typeWins,
-        totalScore,
-        highestScore,
-        highestScoreGameId,
-        highestScoreGameDate,
-      });
-    }
-
-    perTypeStats.sort((a, b) => a.gameTypeName.localeCompare(b.gameTypeName));
-  }
-
-  // Single type stats (when filtered)
-  let averageScore = 0;
-  let highestScore = -Infinity;
-  let highestScoreGameId = "";
-  let highestScoreGameDate = "";
-
-  if (selectedTypeId) {
-    let totalScore = 0;
-    for (const game of completedGames) {
-      const thisPlayer = game.players.find((p) => p.id === playerId);
-      if (!thisPlayer) continue;
-      totalScore += thisPlayer.totalScore;
-      if (thisPlayer.totalScore > highestScore) {
-        highestScore = thisPlayer.totalScore;
-        highestScoreGameId = game.id;
-        highestScoreGameDate = new Date(game.createdAt).toISOString();
-      }
-    }
-    averageScore = gamesPlayed > 0 ? Math.round(totalScore / gamesPlayed) : 0;
-  }
+  const perTypeStats: GameTypeStats[] = [...typeAccumulators.entries()]
+    .map(([typeId, acc]) => ({
+      gameTypeId: typeId,
+      gameTypeName: acc.name,
+      gamesPlayed: acc.count,
+      wins: acc.wins,
+      totalScore: acc.totalScore,
+      highestScore: acc.highestScore,
+      highestScoreGameId: acc.highestScoreGameId,
+      highestScoreGameDate: acc.highestScoreGameDate,
+    }))
+    .sort((a, b) => a.gameTypeName.localeCompare(b.gameTypeName));
 
   return {
     gamesPlayed,
