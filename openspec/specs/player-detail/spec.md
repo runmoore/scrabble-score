@@ -82,6 +82,25 @@ Games with no assigned game type SHALL be included in overall stats when "All" i
 - **THEN** those games SHALL be included in games played, win rate, and overall counts
 - **AND** those games SHALL NOT appear in per-game-type average score or highest score breakdowns
 
+### Requirement: Stats card grid layout
+
+The player detail stats cards display in a responsive grid: 2 columns on mobile and tablet, 3 columns on desktop.
+
+#### Scenario: Viewing player stats on mobile
+
+- **WHEN** the viewport is below the `md` breakpoint (< 768px)
+- **THEN** the stats cards grid displays in 2 columns
+
+#### Scenario: Viewing player stats on tablet
+
+- **WHEN** the viewport is at or above the `md` breakpoint (≥ 768px) and below `lg` (< 1024px)
+- **THEN** the stats cards grid displays in 2 columns
+
+#### Scenario: Viewing player stats on desktop
+
+- **WHEN** the viewport is at or above the `lg` breakpoint (≥ 1024px)
+- **THEN** the stats cards grid displays in 3 columns
+
 ### Requirement: Game history list
 
 The game history section SHALL show all games (completed and in-progress), newest first, in a scrollable list. Completed game rows SHALL link to `/games/${game.id}`. In-progress game rows SHALL link to the play screen at `/games/${game.id}/play/${nextPlayerId}`.
