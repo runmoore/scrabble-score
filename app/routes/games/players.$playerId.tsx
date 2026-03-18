@@ -84,7 +84,7 @@ function computeStats(
     for (const [typeId, games] of typeGroups) {
       let typeWins = 0;
       let totalScore = 0;
-      let highestScore = 0;
+      let highestScore = -Infinity;
       let highestScoreGameId = "";
       let highestScoreGameDate = "";
 
@@ -122,7 +122,7 @@ function computeStats(
 
   // Single type stats (when filtered)
   let averageScore = 0;
-  let highestScore = 0;
+  let highestScore = -Infinity;
   let highestScoreGameId = "";
   let highestScoreGameDate = "";
 
@@ -288,7 +288,7 @@ export default function PlayerDetail() {
 
           {/* Highest Score */}
           {selectedTypeId ? (
-            data.highestScore > 0 && (
+            data.highestScoreGameId && (
               <Card
                 title="Highest Score"
                 asLink
@@ -309,7 +309,7 @@ export default function PlayerDetail() {
               <div className="space-y-2">
                 {data.perTypeStats.map(
                   (ts) =>
-                    ts.highestScore > 0 && (
+                    ts.highestScoreGameId && (
                       <Link
                         key={ts.gameTypeId}
                         to={`/games/${ts.highestScoreGameId}`}
