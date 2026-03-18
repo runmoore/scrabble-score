@@ -21,21 +21,25 @@ interface GameTypeStats {
   highestScoreGameDate: string;
 }
 
-function computeStats(
-  allGames: Awaited<ReturnType<typeof getPlayerGames>>,
-  playerId: string,
-  selectedTypeId: string | null
+type EnrichedGame = Omit<
+  Awaited<ReturnType<typeof getPlayerGames>>[number],
+  "players"
+> & {
+  players: ReturnType<typeof assignPlaces>;
+};
+
+export function isOutrightWinner(
+  player: { place?: number },
+  allPlayers: { place?: number }[]
+): boolean {
+  if (player.place !== 1) return false;
+  return allPlayers.filter((p) => p.place === 1).length === 1;
+}
+
+function collectAvailableGameTypes(
+  allGames: Awaited<ReturnType<typeof getPlayerGames>>
 ) {
-  // Enrich all games with scores
-  const enrichedGames = allGames.map((game) => ({
-    ...game,
-    players: assignPlaces(enrichPlayerScores(game.players, game.scores)),
-  }));
-
-  const completedGames = enrichedGames.filter((g) => g.completed);
-
-  // Collect available game types from all games (not just completed)
-  const availableGameTypes = Object.values(
+  return Object.values(
     allGames.reduce<Record<string, Pick<GameType, "id" | "name">>>(
       (acc, game) => {
         if (game.gameType) acc[game.gameType.id] = game.gameType;
@@ -44,25 +48,20 @@ function computeStats(
       {}
     )
   ).sort((a, b) => a.name.localeCompare(b.name));
+}
 
-  // Filter games by selected type
-  const filteredCompleted = selectedTypeId
-    ? completedGames.filter((g) => g.gameType?.id === selectedTypeId)
-    : completedGames;
-
-  const filteredAll = selectedTypeId
-    ? enrichedGames.filter((g) => g.gameType?.id === selectedTypeId)
-    : enrichedGames;
-
-  // Compute overall stats for the filtered set
-  let gamesPlayed = filteredCompleted.length;
+function computeAggregateStats(
+  completedGames: EnrichedGame[],
+  playerId: string,
+  selectedTypeId: string | null
+) {
+  const gamesPlayed = completedGames.length;
   let wins = 0;
 
-  for (const game of filteredCompleted) {
+  for (const game of completedGames) {
     const thisPlayer = game.players.find((p) => p.id === playerId);
     if (!thisPlayer) continue;
-    const playersWithPlace1 = game.players.filter((p) => p.place === 1);
-    if (thisPlayer.place === 1 && playersWithPlace1.length === 1) {
+    if (isOutrightWinner(thisPlayer, game.players)) {
       wins++;
     }
   }
@@ -72,10 +71,10 @@ function computeStats(
   // Per game type stats (for "All" view)
   const perTypeStats: GameTypeStats[] = [];
   if (!selectedTypeId) {
-    const typeGroups = new Map<string | null, typeof filteredCompleted>();
-    for (const game of filteredCompleted) {
+    const typeGroups = new Map<string | null, EnrichedGame[]>();
+    for (const game of completedGames) {
       const key = game.gameType?.id ?? null;
-      if (key === null) continue; // Skip untyped in per-type breakdown
+      if (key === null) continue;
       const group = typeGroups.get(key) ?? [];
       group.push(game);
       typeGroups.set(key, group);
@@ -92,8 +91,7 @@ function computeStats(
         const thisPlayer = game.players.find((p) => p.id === playerId);
         if (!thisPlayer) continue;
         totalScore += thisPlayer.totalScore;
-        const playersWithPlace1 = game.players.filter((p) => p.place === 1);
-        if (thisPlayer.place === 1 && playersWithPlace1.length === 1) {
+        if (isOutrightWinner(thisPlayer, game.players)) {
           typeWins++;
         }
         if (thisPlayer.totalScore > highestScore) {
@@ -128,7 +126,7 @@ function computeStats(
 
   if (selectedTypeId) {
     let totalScore = 0;
-    for (const game of filteredCompleted) {
+    for (const game of completedGames) {
       const thisPlayer = game.players.find((p) => p.id === playerId);
       if (!thisPlayer) continue;
       totalScore += thisPlayer.totalScore;
@@ -141,8 +139,20 @@ function computeStats(
     averageScore = gamesPlayed > 0 ? Math.round(totalScore / gamesPlayed) : 0;
   }
 
-  // Build history from all games (including in-progress)
-  const history = filteredAll.map((game) => {
+  return {
+    gamesPlayed,
+    wins,
+    winRate,
+    averageScore,
+    highestScore,
+    highestScoreGameId,
+    highestScoreGameDate,
+    perTypeStats,
+  };
+}
+
+function buildGameHistory(enrichedGames: EnrichedGame[], playerId: string) {
+  return enrichedGames.map((game) => {
     const thisPlayer = game.players.find((p) => p.id === playerId);
     return {
       id: game.id,
@@ -154,16 +164,38 @@ function computeStats(
       playerCount: game.players.length,
     };
   });
+}
+
+function computeStats(
+  allGames: Awaited<ReturnType<typeof getPlayerGames>>,
+  playerId: string,
+  selectedTypeId: string | null
+) {
+  const enrichedGames = allGames.map((game) => ({
+    ...game,
+    players: assignPlaces(enrichPlayerScores(game.players, game.scores)),
+  }));
+
+  const completedGames = enrichedGames.filter((g) => g.completed);
+
+  const filteredCompleted = selectedTypeId
+    ? completedGames.filter((g) => g.gameType?.id === selectedTypeId)
+    : completedGames;
+
+  const filteredAll = selectedTypeId
+    ? enrichedGames.filter((g) => g.gameType?.id === selectedTypeId)
+    : enrichedGames;
+
+  const availableGameTypes = collectAvailableGameTypes(allGames);
+  const aggregateStats = computeAggregateStats(
+    filteredCompleted,
+    playerId,
+    selectedTypeId
+  );
+  const history = buildGameHistory(filteredAll, playerId);
 
   return {
-    gamesPlayed,
-    wins,
-    winRate,
-    averageScore,
-    highestScore,
-    highestScoreGameId,
-    highestScoreGameDate,
-    perTypeStats,
+    ...aggregateStats,
     history,
     availableGameTypes,
   };
