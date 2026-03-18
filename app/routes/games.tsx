@@ -5,7 +5,6 @@ import { requireUserId } from "~/session.server";
 import type { Game } from "~/models/game.server";
 import { getAllGames } from "~/models/game.server";
 import { format } from "date-fns";
-import { getNextPlayerToPlay } from "~/game-utils";
 import { useState } from "react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
@@ -125,11 +124,7 @@ function GamesMenu({
                   }`
                 }
                 onClick={() => onLinkClick()}
-                to={
-                  game.completed
-                    ? game.id
-                    : `${game.id}/play/${getNextPlayerToPlay(game).id}`
-                }
+                to={game.id}
               >
                 {game.completed ? "🏆" : "🎯"}{" "}
                 {game.gameType

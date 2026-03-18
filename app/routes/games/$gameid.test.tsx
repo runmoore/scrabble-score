@@ -31,10 +31,21 @@ vi.mock("~/models/game.server", () => {
     }),
   };
 });
-describe("loader function", () => {
+describe("loader function for completed game", () => {
   let loaderResponse: any;
 
   beforeEach(async () => {
+    vi.mocked(getGame).mockResolvedValueOnce({
+      id: 1,
+      completed: true,
+      gameType: null,
+      players: [
+        { id: 1, name: "alice", totalScore: 5 },
+        { id: 2, name: "nina", totalScore: 2 },
+      ],
+      scores: [],
+    } as any);
+
     loaderResponse = await loader({
       request: new Request("https://url"),
       params: { gameId: "1" },
@@ -55,7 +66,7 @@ describe("loader function", () => {
 
     expect(data.game).toEqual({
       id: 1,
-      completed: false,
+      completed: true,
       gameType: null,
       players: [
         { id: 1, name: "alice", totalScore: 5, place: 1 },
@@ -82,6 +93,19 @@ describe("loader function", () => {
 
   test("calls prisma to get the game", () => {
     expect(getGame).toHaveBeenCalledWith({ id: "1" });
+  });
+});
+
+describe("loader function for in-progress game", () => {
+  test("redirects to the play screen for the next player", async () => {
+    const response = await loader({
+      request: new Request("https://url"),
+      params: { gameId: "1" },
+      context: {},
+    });
+
+    expect(response.status).toEqual(302);
+    expect(response.headers.get("Location")).toEqual("/games/1/play/1");
   });
 });
 

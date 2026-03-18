@@ -73,6 +73,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     throw new Response("Not Found", { status: 404 });
   }
 
+  if (!game.completed) {
+    const nextPlayer = getNextPlayerToPlay(game);
+    return redirect(`/games/${params.gameId}/play/${nextPlayer.id}`);
+  }
+
   const players = assignPlaces(game.players);
 
   const topScore = players[0].totalScore;
