@@ -1,3 +1,11 @@
+# Compare Loader Performance
+
+## Purpose
+
+Ensures the compare page loader computes player total scores from a single `getAllGames` query rather than issuing individual `getGame` calls per game, avoiding N+1 query performance issues.
+
+## Requirements
+
 ### Requirement: Compare page loader uses single query
 
 The compare page loader SHALL compute player total scores from the data already returned by `getAllGames` rather than issuing individual `getGame` calls per relevant game.

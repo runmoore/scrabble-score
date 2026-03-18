@@ -1,4 +1,10 @@
-## ADDED Requirements
+# Frequent Matchups
+
+## Purpose
+
+Displays the most frequently played player pairs as matchup cards on the compare player-selection page, providing quick navigation to head-to-head comparisons.
+
+## Requirements
 
 ### Requirement: Matchup cards displayed on compare player-selection page
 

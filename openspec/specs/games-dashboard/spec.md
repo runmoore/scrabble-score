@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD
+Main games index page displaying in-progress game cards, completed game summary stats, most popular game types, most active players, and a new game button.
 
 ## Requirements
 
@@ -100,12 +100,17 @@ The games index page SHALL display a card titled "Most Popular Games" showing th
 
 ### Requirement: Most active players card
 
-The games index page SHALL display a card titled "Most Active Players" showing the top 3 players ranked by number of games played. Each entry SHALL display the player name and the count of games. Only non-deleted games SHALL be counted. Results SHALL be ordered by count descending.
+The games index page SHALL display a card titled "Most Active Players" showing the top 3 players ranked by number of games played. The card title SHALL be a link that navigates to `/games/players`. Each entry SHALL display the player name and the count of games. Only non-deleted games SHALL be counted. Results SHALL be ordered by count descending.
 
 #### Scenario: Top 3 players displayed
 
 - **WHEN** the user navigates to the games index page and has players who have played games
 - **THEN** a card displays up to 3 players ranked by game count, each showing the player name and count
+
+#### Scenario: Card title links to player list
+
+- **WHEN** a user taps the "Most Active Players" card title on the dashboard
+- **THEN** the app SHALL navigate to `/games/players`
 
 #### Scenario: Fewer than 3 players exist
 

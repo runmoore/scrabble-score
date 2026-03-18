@@ -1,4 +1,10 @@
-## ADDED Requirements
+# Sticky New Game Button
+
+## Purpose
+
+Provides a floating action button (FAB) for creating new games on mobile viewports, ensuring the primary action is always accessible regardless of scroll position, with an inline button on desktop.
+
+## Requirements
 
 ### Requirement: Floating new game button on mobile
 
