@@ -1,15 +1,18 @@
 import { loader, isOutrightWinner } from "./players.$playerId";
+import type { getPlayerGames } from "~/models/game.server";
 
 vi.mock("~/session.server", () => ({
   requireUserId: vi.fn().mockResolvedValue("user-1"),
 }));
 
+type PlayerGame = Awaited<ReturnType<typeof getPlayerGames>>[number];
+
 const gameTypeScrabble = { id: "gt-scrabble", name: "Scrabble" };
 const gameTypeSushiGo = { id: "gt-sushi", name: "Sushi Go" };
 
 const players = [
-  { id: "p1", name: "Alice" },
-  { id: "p2", name: "Bob" },
+  { id: "p1", name: "Alice", userId: "user-1" },
+  { id: "p2", name: "Bob", userId: "user-1" },
 ];
 
 function makeGame({
@@ -17,20 +20,25 @@ function makeGame({
   completed = true,
   gameType = gameTypeScrabble,
   scores = [],
-  createdAt = new Date("2026-01-15").toISOString(),
+  createdAt = new Date("2026-01-15"),
 }: {
   id: string;
   completed?: boolean;
   gameType?: { id: string; name: string } | null;
   scores?: { playerId: string; points: number }[];
-  createdAt?: string;
-}) {
+  createdAt?: Date;
+}): PlayerGame {
   return {
     id,
     completed,
     gameType,
     players,
-    scores,
+    scores: scores.map((s, i) => ({
+      id: `score-${id}-${i}`,
+      gameId: id,
+      scoredAt: new Date(),
+      ...s,
+    })),
     createdAt,
   };
 }
@@ -134,7 +142,7 @@ describe("players.$playerId loader", () => {
           { playerId: "p2", points: 75 },
         ],
       }),
-    ] as any);
+    ]);
 
     const response = await callLoader("p1");
     const data = await response.json();
@@ -164,7 +172,7 @@ describe("players.$playerId loader", () => {
           { playerId: "p2", points: 30 },
         ],
       }),
-    ] as any);
+    ]);
 
     const response = await callLoader("p1");
     const data = await response.json();
@@ -201,7 +209,7 @@ describe("players.$playerId loader", () => {
           { playerId: "p2", points: 30 },
         ],
       }),
-    ] as any);
+    ]);
 
     const response = await callLoader("p1", { type: "gt-scrabble" });
     const data = await response.json();
@@ -232,7 +240,7 @@ describe("players.$playerId loader", () => {
           { playerId: "p2", points: 30 },
         ],
       }),
-    ] as any);
+    ]);
 
     const response = await callLoader("p1");
     const data = await response.json();
@@ -262,7 +270,7 @@ describe("players.$playerId loader", () => {
           { playerId: "p2", points: 80 },
         ],
       }),
-    ] as any);
+    ]);
 
     const response = await callLoader("p1");
     const data = await response.json();
@@ -284,7 +292,7 @@ describe("players.$playerId loader", () => {
         gameType: gameTypeSushiGo,
         scores: [],
       }),
-    ] as any);
+    ]);
 
     const response = await callLoader("p1");
     const data = await response.json();
