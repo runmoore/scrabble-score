@@ -178,7 +178,7 @@ export default function NewGamePage() {
             </p>
           )}
           <div className="mt-3">
-            {showAddGameType ? (
+            {!hydrated || showAddGameType ? (
               <gameTypeFetcher.Form
                 method="post"
                 key={`game-type-${gameTypes.length}`}
@@ -243,7 +243,7 @@ export default function NewGamePage() {
             </p>
           )}
           <div className="mt-3">
-            {showAddPlayer ? (
+            {!hydrated || showAddPlayer ? (
               <playerFetcher.Form method="post" key={players.length}>
                 <div className="flex items-center gap-2">
                   <input
