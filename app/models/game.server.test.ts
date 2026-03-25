@@ -8,6 +8,7 @@ import {
 import { prisma } from "~/db.server";
 
 import type { EnhancedGame } from "~/game-utils";
+import type { Player, Game, GameType } from "./game.server";
 
 vi.mock("~/db.server", () => {
   return {
@@ -76,22 +77,28 @@ describe("game.server getLastCompletedGame", () => {
   });
 
   test("queries for last completed game and returns with computed totals and places", async () => {
-    vi.mocked(prisma.game.findFirst).mockResolvedValueOnce({
+    // Provide raw Player[] here — production code runs enrichPlayerScores to add totalScore
+    const mockGame: Omit<EnhancedGame, "players"> & { players: Player[] } = {
       id: "456",
       completed: true,
       createdAt: new Date("2026-01-01"),
       gameType: { id: "gt-1", name: "Scrabble" },
       players: [
-        { id: "p1", name: "Alice" },
-        { id: "p2", name: "Bob" },
+        { id: "p1", name: "Alice", userId: "user-1" },
+        { id: "p2", name: "Bob", userId: "user-1" },
       ],
       scores: [
-        { playerId: "p1", points: 30 },
-        { playerId: "p2", points: 50 },
-        { playerId: "p1", points: 20 },
-        { playerId: "p2", points: 10 },
+        { id: "s1", playerId: "p1", points: 30, gameId: "456", scoredAt: new Date() },
+        { id: "s2", playerId: "p2", points: 50, gameId: "456", scoredAt: new Date() },
+        { id: "s3", playerId: "p1", points: 20, gameId: "456", scoredAt: new Date() },
+        { id: "s4", playerId: "p2", points: 10, gameId: "456", scoredAt: new Date() },
       ],
-    } as any);
+    };
+    // Cast needed because Prisma's findFirst signature expects Game, but the
+    // select in production code returns a subset of those fields.
+    vi.mocked(prisma.game.findFirst).mockResolvedValueOnce(
+      mockGame as unknown as Game
+    );
 
     const result = await getLastCompletedGame({ userId: "user-1" });
 
@@ -157,11 +164,13 @@ describe("game.server getTopGameTypes", () => {
   });
 
   test("returns game types ranked by count", async () => {
-    vi.mocked(prisma.gameType.findMany).mockResolvedValueOnce([
-      { id: "gt-1", name: "Scrabble", userId: "user-1", _count: { games: 5 } },
-      { id: "gt-2", name: "Words", userId: "user-1", _count: { games: 3 } },
-      { id: "gt-3", name: "Empty", userId: "user-1", _count: { games: 0 } },
-    ] as any);
+    vi.mocked(prisma.gameType.findMany).mockResolvedValueOnce(
+      [
+        { id: "gt-1", name: "Scrabble", _count: { games: 5 } },
+        { id: "gt-2", name: "Words", _count: { games: 3 } },
+        { id: "gt-3", name: "Empty", _count: { games: 0 } },
+      ] satisfies Array<{ id: string; name: string; _count: { games: number } }> as unknown as GameType[]
+    );
 
     const result = await getTopGameTypes({ userId: "user-1", limit: 3 });
 
@@ -197,15 +206,17 @@ describe("game.server getTopPlayers", () => {
   });
 
   test("returns players ranked by game count", async () => {
-    vi.mocked(prisma.player.findMany).mockResolvedValueOnce([
-      {
-        id: "p1",
-        name: "Alice",
-        games: [{ id: "g1" }, { id: "g2" }, { id: "g3" }],
-      },
-      { id: "p2", name: "Bob", games: [{ id: "g1" }, { id: "g2" }] },
-      { id: "p3", name: "Carol", games: [{ id: "g1" }] },
-    ] as any);
+    vi.mocked(prisma.player.findMany).mockResolvedValueOnce(
+      [
+        {
+          id: "p1",
+          name: "Alice",
+          games: [{ id: "g1" }, { id: "g2" }, { id: "g3" }],
+        },
+        { id: "p2", name: "Bob", games: [{ id: "g1" }, { id: "g2" }] },
+        { id: "p3", name: "Carol", games: [{ id: "g1" }] },
+      ] satisfies Array<{ id: string; name: string; games: { id: string }[] }> as unknown as Player[]
+    );
 
     const result = await getTopPlayers({ userId: "user-1", limit: 3 });
 
@@ -217,10 +228,12 @@ describe("game.server getTopPlayers", () => {
   });
 
   test("excludes players with zero games", async () => {
-    vi.mocked(prisma.player.findMany).mockResolvedValueOnce([
-      { id: "p1", name: "Alice", games: [{ id: "g1" }] },
-      { id: "p2", name: "Bob", games: [] },
-    ] as any);
+    vi.mocked(prisma.player.findMany).mockResolvedValueOnce(
+      [
+        { id: "p1", name: "Alice", games: [{ id: "g1" }] },
+        { id: "p2", name: "Bob", games: [] },
+      ] satisfies Array<{ id: string; name: string; games: { id: string }[] }> as unknown as Player[]
+    );
 
     const result = await getTopPlayers({ userId: "user-1" });
 
