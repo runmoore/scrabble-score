@@ -15,15 +15,42 @@ vi.mock("~/db.server", () => {
       game: {
         findFirst: vi.fn().mockResolvedValue({
           id: "123",
+          completed: false,
+          createdAt: new Date("2026-01-01"),
+          gameType: null,
           players: [
-            { id: 1, totalScore: 11 },
-            { id: 2, totalScore: 22 },
+            { id: "1", name: "Player 1", userId: "user-1" },
+            { id: "2", name: "Player 2", userId: "user-1" },
           ],
           scores: [
-            { playerId: 1, points: 1 },
-            { playerId: 2, points: 2 },
-            { playerId: 1, points: 10 },
-            { playerId: 2, points: 20 },
+            {
+              id: "sc1",
+              playerId: "1",
+              gameId: "123",
+              points: 1,
+              scoredAt: new Date("2026-01-01"),
+            },
+            {
+              id: "sc2",
+              playerId: "2",
+              gameId: "123",
+              points: 2,
+              scoredAt: new Date("2026-01-01"),
+            },
+            {
+              id: "sc3",
+              playerId: "1",
+              gameId: "123",
+              points: 10,
+              scoredAt: new Date("2026-01-01"),
+            },
+            {
+              id: "sc4",
+              playerId: "2",
+              gameId: "123",
+              points: 20,
+              scoredAt: new Date("2026-01-01"),
+            },
           ],
         }),
         update: vi.fn().mockResolvedValue({ id: "123", gameTypeId: "gt-1" }),
@@ -82,15 +109,40 @@ describe("game.server getLastCompletedGame", () => {
       createdAt: new Date("2026-01-01"),
       gameType: { id: "gt-1", name: "Scrabble" },
       players: [
-        { id: "p1", name: "Alice" },
-        { id: "p2", name: "Bob" },
+        { id: "p1", name: "Alice", userId: "user-1" },
+        { id: "p2", name: "Bob", userId: "user-1" },
       ],
       scores: [
-        { playerId: "p1", points: 30 },
-        { playerId: "p2", points: 50 },
-        { playerId: "p1", points: 20 },
-        { playerId: "p2", points: 10 },
+        {
+          id: "s1",
+          playerId: "p1",
+          gameId: "456",
+          points: 30,
+          scoredAt: new Date("2026-01-01"),
+        },
+        {
+          id: "s2",
+          playerId: "p2",
+          gameId: "456",
+          points: 50,
+          scoredAt: new Date("2026-01-01"),
+        },
+        {
+          id: "s3",
+          playerId: "p1",
+          gameId: "456",
+          points: 20,
+          scoredAt: new Date("2026-01-01"),
+        },
+        {
+          id: "s4",
+          playerId: "p2",
+          gameId: "456",
+          points: 10,
+          scoredAt: new Date("2026-01-01"),
+        },
       ],
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma's generic return type doesn't narrow through mocks
     } as any);
 
     const result = await getLastCompletedGame({ userId: "user-1" });
@@ -158,9 +210,10 @@ describe("game.server getTopGameTypes", () => {
 
   test("returns game types ranked by count", async () => {
     vi.mocked(prisma.gameType.findMany).mockResolvedValueOnce([
-      { id: "gt-1", name: "Scrabble", userId: "user-1", _count: { games: 5 } },
-      { id: "gt-2", name: "Words", userId: "user-1", _count: { games: 3 } },
-      { id: "gt-3", name: "Empty", userId: "user-1", _count: { games: 0 } },
+      { id: "gt-1", name: "Scrabble", _count: { games: 5 } },
+      { id: "gt-2", name: "Words", _count: { games: 3 } },
+      { id: "gt-3", name: "Empty", _count: { games: 0 } },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma's generic return type doesn't narrow through mocks
     ] as any);
 
     const result = await getTopGameTypes({ userId: "user-1", limit: 3 });
@@ -205,6 +258,7 @@ describe("game.server getTopPlayers", () => {
       },
       { id: "p2", name: "Bob", games: [{ id: "g1" }, { id: "g2" }] },
       { id: "p3", name: "Carol", games: [{ id: "g1" }] },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma's generic return type doesn't narrow through mocks
     ] as any);
 
     const result = await getTopPlayers({ userId: "user-1", limit: 3 });
@@ -220,6 +274,7 @@ describe("game.server getTopPlayers", () => {
     vi.mocked(prisma.player.findMany).mockResolvedValueOnce([
       { id: "p1", name: "Alice", games: [{ id: "g1" }] },
       { id: "p2", name: "Bob", games: [] },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma's generic return type doesn't narrow through mocks
     ] as any);
 
     const result = await getTopPlayers({ userId: "user-1" });

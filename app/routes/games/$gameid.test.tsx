@@ -17,12 +17,25 @@ vi.mock("~/models/game.server", () => {
     reopenGame: vi.fn(),
     getAllGameTypes: vi.fn().mockResolvedValue([]),
     getGame: vi.fn().mockResolvedValue({
-      id: 1,
+      id: "1",
       completed: false,
+      createdAt: new Date("2026-01-01"),
       gameType: null,
       players: [
-        { id: 1, name: "alice", totalScore: 5 },
-        { id: 2, name: "nina", totalScore: 2 },
+        {
+          id: "1",
+          name: "alice",
+          userId: "xxx",
+          scores: [],
+          totalScore: 5,
+        },
+        {
+          id: "2",
+          name: "nina",
+          userId: "xxx",
+          scores: [],
+          totalScore: 2,
+        },
       ],
       scores: [],
     }),
@@ -36,15 +49,28 @@ describe("loader function for completed game", () => {
 
   beforeEach(async () => {
     vi.mocked(getGame).mockResolvedValueOnce({
-      id: 1,
+      id: "1",
       completed: true,
+      createdAt: new Date("2026-01-01"),
       gameType: null,
       players: [
-        { id: 1, name: "alice", totalScore: 5 },
-        { id: 2, name: "nina", totalScore: 2 },
+        {
+          id: "1",
+          name: "alice",
+          userId: "xxx",
+          scores: [],
+          totalScore: 5,
+        },
+        {
+          id: "2",
+          name: "nina",
+          userId: "xxx",
+          scores: [],
+          totalScore: 2,
+        },
       ],
       scores: [],
-    } as any);
+    });
 
     loaderResponse = await loader({
       request: new Request("https://url"),
@@ -65,12 +91,27 @@ describe("loader function for completed game", () => {
     const data = await loaderResponse.json();
 
     expect(data.game).toEqual({
-      id: 1,
+      id: "1",
       completed: true,
+      createdAt: "2026-01-01T00:00:00.000Z",
       gameType: null,
       players: [
-        { id: 1, name: "alice", totalScore: 5, place: 1 },
-        { id: 2, name: "nina", totalScore: 2, place: 2 },
+        {
+          id: "1",
+          name: "alice",
+          userId: "xxx",
+          scores: [],
+          totalScore: 5,
+          place: 1,
+        },
+        {
+          id: "2",
+          name: "nina",
+          userId: "xxx",
+          scores: [],
+          totalScore: 2,
+          place: 2,
+        },
       ],
       scores: [],
     });
@@ -81,7 +122,14 @@ describe("loader function for completed game", () => {
 
     expect(data.winners.length).toEqual(1);
     expect(data.winners).toEqual([
-      { id: 1, name: "alice", totalScore: 5, place: 1 },
+      {
+        id: "1",
+        name: "alice",
+        userId: "xxx",
+        scores: [],
+        totalScore: 5,
+        place: 1,
+      },
     ]);
   });
 
@@ -169,7 +217,7 @@ describe("action function for rematch game", () => {
   test("should create a new game", () => {
     expect(createGame).toHaveBeenCalledWith({
       userId: "xxx",
-      players: [1, 2],
+      players: ["1", "2"],
       gameTypeId: null,
     });
   });
