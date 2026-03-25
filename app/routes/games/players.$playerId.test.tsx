@@ -4,37 +4,6 @@ vi.mock("~/session.server", () => ({
   requireUserId: vi.fn().mockResolvedValue("user-1"),
 }));
 
-const gameTypeScrabble = { id: "gt-scrabble", name: "Scrabble" };
-const gameTypeSushiGo = { id: "gt-sushi", name: "Sushi Go" };
-
-const players = [
-  { id: "p1", name: "Alice" },
-  { id: "p2", name: "Bob" },
-];
-
-function makeGame({
-  id,
-  completed = true,
-  gameType = gameTypeScrabble,
-  scores = [],
-  createdAt = new Date("2026-01-15").toISOString(),
-}: {
-  id: string;
-  completed?: boolean;
-  gameType?: { id: string; name: string } | null;
-  scores?: { playerId: string; points: number }[];
-  createdAt?: string;
-}) {
-  return {
-    id,
-    completed,
-    gameType,
-    players,
-    scores,
-    createdAt,
-  };
-}
-
 vi.mock("~/models/game.server", () => ({
   getPlayer: vi.fn().mockResolvedValue({ id: "p1", name: "Alice" }),
   getPlayerGames: vi.fn().mockResolvedValue([]),
@@ -111,30 +80,87 @@ describe("players.$playerId loader", () => {
     const { getPlayerGames } = await import("~/models/game.server");
     vi.mocked(getPlayerGames).mockResolvedValueOnce([
       // Alice wins (higher score)
-      makeGame({
+      {
         id: "g1",
-        scores: [
-          { playerId: "p1", points: 100 },
-          { playerId: "p2", points: 80 },
+        completed: true,
+        createdAt: new Date("2026-01-15"),
+        gameType: { id: "gt-scrabble", name: "Scrabble" },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
         ],
-      }),
+        scores: [
+          {
+            id: "s1",
+            playerId: "p1",
+            gameId: "g1",
+            points: 100,
+            scoredAt: new Date("2026-01-15"),
+          },
+          {
+            id: "s2",
+            playerId: "p2",
+            gameId: "g1",
+            points: 80,
+            scoredAt: new Date("2026-01-15"),
+          },
+        ],
+      },
       // Alice loses
-      makeGame({
+      {
         id: "g2",
-        scores: [
-          { playerId: "p1", points: 50 },
-          { playerId: "p2", points: 90 },
+        completed: true,
+        createdAt: new Date("2026-01-15"),
+        gameType: { id: "gt-scrabble", name: "Scrabble" },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
         ],
-      }),
+        scores: [
+          {
+            id: "s3",
+            playerId: "p1",
+            gameId: "g2",
+            points: 50,
+            scoredAt: new Date("2026-01-15"),
+          },
+          {
+            id: "s4",
+            playerId: "p2",
+            gameId: "g2",
+            points: 90,
+            scoredAt: new Date("2026-01-15"),
+          },
+        ],
+      },
       // Tie — neither win nor loss
-      makeGame({
+      {
         id: "g3",
-        scores: [
-          { playerId: "p1", points: 75 },
-          { playerId: "p2", points: 75 },
+        completed: true,
+        createdAt: new Date("2026-01-15"),
+        gameType: { id: "gt-scrabble", name: "Scrabble" },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
         ],
-      }),
-    ] as any);
+        scores: [
+          {
+            id: "s5",
+            playerId: "p1",
+            gameId: "g3",
+            points: 75,
+            scoredAt: new Date("2026-01-15"),
+          },
+          {
+            id: "s6",
+            playerId: "p2",
+            gameId: "g3",
+            points: 75,
+            scoredAt: new Date("2026-01-15"),
+          },
+        ],
+      },
+    ]);
 
     const response = await callLoader("p1");
     const data = await response.json();
@@ -148,23 +174,59 @@ describe("players.$playerId loader", () => {
   test("shows per-type stats when no type filter is selected", async () => {
     const { getPlayerGames } = await import("~/models/game.server");
     vi.mocked(getPlayerGames).mockResolvedValueOnce([
-      makeGame({
+      {
         id: "g1",
-        gameType: gameTypeScrabble,
-        scores: [
-          { playerId: "p1", points: 300 },
-          { playerId: "p2", points: 200 },
+        completed: true,
+        createdAt: new Date("2026-01-15"),
+        gameType: { id: "gt-scrabble", name: "Scrabble" },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
         ],
-      }),
-      makeGame({
+        scores: [
+          {
+            id: "s1",
+            playerId: "p1",
+            gameId: "g1",
+            points: 300,
+            scoredAt: new Date("2026-01-15"),
+          },
+          {
+            id: "s2",
+            playerId: "p2",
+            gameId: "g1",
+            points: 200,
+            scoredAt: new Date("2026-01-15"),
+          },
+        ],
+      },
+      {
         id: "g2",
-        gameType: gameTypeSushiGo,
-        scores: [
-          { playerId: "p1", points: 40 },
-          { playerId: "p2", points: 30 },
+        completed: true,
+        createdAt: new Date("2026-01-15"),
+        gameType: { id: "gt-sushi", name: "Sushi Go" },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
         ],
-      }),
-    ] as any);
+        scores: [
+          {
+            id: "s3",
+            playerId: "p1",
+            gameId: "g2",
+            points: 40,
+            scoredAt: new Date("2026-01-15"),
+          },
+          {
+            id: "s4",
+            playerId: "p2",
+            gameId: "g2",
+            points: 30,
+            scoredAt: new Date("2026-01-15"),
+          },
+        ],
+      },
+    ]);
 
     const response = await callLoader("p1");
     const data = await response.json();
@@ -185,23 +247,59 @@ describe("players.$playerId loader", () => {
   test("filters stats by game type when type param is set", async () => {
     const { getPlayerGames } = await import("~/models/game.server");
     vi.mocked(getPlayerGames).mockResolvedValueOnce([
-      makeGame({
+      {
         id: "g1",
-        gameType: gameTypeScrabble,
-        scores: [
-          { playerId: "p1", points: 300 },
-          { playerId: "p2", points: 200 },
+        completed: true,
+        createdAt: new Date("2026-01-15"),
+        gameType: { id: "gt-scrabble", name: "Scrabble" },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
         ],
-      }),
-      makeGame({
+        scores: [
+          {
+            id: "s1",
+            playerId: "p1",
+            gameId: "g1",
+            points: 300,
+            scoredAt: new Date("2026-01-15"),
+          },
+          {
+            id: "s2",
+            playerId: "p2",
+            gameId: "g1",
+            points: 200,
+            scoredAt: new Date("2026-01-15"),
+          },
+        ],
+      },
+      {
         id: "g2",
-        gameType: gameTypeSushiGo,
-        scores: [
-          { playerId: "p1", points: 40 },
-          { playerId: "p2", points: 30 },
+        completed: true,
+        createdAt: new Date("2026-01-15"),
+        gameType: { id: "gt-sushi", name: "Sushi Go" },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
         ],
-      }),
-    ] as any);
+        scores: [
+          {
+            id: "s3",
+            playerId: "p1",
+            gameId: "g2",
+            points: 40,
+            scoredAt: new Date("2026-01-15"),
+          },
+          {
+            id: "s4",
+            playerId: "p2",
+            gameId: "g2",
+            points: 30,
+            scoredAt: new Date("2026-01-15"),
+          },
+        ],
+      },
+    ]);
 
     const response = await callLoader("p1", { type: "gt-scrabble" });
     const data = await response.json();
@@ -216,23 +314,59 @@ describe("players.$playerId loader", () => {
   test("includes in-progress games in history but not stats", async () => {
     const { getPlayerGames } = await import("~/models/game.server");
     vi.mocked(getPlayerGames).mockResolvedValueOnce([
-      makeGame({
+      {
         id: "g1",
         completed: true,
-        scores: [
-          { playerId: "p1", points: 100 },
-          { playerId: "p2", points: 80 },
+        createdAt: new Date("2026-01-15"),
+        gameType: { id: "gt-scrabble", name: "Scrabble" },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
         ],
-      }),
-      makeGame({
+        scores: [
+          {
+            id: "s1",
+            playerId: "p1",
+            gameId: "g1",
+            points: 100,
+            scoredAt: new Date("2026-01-15"),
+          },
+          {
+            id: "s2",
+            playerId: "p2",
+            gameId: "g1",
+            points: 80,
+            scoredAt: new Date("2026-01-15"),
+          },
+        ],
+      },
+      {
         id: "g2",
         completed: false,
-        scores: [
-          { playerId: "p1", points: 50 },
-          { playerId: "p2", points: 30 },
+        createdAt: new Date("2026-01-15"),
+        gameType: { id: "gt-scrabble", name: "Scrabble" },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
         ],
-      }),
-    ] as any);
+        scores: [
+          {
+            id: "s3",
+            playerId: "p1",
+            gameId: "g2",
+            points: 50,
+            scoredAt: new Date("2026-01-15"),
+          },
+          {
+            id: "s4",
+            playerId: "p2",
+            gameId: "g2",
+            points: 30,
+            scoredAt: new Date("2026-01-15"),
+          },
+        ],
+      },
+    ]);
 
     const response = await callLoader("p1");
     const data = await response.json();
@@ -246,23 +380,59 @@ describe("players.$playerId loader", () => {
   test("skips untyped games in per-type breakdown", async () => {
     const { getPlayerGames } = await import("~/models/game.server");
     vi.mocked(getPlayerGames).mockResolvedValueOnce([
-      makeGame({
+      {
         id: "g1",
-        gameType: gameTypeScrabble,
-        scores: [
-          { playerId: "p1", points: 300 },
-          { playerId: "p2", points: 200 },
+        completed: true,
+        createdAt: new Date("2026-01-15"),
+        gameType: { id: "gt-scrabble", name: "Scrabble" },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
         ],
-      }),
-      makeGame({
+        scores: [
+          {
+            id: "s1",
+            playerId: "p1",
+            gameId: "g1",
+            points: 300,
+            scoredAt: new Date("2026-01-15"),
+          },
+          {
+            id: "s2",
+            playerId: "p2",
+            gameId: "g1",
+            points: 200,
+            scoredAt: new Date("2026-01-15"),
+          },
+        ],
+      },
+      {
         id: "g2",
+        completed: true,
+        createdAt: new Date("2026-01-15"),
         gameType: null,
-        scores: [
-          { playerId: "p1", points: 100 },
-          { playerId: "p2", points: 80 },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
         ],
-      }),
-    ] as any);
+        scores: [
+          {
+            id: "s3",
+            playerId: "p1",
+            gameId: "g2",
+            points: 100,
+            scoredAt: new Date("2026-01-15"),
+          },
+          {
+            id: "s4",
+            playerId: "p2",
+            gameId: "g2",
+            points: 80,
+            scoredAt: new Date("2026-01-15"),
+          },
+        ],
+      },
+    ]);
 
     const response = await callLoader("p1");
     const data = await response.json();
@@ -277,21 +447,36 @@ describe("players.$playerId loader", () => {
   test("returns available game types from all games", async () => {
     const { getPlayerGames } = await import("~/models/game.server");
     vi.mocked(getPlayerGames).mockResolvedValueOnce([
-      makeGame({ id: "g1", gameType: gameTypeScrabble, scores: [] }),
-      makeGame({
+      {
+        id: "g1",
+        completed: true,
+        createdAt: new Date("2026-01-15"),
+        gameType: { id: "gt-scrabble", name: "Scrabble" },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
+        ],
+        scores: [],
+      },
+      {
         id: "g2",
         completed: false,
-        gameType: gameTypeSushiGo,
+        createdAt: new Date("2026-01-15"),
+        gameType: { id: "gt-sushi", name: "Sushi Go" },
+        players: [
+          { id: "p1", name: "Alice", userId: "user-1" },
+          { id: "p2", name: "Bob", userId: "user-1" },
+        ],
         scores: [],
-      }),
-    ] as any);
+      },
+    ]);
 
     const response = await callLoader("p1");
     const data = await response.json();
 
     expect(data.availableGameTypes).toEqual([
-      gameTypeScrabble,
-      gameTypeSushiGo,
+      { id: "gt-scrabble", name: "Scrabble" },
+      { id: "gt-sushi", name: "Sushi Go" },
     ]);
   });
 });
