@@ -8,7 +8,7 @@ import {
 import { prisma } from "~/db.server";
 
 import type { EnhancedGame } from "~/game-utils";
-import type { Player, Score, Game, GameType } from "./game.server";
+import type { Player, Game, GameType } from "./game.server";
 
 vi.mock("~/db.server", () => {
   return {
@@ -77,23 +77,27 @@ describe("game.server getLastCompletedGame", () => {
   });
 
   test("queries for last completed game and returns with computed totals and places", async () => {
+    // Provide raw Player[] here — production code runs enrichPlayerScores to add totalScore
+    const mockGame: Omit<EnhancedGame, "players"> & { players: Player[] } = {
+      id: "456",
+      completed: true,
+      createdAt: new Date("2026-01-01"),
+      gameType: { id: "gt-1", name: "Scrabble" },
+      players: [
+        { id: "p1", name: "Alice", userId: "user-1" },
+        { id: "p2", name: "Bob", userId: "user-1" },
+      ],
+      scores: [
+        { id: "s1", playerId: "p1", points: 30, gameId: "456", scoredAt: new Date() },
+        { id: "s2", playerId: "p2", points: 50, gameId: "456", scoredAt: new Date() },
+        { id: "s3", playerId: "p1", points: 20, gameId: "456", scoredAt: new Date() },
+        { id: "s4", playerId: "p2", points: 10, gameId: "456", scoredAt: new Date() },
+      ],
+    };
+    // Cast needed because Prisma's findFirst signature expects Game, but the
+    // select in production code returns a subset of those fields.
     vi.mocked(prisma.game.findFirst).mockResolvedValueOnce(
-      {
-        id: "456",
-        completed: true,
-        createdAt: new Date("2026-01-01"),
-        gameType: { id: "gt-1", name: "Scrabble" },
-        players: [
-          { id: "p1", name: "Alice", userId: "user-1" } satisfies Player,
-          { id: "p2", name: "Bob", userId: "user-1" } satisfies Player,
-        ],
-        scores: [
-          { id: "s1", playerId: "p1", points: 30, gameId: "456", scoredAt: new Date() } satisfies Score,
-          { id: "s2", playerId: "p2", points: 50, gameId: "456", scoredAt: new Date() } satisfies Score,
-          { id: "s3", playerId: "p1", points: 20, gameId: "456", scoredAt: new Date() } satisfies Score,
-          { id: "s4", playerId: "p2", points: 10, gameId: "456", scoredAt: new Date() } satisfies Score,
-        ],
-      } satisfies Omit<EnhancedGame, "players"> & { players: Player[] } as unknown as Game
+      mockGame as unknown as Game
     );
 
     const result = await getLastCompletedGame({ userId: "user-1" });
