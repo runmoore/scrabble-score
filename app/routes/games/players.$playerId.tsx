@@ -1,4 +1,9 @@
-import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import {
+  Link,
+  useLoaderData,
+  useNavigation,
+  useSearchParams,
+} from "@remix-run/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { format } from "date-fns";
@@ -215,6 +220,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 export default function PlayerDetail() {
   const data = useLoaderData<typeof loader>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigation = useNavigation();
+  const isFilterLoading = navigation.state === "loading";
   const selectedTypeId = searchParams.get("type");
 
   const handlePillClick = (typeId: string) => {
@@ -253,157 +260,163 @@ export default function PlayerDetail() {
         </div>
       )}
 
-      {/* Stats Cards */}
-      {data.gamesPlayed === 0 ? (
-        <p className="text-gray-500 dark:text-gray-400">
-          No completed games yet.
-        </p>
-      ) : (
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
-          <Card title="Games Played">
-            <p className="text-3xl font-bold text-blue-primary dark:text-blue-400">
-              {data.gamesPlayed}
-            </p>
-          </Card>
-
-          <Card title="Win Rate">
-            <p className="text-3xl font-bold text-green-primary dark:text-green-400">
-              {data.winRate}%
-            </p>
-            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-              {data.wins} {data.wins === 1 ? "win" : "wins"} of{" "}
-              {data.gamesPlayed}
-            </p>
-          </Card>
-
-          {/* Average Score */}
-          {selectedTypeId ? (
-            <Card title="Average Score">
-              <p className="text-3xl font-bold text-purple-primary dark:text-purple-400">
-                {data.averageScore}
-              </p>
-            </Card>
-          ) : (
-            <Card title="Average Score">
-              <div className="space-y-2">
-                {data.perTypeStats.map((ts) => (
-                  <div
-                    key={ts.gameTypeId}
-                    className="flex justify-between text-sm dark:text-gray-300"
-                  >
-                    <span>{ts.gameTypeName}</span>
-                    <span className="font-medium text-purple-primary dark:text-purple-400">
-                      {ts.gamesPlayed > 0
-                        ? Math.round(ts.totalScore / ts.gamesPlayed)
-                        : 0}
-                    </span>
-                  </div>
-                ))}
-                {data.perTypeStats.length === 0 && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    No game types assigned
-                  </p>
-                )}
-              </div>
-            </Card>
-          )}
-
-          {/* Highest Score */}
-          {selectedTypeId ? (
-            data.highestScoreGameId && (
-              <Card
-                title="Highest Score"
-                asLink
-                to={`/games/${data.highestScoreGameId}`}
-              >
-                <p className="text-3xl font-bold text-purple-primary dark:text-purple-400">
-                  {data.highestScore}
-                </p>
-                {data.highestScoreGameDate && (
-                  <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    {format(data.highestScoreGameDate, "do MMM yyyy")}
-                  </p>
-                )}
-              </Card>
-            )
-          ) : (
-            <Card title="Highest Score">
-              <div className="space-y-2">
-                {data.perTypeStats.map(
-                  (ts) =>
-                    ts.highestScoreGameId && (
-                      <Link
-                        key={ts.gameTypeId}
-                        to={`/games/${ts.highestScoreGameId}`}
-                        className="flex justify-between text-sm hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
-                      >
-                        <span>{ts.gameTypeName}</span>
-                        <span className="font-medium text-purple-primary dark:text-purple-400">
-                          {ts.highestScore}
-                        </span>
-                      </Link>
-                    )
-                )}
-                {data.perTypeStats.length === 0 && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    No game types assigned
-                  </p>
-                )}
-              </div>
-            </Card>
-          )}
-        </div>
-      )}
-
-      {/* Game History */}
-      <div>
-        <h2 className="mb-4 text-xl font-semibold dark:text-gray-100">
-          All Games
-        </h2>
-        {data.history.length === 0 ? (
-          <p className="py-8 text-center text-gray-600 dark:text-gray-400">
-            No games found
+      <div
+        className={`space-y-6 transition-opacity duration-150 ${
+          isFilterLoading ? "opacity-20" : "opacity-100"
+        }`}
+      >
+        {/* Stats Cards */}
+        {data.gamesPlayed === 0 ? (
+          <p className="text-gray-500 dark:text-gray-400">
+            No completed games yet.
           </p>
         ) : (
-          <div className="max-h-96 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700">
-            {data.history.map((game, index) => (
-              <Link
-                key={game.id}
-                to={`/games/${game.id}`}
-                className={`flex items-center p-4 transition-colors hover:bg-blue-50 dark:hover:bg-blue-900/30 ${
-                  index % 2 === 0
-                    ? "bg-white dark:bg-gray-900"
-                    : "bg-gray-50 dark:bg-gray-800"
-                }`}
-              >
-                <div className="w-[28%] text-sm text-gray-600 dark:text-gray-400">
-                  {format(game.createdAt, "do MMM yyyy")}
-                </div>
-                <div className="w-[22%] truncate text-center text-sm text-gray-600 dark:text-gray-400">
-                  {game.gameTypeName ?? "—"}
-                </div>
-                <div className="w-[20%] text-center font-medium text-blue-primary dark:text-blue-400">
-                  {game.score}
-                </div>
-                <div className="w-[30%] text-center text-sm">
-                  {game.completed ? (
-                    <span className="text-gray-700 dark:text-gray-300">
-                      {game.place != null
-                        ? `${getNumberWithOrdinal(game.place)} of ${
-                            game.playerCount
-                          }`
-                        : "—"}
-                    </span>
-                  ) : (
-                    <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                      In Progress
-                    </span>
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
+            <Card title="Games Played">
+              <p className="text-3xl font-bold text-blue-primary dark:text-blue-400">
+                {data.gamesPlayed}
+              </p>
+            </Card>
+
+            <Card title="Win Rate">
+              <p className="text-3xl font-bold text-green-primary dark:text-green-400">
+                {data.winRate}%
+              </p>
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                {data.wins} {data.wins === 1 ? "win" : "wins"} of{" "}
+                {data.gamesPlayed}
+              </p>
+            </Card>
+
+            {/* Average Score */}
+            {selectedTypeId ? (
+              <Card title="Average Score">
+                <p className="text-3xl font-bold text-purple-primary dark:text-purple-400">
+                  {data.averageScore}
+                </p>
+              </Card>
+            ) : (
+              <Card title="Average Score">
+                <div className="space-y-2">
+                  {data.perTypeStats.map((ts) => (
+                    <div
+                      key={ts.gameTypeId}
+                      className="flex justify-between text-sm dark:text-gray-300"
+                    >
+                      <span>{ts.gameTypeName}</span>
+                      <span className="font-medium text-purple-primary dark:text-purple-400">
+                        {ts.gamesPlayed > 0
+                          ? Math.round(ts.totalScore / ts.gamesPlayed)
+                          : 0}
+                      </span>
+                    </div>
+                  ))}
+                  {data.perTypeStats.length === 0 && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      No game types assigned
+                    </p>
                   )}
                 </div>
-              </Link>
-            ))}
+              </Card>
+            )}
+
+            {/* Highest Score */}
+            {selectedTypeId ? (
+              data.highestScoreGameId && (
+                <Card
+                  title="Highest Score"
+                  asLink
+                  to={`/games/${data.highestScoreGameId}`}
+                >
+                  <p className="text-3xl font-bold text-purple-primary dark:text-purple-400">
+                    {data.highestScore}
+                  </p>
+                  {data.highestScoreGameDate && (
+                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                      {format(data.highestScoreGameDate, "do MMM yyyy")}
+                    </p>
+                  )}
+                </Card>
+              )
+            ) : (
+              <Card title="Highest Score">
+                <div className="space-y-2">
+                  {data.perTypeStats.map(
+                    (ts) =>
+                      ts.highestScoreGameId && (
+                        <Link
+                          key={ts.gameTypeId}
+                          to={`/games/${ts.highestScoreGameId}`}
+                          className="flex justify-between text-sm hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                        >
+                          <span>{ts.gameTypeName}</span>
+                          <span className="font-medium text-purple-primary dark:text-purple-400">
+                            {ts.highestScore}
+                          </span>
+                        </Link>
+                      )
+                  )}
+                  {data.perTypeStats.length === 0 && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      No game types assigned
+                    </p>
+                  )}
+                </div>
+              </Card>
+            )}
           </div>
         )}
+
+        {/* Game History */}
+        <div>
+          <h2 className="mb-4 text-xl font-semibold dark:text-gray-100">
+            All Games
+          </h2>
+          {data.history.length === 0 ? (
+            <p className="py-8 text-center text-gray-600 dark:text-gray-400">
+              No games found
+            </p>
+          ) : (
+            <div className="max-h-96 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700">
+              {data.history.map((game, index) => (
+                <Link
+                  key={game.id}
+                  to={`/games/${game.id}`}
+                  className={`flex items-center p-4 transition-colors hover:bg-blue-50 dark:hover:bg-blue-900/30 ${
+                    index % 2 === 0
+                      ? "bg-white dark:bg-gray-900"
+                      : "bg-gray-50 dark:bg-gray-800"
+                  }`}
+                >
+                  <div className="w-[28%] text-sm text-gray-600 dark:text-gray-400">
+                    {format(game.createdAt, "do MMM yyyy")}
+                  </div>
+                  <div className="w-[22%] truncate text-center text-sm text-gray-600 dark:text-gray-400">
+                    {game.gameTypeName ?? "—"}
+                  </div>
+                  <div className="w-[20%] text-center font-medium text-blue-primary dark:text-blue-400">
+                    {game.score}
+                  </div>
+                  <div className="w-[30%] text-center text-sm">
+                    {game.completed ? (
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {game.place != null
+                          ? `${getNumberWithOrdinal(game.place)} of ${
+                              game.playerCount
+                            }`
+                          : "—"}
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                        In Progress
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
