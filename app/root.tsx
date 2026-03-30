@@ -13,6 +13,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 
+import BackButton from "~/components/BackButton";
 import { getUser } from "./session.server";
 import stylesheet from "~/tailwind.css";
 
@@ -48,6 +49,7 @@ export default function App() {
       </head>
       <body className="h-full bg-white dark:bg-gray-900">
         <Outlet />
+        <BackButton />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
