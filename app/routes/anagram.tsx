@@ -270,6 +270,7 @@ export default function Anagram() {
                   updatedWord[indexOfNewWord] = character;
 
                   setNewWord(updatedWord);
+                  setUndoStack((prev) => [...prev, indexOfNewWord]);
                   setIndexOfNewWord(
                     findNextBlankLetter(updatedWord, indexOfNewWord)
                   );
@@ -280,6 +281,21 @@ export default function Anagram() {
                     const updatedWord = [...newWord];
                     updatedWord[index] = "";
                     setNewWord(updatedWord);
+
+                    // Remove the last history entry for this word position
+                    setUndoStack((prev) => {
+                      let lastIdx = -1;
+                      for (let j = prev.length - 1; j >= 0; j--) {
+                        if (prev[j] === index) {
+                          lastIdx = j;
+                          break;
+                        }
+                      }
+                      if (lastIdx > -1) {
+                        return prev.filter((_, idx) => idx !== lastIdx);
+                      }
+                      return prev;
+                    });
 
                     setIndexOfNewWord(index);
                   }
