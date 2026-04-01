@@ -161,6 +161,37 @@ export default function Anagram() {
     setUndoStack([]);
   };
 
+  const undo = () => {
+    if (undoStack.length === 0) return;
+
+    const wordIndex = undoStack[undoStack.length - 1];
+    const character = newWord[wordIndex];
+
+    // Clear the placed letter
+    const updatedWord = [...newWord];
+    updatedWord[wordIndex] = "";
+    setNewWord(updatedWord);
+
+    // Un-dismiss the first matching dismissed circle letter
+    const updatedLetters = [...letters];
+    const letterIdx = updatedLetters.findIndex(
+      (l) => l.character === character && l.isDismissed
+    );
+    if (letterIdx > -1) {
+      updatedLetters[letterIdx] = {
+        ...updatedLetters[letterIdx],
+        isDismissed: false,
+      };
+      setLetters(updatedLetters);
+    }
+
+    // Move cursor to the cleared position
+    setIndexOfNewWord(wordIndex);
+
+    // Pop the last entry
+    setUndoStack((prev) => prev.slice(0, -1));
+  };
+
   const goToNextBlankLetter = () => {
     const nextIndex = findNextBlankLetter(newWord, indexOfNewWord + 1);
     setIndexOfNewWord(nextIndex);
@@ -329,6 +360,13 @@ export default function Anagram() {
               className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-400 dark:bg-gray-800 dark:text-gray-200"
             >
               Next
+            </button>
+            <button
+              onClick={undo}
+              disabled={undoStack.length === 0}
+              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-400 dark:bg-gray-800 dark:text-gray-200"
+            >
+              Undo
             </button>
           </div>
         </div>
