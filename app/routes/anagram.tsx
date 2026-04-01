@@ -113,6 +113,7 @@ export default function Anagram() {
   );
 
   const [indexOfNewWord, setIndexOfNewWord] = useState(0);
+  const [undoStack, setUndoStack] = useState<number[]>([]);
   const [recentAnagrams, setRecentAnagrams] = useState<string[]>([]);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -124,6 +125,7 @@ export default function Anagram() {
     setLetters(queryToLetters(searchQuery));
     setNewWord(queryToBlankNewWord(searchQuery));
     setIndexOfNewWord(0);
+    setUndoStack([]);
 
     // Add new search query to recent anagrams when it changes
     if (searchQuery) {
@@ -156,6 +158,7 @@ export default function Anagram() {
     setLetters((value) =>
       value.map((letter) => ({ ...letter, isDismissed: false }))
     );
+    setUndoStack([]);
   };
 
   const goToNextBlankLetter = () => {
