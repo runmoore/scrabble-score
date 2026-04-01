@@ -100,6 +100,17 @@ function findNextBlankLetter(word: string[], startIndex: number): number {
   return -1;
 }
 
+function removeLastStackEntry(stack: number[], wordIndex: number): number[] {
+  let lastIdx = -1;
+  for (let j = stack.length - 1; j >= 0; j--) {
+    if (stack[j] === wordIndex) {
+      lastIdx = j;
+      break;
+    }
+  }
+  return lastIdx > -1 ? stack.filter((_, idx) => idx !== lastIdx) : stack;
+}
+
 export default function Anagram() {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -313,20 +324,7 @@ export default function Anagram() {
                     updatedWord[index] = "";
                     setNewWord(updatedWord);
 
-                    // Remove the last history entry for this word position
-                    setUndoStack((prev) => {
-                      let lastIdx = -1;
-                      for (let j = prev.length - 1; j >= 0; j--) {
-                        if (prev[j] === index) {
-                          lastIdx = j;
-                          break;
-                        }
-                      }
-                      if (lastIdx > -1) {
-                        return prev.filter((_, idx) => idx !== lastIdx);
-                      }
-                      return prev;
-                    });
+                    setUndoStack((prev) => removeLastStackEntry(prev, index));
 
                     setIndexOfNewWord(index);
                   }
@@ -395,20 +393,7 @@ export default function Anagram() {
                   );
                   updatedLetters[index].isDismissed = false;
 
-                  // Remove the last history entry for this word position
-                  setUndoStack((prev) => {
-                    let lastIdx = -1;
-                    for (let j = prev.length - 1; j >= 0; j--) {
-                      if (prev[j] === i) {
-                        lastIdx = j;
-                        break;
-                      }
-                    }
-                    if (lastIdx > -1) {
-                      return prev.filter((_, idx) => idx !== lastIdx);
-                    }
-                    return prev;
-                  });
+                  setUndoStack((prev) => removeLastStackEntry(prev, i));
                 }
                 setIndexOfNewWord(i);
               }}
