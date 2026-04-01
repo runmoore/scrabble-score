@@ -356,6 +356,21 @@ export default function Anagram() {
                       character === newWord[i] && isDismissed
                   );
                   updatedLetters[index].isDismissed = false;
+
+                  // Remove the last history entry for this word position
+                  setUndoStack((prev) => {
+                    let lastIdx = -1;
+                    for (let j = prev.length - 1; j >= 0; j--) {
+                      if (prev[j] === i) {
+                        lastIdx = j;
+                        break;
+                      }
+                    }
+                    if (lastIdx > -1) {
+                      return prev.filter((_, idx) => idx !== lastIdx);
+                    }
+                    return prev;
+                  });
                 }
                 setIndexOfNewWord(i);
               }}
