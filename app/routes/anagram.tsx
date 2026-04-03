@@ -100,6 +100,17 @@ function findNextBlankLetter(word: string[], startIndex: number): number {
   return -1;
 }
 
+function removeLastStackEntry(stack: number[], wordIndex: number): number[] {
+  let lastIdx = -1;
+  for (let j = stack.length - 1; j >= 0; j--) {
+    if (stack[j] === wordIndex) {
+      lastIdx = j;
+      break;
+    }
+  }
+  return lastIdx > -1 ? stack.filter((_, idx) => idx !== lastIdx) : stack;
+}
+
 export default function Anagram() {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -113,6 +124,7 @@ export default function Anagram() {
   );
 
   const [indexOfNewWord, setIndexOfNewWord] = useState(0);
+  const [undoStack, setUndoStack] = useState<number[]>([]);
   const [recentAnagrams, setRecentAnagrams] = useState<string[]>([]);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -124,6 +136,7 @@ export default function Anagram() {
     setLetters(queryToLetters(searchQuery));
     setNewWord(queryToBlankNewWord(searchQuery));
     setIndexOfNewWord(0);
+    setUndoStack([]);
 
     // Add new search query to recent anagrams when it changes
     if (searchQuery) {
@@ -156,6 +169,38 @@ export default function Anagram() {
     setLetters((value) =>
       value.map((letter) => ({ ...letter, isDismissed: false }))
     );
+    setUndoStack([]);
+  };
+
+  const undo = () => {
+    if (undoStack.length === 0) return;
+
+    const wordIndex = undoStack[undoStack.length - 1];
+    const character = newWord[wordIndex];
+
+    // Clear the placed letter
+    const updatedWord = [...newWord];
+    updatedWord[wordIndex] = "";
+    setNewWord(updatedWord);
+
+    // Un-dismiss the first matching dismissed circle letter
+    const updatedLetters = [...letters];
+    const letterIdx = updatedLetters.findIndex(
+      (l) => l.character === character && l.isDismissed
+    );
+    if (letterIdx > -1) {
+      updatedLetters[letterIdx] = {
+        ...updatedLetters[letterIdx],
+        isDismissed: false,
+      };
+      setLetters(updatedLetters);
+    }
+
+    // Move cursor to the cleared position
+    setIndexOfNewWord(wordIndex);
+
+    // Pop the last entry
+    setUndoStack((prev) => prev.slice(0, -1));
   };
 
   const goToNextBlankLetter = () => {
@@ -267,6 +312,7 @@ export default function Anagram() {
                   updatedWord[indexOfNewWord] = character;
 
                   setNewWord(updatedWord);
+                  setUndoStack((prev) => [...prev, indexOfNewWord]);
                   setIndexOfNewWord(
                     findNextBlankLetter(updatedWord, indexOfNewWord)
                   );
@@ -277,6 +323,8 @@ export default function Anagram() {
                     const updatedWord = [...newWord];
                     updatedWord[index] = "";
                     setNewWord(updatedWord);
+
+                    setUndoStack((prev) => removeLastStackEntry(prev, index));
 
                     setIndexOfNewWord(index);
                   }
@@ -311,6 +359,13 @@ export default function Anagram() {
             >
               Next
             </button>
+            <button
+              onClick={undo}
+              disabled={undoStack.length === 0}
+              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-400 dark:bg-gray-800 dark:text-gray-200"
+            >
+              Undo
+            </button>
           </div>
         </div>
       )}
@@ -337,6 +392,8 @@ export default function Anagram() {
                       character === newWord[i] && isDismissed
                   );
                   updatedLetters[index].isDismissed = false;
+
+                  setUndoStack((prev) => removeLastStackEntry(prev, i));
                 }
                 setIndexOfNewWord(i);
               }}
