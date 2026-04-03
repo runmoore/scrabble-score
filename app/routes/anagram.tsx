@@ -2,6 +2,8 @@ import { Form, Link, useSearchParams } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/server-runtime";
 import { useEffect, useRef, useState } from "react";
 
+import { ActionButton } from "~/components/ActionButton";
+
 export const links: LinksFunction = () => {
   return [{ rel: "manifest", href: "/anagram-manifest.json" }];
 };
@@ -339,33 +341,18 @@ export default function Anagram() {
           <div className="align-center mt-8 flex flex-wrap justify-center dark:text-gray-100">
             ({newWord.length})
           </div>
-          <div className="align-center mt-8 flex flex-wrap justify-center">
-            <button
-              onClick={shuffle}
-              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700 dark:border-gray-400 dark:bg-gray-800 dark:text-gray-200"
-            >
-              Shuffle
-            </button>
-            <button
-              onClick={clearNewWord}
-              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700 dark:border-gray-400 dark:bg-gray-800 dark:text-gray-200"
-            >
-              Clear
-            </button>
-            <button
+          <div className="align-center mt-8 flex flex-wrap justify-center gap-4">
+            <ActionButton onClick={shuffle}>Shuffle</ActionButton>
+            <ActionButton onClick={clearNewWord}>Clear</ActionButton>
+            <ActionButton
               onClick={goToNextBlankLetter}
               disabled={newWord.filter((letter) => letter === "").length < 2}
-              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-400 dark:bg-gray-800 dark:text-gray-200"
             >
               Next
-            </button>
-            <button
-              onClick={undo}
-              disabled={undoStack.length === 0}
-              className="ml-4 rounded-2xl border border-black bg-gray-100 p-2 text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-400 dark:bg-gray-800 dark:text-gray-200"
-            >
+            </ActionButton>
+            <ActionButton onClick={undo} disabled={undoStack.length === 0}>
               Undo
-            </button>
+            </ActionButton>
           </div>
         </div>
       )}
