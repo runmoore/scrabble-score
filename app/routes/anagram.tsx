@@ -304,7 +304,7 @@ export default function Anagram() {
               isDismissed={isDismissed}
               onClick={(isDismissed) => {
                 const updatedLetters = [...letters];
-                updatedLetters[i].isDismissed = isDismissed;
+                updatedLetters[i] = { ...updatedLetters[i], isDismissed };
                 setLetters(updatedLetters);
 
                 if (isDismissed) {
@@ -391,7 +391,7 @@ export default function Anagram() {
                     ({ character, isDismissed }) =>
                       character === newWord[i] && isDismissed
                   );
-                  updatedLetters[index].isDismissed = false;
+                  updatedLetters[index] = { ...updatedLetters[index], isDismissed: false };
 
                   setUndoStack((prev) => removeLastStackEntry(prev, i));
                 }
