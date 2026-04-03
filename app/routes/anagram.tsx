@@ -379,7 +379,7 @@ export default function Anagram() {
                   setNewWord(updatedWord);
 
                   const updatedLetters = [...letters];
-                  const index = updatedLetters.findLastIndex(
+                  const index = updatedLetters.findIndex(
                     ({ character, isDismissed }) =>
                       character === newWord[i] && isDismissed
                   );
