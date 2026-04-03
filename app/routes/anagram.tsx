@@ -102,17 +102,6 @@ function findNextBlankLetter(word: string[], startIndex: number): number {
   return -1;
 }
 
-function removeLastStackEntry(stack: number[], wordIndex: number): number[] {
-  let lastIdx = -1;
-  for (let j = stack.length - 1; j >= 0; j--) {
-    if (stack[j] === wordIndex) {
-      lastIdx = j;
-      break;
-    }
-  }
-  return lastIdx > -1 ? stack.filter((_, idx) => idx !== lastIdx) : stack;
-}
-
 export default function Anagram() {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -326,7 +315,10 @@ export default function Anagram() {
                     updatedWord[index] = "";
                     setNewWord(updatedWord);
 
-                    setUndoStack((prev) => removeLastStackEntry(prev, index));
+                    setUndoStack((prev) => {
+                      const lastIdx = prev.findLastIndex((entry) => entry === index);
+                      return lastIdx > -1 ? prev.filter((_, idx) => idx !== lastIdx) : prev;
+                    });
 
                     setIndexOfNewWord(index);
                   }
@@ -380,7 +372,10 @@ export default function Anagram() {
                   );
                   updatedLetters[index] = { ...updatedLetters[index], isDismissed: false };
 
-                  setUndoStack((prev) => removeLastStackEntry(prev, i));
+                  setUndoStack((prev) => {
+                    const lastIdx = prev.findLastIndex((entry) => entry === i);
+                    return lastIdx > -1 ? prev.filter((_, idx) => idx !== lastIdx) : prev;
+                  });
                 }
                 setIndexOfNewWord(i);
               }}
