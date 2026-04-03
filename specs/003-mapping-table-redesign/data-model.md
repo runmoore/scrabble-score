@@ -19,7 +19,7 @@ The MappingGrid component uses existing state structures that remain identical:
 ### `mappings` State
 
 ```typescript
-Record<string, string>
+Record<string, string>;
 ```
 
 - Maps cipher letters (A-Z) to plain letters
