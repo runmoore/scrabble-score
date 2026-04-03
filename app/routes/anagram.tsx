@@ -172,9 +172,9 @@ export default function Anagram() {
     updatedWord[wordIndex] = "";
     setNewWord(updatedWord);
 
-    // Un-dismiss the last matching dismissed circle letter
+    // Un-dismiss the first matching dismissed circle letter
     const updatedLetters = [...letters];
-    const letterIdx = updatedLetters.findLastIndex(
+    const letterIdx = updatedLetters.findIndex(
       (l) => l.character === character && l.isDismissed
     );
     if (letterIdx > -1) {
