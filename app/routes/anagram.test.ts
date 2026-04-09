@@ -88,7 +88,7 @@ describe("removeLastOccurrence", () => {
   });
 
   it("removes only the last occurrence when the value appears multiple times", () => {
-    expect(removeLastOccurrence([1, 2, 2, 3], 2)).toEqual([1, 2, 3]);
+    expect(removeLastOccurrence([1, 2, 3, 2, 4], 2)).toEqual([1, 2, 3, 4]);
   });
 
   it("returns the original array when the value is not present", () => {
