@@ -15,17 +15,6 @@ import { enrichPlayerScores, assignPlaces } from "~/game-utils";
 import { getNumberWithOrdinal } from "~/components/Leaderboard";
 import { requireUserId } from "~/session.server";
 
-interface GameTypeStats {
-  gameTypeId: string | null;
-  gameTypeName: string;
-  gamesPlayed: number;
-  wins: number;
-  totalScore: number;
-  highestScore: number;
-  highestScoreGameId: string;
-  highestScoreGameDate: string;
-}
-
 type EnrichedGame = Omit<
   Awaited<ReturnType<typeof getPlayerGames>>[number],
   "players"
@@ -121,7 +110,7 @@ function computeAggregateStats(
       ? Math.round(totalScore / gamesPlayed)
       : 0;
 
-  const perTypeStats: GameTypeStats[] = [...typeAccumulators.entries()]
+  const perTypeStats = [...typeAccumulators.entries()]
     .map(([typeId, acc]) => ({
       gameTypeId: typeId,
       gameTypeName: acc.name,
