@@ -199,6 +199,62 @@ export default function Anagram() {
     setIndexOfNewWord(nextIndex);
   };
 
+  const placeCircleLetter = (letterIndex: number, isDismissed: boolean) => {
+    const updatedLetters = [...letters];
+    updatedLetters[letterIndex] = { ...updatedLetters[letterIndex], isDismissed };
+    setLetters(updatedLetters);
+
+    if (isDismissed) {
+      const character = letters[letterIndex].character;
+      let updatedWord = [...newWord];
+      updatedWord[indexOfNewWord] = character;
+
+      setNewWord(updatedWord);
+      setUndoStack((prev) => [...prev, indexOfNewWord]);
+      setIndexOfNewWord(
+        findNextBlankLetter(updatedWord, indexOfNewWord)
+      );
+    } else {
+      const character = letters[letterIndex].character;
+      const index = newWord.lastIndexOf(character);
+
+      if (index > -1) {
+        const updatedWord = [...newWord];
+        updatedWord[index] = "";
+        setNewWord(updatedWord);
+
+        setUndoStack((prev) => {
+          const lastIdx = prev.findLastIndex((entry) => entry === index);
+          return lastIdx > -1 ? prev.filter((_, idx) => idx !== lastIdx) : prev;
+        });
+
+        setIndexOfNewWord(index);
+      }
+    }
+  };
+
+  const removePlacedLetter = (wordIndex: number) => {
+    if (newWord[wordIndex] !== "") {
+      let updatedWord = [...newWord];
+      updatedWord[wordIndex] = "";
+      setNewWord(updatedWord);
+
+      const updatedLetters = [...letters];
+      const index = updatedLetters.findIndex(
+        ({ character, isDismissed }) =>
+          character === newWord[wordIndex] && isDismissed
+      );
+      updatedLetters[index] = { ...updatedLetters[index], isDismissed: false };
+      setLetters(updatedLetters);
+
+      setUndoStack((prev) => {
+        const lastIdx = prev.findLastIndex((entry) => entry === wordIndex);
+        return lastIdx > -1 ? prev.filter((_, idx) => idx !== lastIdx) : prev;
+      });
+    }
+    setIndexOfNewWord(wordIndex);
+  };
+
   return (
     <>
       <div className="align-center mt-8 flex flex-wrap justify-center">
@@ -293,37 +349,7 @@ export default function Anagram() {
               letter={character}
               id={`letter${i}`}
               isDismissed={isDismissed}
-              onClick={(isDismissed) => {
-                const updatedLetters = [...letters];
-                updatedLetters[i] = { ...updatedLetters[i], isDismissed };
-                setLetters(updatedLetters);
-
-                if (isDismissed) {
-                  let updatedWord = [...newWord];
-                  updatedWord[indexOfNewWord] = character;
-
-                  setNewWord(updatedWord);
-                  setUndoStack((prev) => [...prev, indexOfNewWord]);
-                  setIndexOfNewWord(
-                    findNextBlankLetter(updatedWord, indexOfNewWord)
-                  );
-                } else {
-                  const index = newWord.lastIndexOf(character);
-
-                  if (index > -1) {
-                    const updatedWord = [...newWord];
-                    updatedWord[index] = "";
-                    setNewWord(updatedWord);
-
-                    setUndoStack((prev) => {
-                      const lastIdx = prev.findLastIndex((entry) => entry === index);
-                      return lastIdx > -1 ? prev.filter((_, idx) => idx !== lastIdx) : prev;
-                    });
-
-                    setIndexOfNewWord(index);
-                  }
-                }
-              }}
+              onClick={(isDismissed) => placeCircleLetter(i, isDismissed)}
             />
           );
         })}
@@ -358,27 +384,7 @@ export default function Anagram() {
                   ? "border-b-red-500 dark:border-b-red-400"
                   : "border-b-gray-500 dark:border-b-gray-400"
               }`}
-              onClick={() => {
-                if (newWord[i] !== "") {
-                  // We've clicked on a letter that's already been placed, so we should remove it
-                  let updatedWord = [...newWord];
-                  updatedWord[i] = "";
-                  setNewWord(updatedWord);
-
-                  const updatedLetters = [...letters];
-                  const index = updatedLetters.findIndex(
-                    ({ character, isDismissed }) =>
-                      character === newWord[i] && isDismissed
-                  );
-                  updatedLetters[index] = { ...updatedLetters[index], isDismissed: false };
-
-                  setUndoStack((prev) => {
-                    const lastIdx = prev.findLastIndex((entry) => entry === i);
-                    return lastIdx > -1 ? prev.filter((_, idx) => idx !== lastIdx) : prev;
-                  });
-                }
-                setIndexOfNewWord(i);
-              }}
+              onClick={() => removePlacedLetter(i)}
             >
               {letter}
             </div>
