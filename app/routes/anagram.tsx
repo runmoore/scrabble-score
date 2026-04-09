@@ -235,14 +235,15 @@ export default function Anagram() {
 
   const removePlacedLetter = (wordIndex: number) => {
     if (newWord[wordIndex] !== "") {
+      const character = newWord[wordIndex];
       let updatedWord = [...newWord];
       updatedWord[wordIndex] = "";
       setNewWord(updatedWord);
 
       const updatedLetters = [...letters];
       const index = updatedLetters.findIndex(
-        ({ character, isDismissed }) =>
-          character === newWord[wordIndex] && isDismissed
+        (l) =>
+          l.character === character && l.isDismissed
       );
       updatedLetters[index] = { ...updatedLetters[index], isDismissed: false };
       setLetters(updatedLetters);
