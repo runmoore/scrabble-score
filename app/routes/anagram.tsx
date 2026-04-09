@@ -88,6 +88,11 @@ function Letter({
   );
 }
 
+function removeLastOccurrence(stack: number[], value: number): number[] {
+  const lastIdx = stack.findLastIndex((entry) => entry === value);
+  return lastIdx > -1 ? stack.filter((_, idx) => idx !== lastIdx) : stack;
+}
+
 function findNextBlankLetter(word: string[], startIndex: number): number {
   let count = 0;
   let index = startIndex % word.length;
@@ -200,13 +205,13 @@ export default function Anagram() {
   };
 
   const placeCircleLetter = (letterIndex: number, isDismissed: boolean) => {
+    const character = letters[letterIndex].character;
     const updatedLetters = [...letters];
     updatedLetters[letterIndex] = { ...updatedLetters[letterIndex], isDismissed };
     setLetters(updatedLetters);
 
     if (isDismissed) {
-      const character = letters[letterIndex].character;
-      let updatedWord = [...newWord];
+      const updatedWord = [...newWord];
       updatedWord[indexOfNewWord] = character;
 
       setNewWord(updatedWord);
@@ -215,19 +220,13 @@ export default function Anagram() {
         findNextBlankLetter(updatedWord, indexOfNewWord)
       );
     } else {
-      const character = letters[letterIndex].character;
       const index = newWord.lastIndexOf(character);
 
       if (index > -1) {
         const updatedWord = [...newWord];
         updatedWord[index] = "";
         setNewWord(updatedWord);
-
-        setUndoStack((prev) => {
-          const lastIdx = prev.findLastIndex((entry) => entry === index);
-          return lastIdx > -1 ? prev.filter((_, idx) => idx !== lastIdx) : prev;
-        });
-
+        setUndoStack((prev) => removeLastOccurrence(prev, index));
         setIndexOfNewWord(index);
       }
     }
@@ -236,22 +235,20 @@ export default function Anagram() {
   const removePlacedLetter = (wordIndex: number) => {
     if (newWord[wordIndex] !== "") {
       const character = newWord[wordIndex];
-      let updatedWord = [...newWord];
+      const updatedWord = [...newWord];
       updatedWord[wordIndex] = "";
       setNewWord(updatedWord);
 
       const updatedLetters = [...letters];
-      const index = updatedLetters.findIndex(
-        (l) =>
-          l.character === character && l.isDismissed
+      const letterIdx = updatedLetters.findIndex(
+        (l) => l.character === character && l.isDismissed
       );
-      updatedLetters[index] = { ...updatedLetters[index], isDismissed: false };
-      setLetters(updatedLetters);
+      if (letterIdx > -1) {
+        updatedLetters[letterIdx] = { ...updatedLetters[letterIdx], isDismissed: false };
+        setLetters(updatedLetters);
+      }
 
-      setUndoStack((prev) => {
-        const lastIdx = prev.findLastIndex((entry) => entry === wordIndex);
-        return lastIdx > -1 ? prev.filter((_, idx) => idx !== lastIdx) : prev;
-      });
+      setUndoStack((prev) => removeLastOccurrence(prev, wordIndex));
     }
     setIndexOfNewWord(wordIndex);
   };
