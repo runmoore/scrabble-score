@@ -361,14 +361,15 @@ export default function Anagram() {
               onClick={() => {
                 if (newWord[i] !== "") {
                   // We've clicked on a letter that's already been placed, so we should remove it
+                  const character = newWord[i];
                   let updatedWord = [...newWord];
                   updatedWord[i] = "";
                   setNewWord(updatedWord);
 
                   const updatedLetters = [...letters];
                   const index = updatedLetters.findIndex(
-                    ({ character, isDismissed }) =>
-                      character === newWord[i] && isDismissed
+                    (l) =>
+                      l.character === character && l.isDismissed
                   );
                   updatedLetters[index] = { ...updatedLetters[index], isDismissed: false };
 
