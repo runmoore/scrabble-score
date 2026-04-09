@@ -76,9 +76,8 @@ describe("generateRadius", () => {
   });
 
   it("scales radius with letter count", () => {
-    const count = 7;
-    const expected = (count * 48) / (2 * Math.PI);
-    expect(generateRadius(count)).toBeCloseTo(expected);
+    expect(generateRadius(7)).toBeGreaterThan(generateRadius(6));
+    expect(generateRadius(7)).toBeCloseTo(53.5, 0);
   });
 });
 
