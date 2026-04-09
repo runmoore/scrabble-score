@@ -10,7 +10,7 @@ export const links: LinksFunction = () => {
 
 const SIZE_OF_LETTER = 48;
 
-type Letter = {
+export type Letter = {
   character: string;
   isDismissed: boolean;
 };
@@ -27,7 +27,7 @@ function shuffleLetters(letters: Array<Letter>): Array<Letter> {
   return array;
 }
 
-function sanitiseQuery(query: string): string {
+export function sanitiseQuery(query: string): string {
   return query
     .split("")
     .map((x) => x.trim())
@@ -35,18 +35,18 @@ function sanitiseQuery(query: string): string {
     .join("");
 }
 
-function queryToBlankNewWord(query: string): string[] {
+export function queryToBlankNewWord(query: string): string[] {
   return new Array(sanitiseQuery(query).length).fill("");
 }
 
-function queryToLetters(query: string): Array<Letter> {
+export function queryToLetters(query: string): Array<Letter> {
   return sanitiseQuery(query)
     .split("")
     .map((character) => ({ character, isDismissed: false }));
 }
 
 // Allows the radius of the circle to scale with the number of letters
-function generateRadius(count: number): number {
+export function generateRadius(count: number): number {
   if (count === 1) return 0;
 
   const desiredCircumference = count * SIZE_OF_LETTER;
@@ -88,12 +88,12 @@ function Letter({
   );
 }
 
-function removeLastOccurrence(stack: number[], value: number): number[] {
+export function removeLastOccurrence(stack: number[], value: number): number[] {
   const lastIdx = stack.findLastIndex((entry) => entry === value);
   return lastIdx > -1 ? stack.filter((_, idx) => idx !== lastIdx) : stack;
 }
 
-function findNextBlankLetter(word: string[], startIndex: number): number {
+export function findNextBlankLetter(word: string[], startIndex: number): number {
   let count = 0;
   let index = startIndex % word.length;
   while (count < word.length) {
