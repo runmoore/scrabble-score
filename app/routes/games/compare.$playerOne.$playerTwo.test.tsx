@@ -1,4 +1,5 @@
 import { loader } from "./compare.$playerOne.$playerTwo";
+import { getAllGames } from "~/models/game.server";
 
 vi.mock("~/session.server", () => {
   return {
@@ -139,6 +140,67 @@ describe("compare loader", () => {
       const data = await response.json();
 
       expect(data.availableGameTypes).toHaveLength(2);
+    });
+  });
+
+  describe("draw counts", () => {
+    test("returns 0 draws when no games are drawn", async () => {
+      const response = await callLoader("http://localhost/games/compare/p1/p2");
+      const data = await response.json();
+
+      expect(data.draws).toBe(0);
+      expect(data.drawsLastFive).toBe(0);
+    });
+
+    test("counts draws correctly when games have equal scores", async () => {
+      const players = [
+        { id: "p1", name: "Alice" },
+        { id: "p2", name: "Bob" },
+      ];
+
+      vi.mocked(getAllGames).mockResolvedValueOnce([
+        {
+          id: "g1",
+          createdAt: new Date("2026-01-03").toISOString(),
+          completed: true,
+          gameType: null,
+          players,
+          scores: [
+            { playerId: "p1", points: 100 },
+            { playerId: "p2", points: 100 },
+          ],
+        },
+        {
+          id: "g2",
+          createdAt: new Date("2026-01-02").toISOString(),
+          completed: true,
+          gameType: null,
+          players,
+          scores: [
+            { playerId: "p1", points: 90 },
+            { playerId: "p2", points: 80 },
+          ],
+        },
+        {
+          id: "g3",
+          createdAt: new Date("2026-01-01").toISOString(),
+          completed: true,
+          gameType: null,
+          players,
+          scores: [
+            { playerId: "p1", points: 50 },
+            { playerId: "p2", points: 50 },
+          ],
+        },
+      ] as any);
+
+      const response = await callLoader("http://localhost/games/compare/p1/p2");
+      const data = await response.json();
+
+      expect(data.draws).toBe(2);
+      expect(data.drawsLastFive).toBe(2);
+      expect(data.playerOne.won).toBe(1);
+      expect(data.playerTwo.won).toBe(0);
     });
   });
 });

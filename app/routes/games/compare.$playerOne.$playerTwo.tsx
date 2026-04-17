@@ -66,6 +66,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     name: playerTwoName,
   };
 
+  let draws = 0;
+  let drawsLastFive = 0;
+
   let highestScore: {
     score: number;
     playerName: string;
@@ -95,6 +98,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     } else if (p1.totalScore < p2.totalScore) {
       playerTwo.won++;
       if (index < 5) playerTwo.wonLastFive++;
+    } else {
+      draws++;
+      if (index < 5) drawsLastFive++;
     }
 
     // Track highest score
@@ -121,6 +127,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return json({
     playerOne,
     playerTwo,
+    draws,
+    drawsLastFive,
     relevantGames,
     highestScore,
     availableGameTypes,
@@ -210,6 +218,15 @@ export default function ComparePlayers() {
                 {loaderData.playerTwo.won}
               </div>
             </div>
+            <div className="text-2xl font-bold text-gray-400">-</div>
+            <div className="text-center">
+              <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Draws
+              </div>
+              <div className="text-3xl font-bold text-gray-500 dark:text-gray-400">
+                {loaderData.draws}
+              </div>
+            </div>
           </div>
         </Card>
 
@@ -232,6 +249,15 @@ export default function ComparePlayers() {
                 </div>
                 <div className="text-3xl font-bold text-green-primary dark:text-green-400">
                   {loaderData.playerTwo.wonLastFive}
+                </div>
+              </div>
+              <div className="text-2xl font-bold text-gray-400">-</div>
+              <div className="text-center">
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Draws
+                </div>
+                <div className="text-3xl font-bold text-gray-500 dark:text-gray-400">
+                  {loaderData.drawsLastFive}
                 </div>
               </div>
             </div>
