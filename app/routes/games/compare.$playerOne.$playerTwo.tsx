@@ -3,7 +3,6 @@ import { json, type LoaderFunctionArgs } from "@remix-run/server-runtime";
 import { format } from "date-fns";
 import invariant from "tiny-invariant";
 import { Card } from "~/components/Card";
-import { RecordCard } from "~/components/RecordCard";
 import type { GameType } from "~/models/game.server";
 import { getAllGames, getPlayer } from "~/models/game.server";
 import { enrichPlayerScores, type PlayerWithScores } from "~/game-utils";
@@ -200,27 +199,69 @@ export default function ComparePlayers() {
       {/* Card Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* All-Time Record Card */}
-        <RecordCard
-          title="All-Time Record"
-          p1Label={loaderData.playerOne.name}
-          p1Count={loaderData.playerOne.won}
-          p2Label={loaderData.playerTwo.name}
-          p2Count={loaderData.playerTwo.won}
-          draws={loaderData.draws}
-          color="blue"
-        />
+        <Card title="All-Time Record">
+          <div className="flex items-center justify-between">
+            <div className="text-center">
+              <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                {loaderData.playerOne.name}
+              </div>
+              <div className="text-3xl font-bold text-blue-primary dark:text-blue-400">
+                {loaderData.playerOne.won}
+              </div>
+            </div>
+            <div className="text-2xl font-bold text-gray-400">-</div>
+            <div className="text-center">
+              <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                {loaderData.playerTwo.name}
+              </div>
+              <div className="text-3xl font-bold text-blue-primary dark:text-blue-400">
+                {loaderData.playerTwo.won}
+              </div>
+            </div>
+            <div className="text-2xl font-bold text-gray-400">-</div>
+            <div className="text-center">
+              <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Draws
+              </div>
+              <div className="text-3xl font-bold text-gray-500 dark:text-gray-400">
+                {loaderData.draws}
+              </div>
+            </div>
+          </div>
+        </Card>
 
         {/* Last 5 Games Card - Only show if more than 5 games played */}
         {loaderData.relevantGames.length > 5 && (
-          <RecordCard
-            title="Last 5 Games"
-            p1Label={loaderData.playerOne.name}
-            p1Count={loaderData.playerOne.wonLastFive}
-            p2Label={loaderData.playerTwo.name}
-            p2Count={loaderData.playerTwo.wonLastFive}
-            draws={loaderData.drawsLastFive}
-            color="green"
-          />
+          <Card title="Last 5 Games">
+            <div className="flex items-center justify-between">
+              <div className="text-center">
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {loaderData.playerOne.name}
+                </div>
+                <div className="text-3xl font-bold text-green-primary dark:text-green-400">
+                  {loaderData.playerOne.wonLastFive}
+                </div>
+              </div>
+              <div className="text-2xl font-bold text-gray-400">-</div>
+              <div className="text-center">
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {loaderData.playerTwo.name}
+                </div>
+                <div className="text-3xl font-bold text-green-primary dark:text-green-400">
+                  {loaderData.playerTwo.wonLastFive}
+                </div>
+              </div>
+              <div className="text-2xl font-bold text-gray-400">-</div>
+              <div className="text-center">
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Draws
+                </div>
+                <div className="text-3xl font-bold text-gray-500 dark:text-gray-400">
+                  {loaderData.drawsLastFive}
+                </div>
+              </div>
+            </div>
+          </Card>
         )}
 
         {/* Last Game Card */}
