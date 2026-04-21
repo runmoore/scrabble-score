@@ -7,9 +7,9 @@ const colorClasses = {
 
 interface RecordCardProps {
   title: string;
-  p1Label: string;
+  p1Label: string | undefined;
   p1Count: number;
-  p2Label: string;
+  p2Label: string | undefined;
   p2Count: number;
   draws: number;
   color: keyof typeof colorClasses;

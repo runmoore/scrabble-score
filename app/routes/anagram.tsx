@@ -93,7 +93,10 @@ export function removeLastOccurrence(stack: number[], value: number): number[] {
   return lastIdx > -1 ? stack.filter((_, idx) => idx !== lastIdx) : stack;
 }
 
-export function findNextBlankLetter(word: string[], startIndex: number): number {
+export function findNextBlankLetter(
+  word: string[],
+  startIndex: number
+): number {
   let count = 0;
   let index = startIndex % word.length;
   while (count < word.length) {
@@ -207,7 +210,10 @@ export default function Anagram() {
   const placeCircleLetter = (letterIndex: number, isDismissed: boolean) => {
     const character = letters[letterIndex].character;
     const updatedLetters = [...letters];
-    updatedLetters[letterIndex] = { ...updatedLetters[letterIndex], isDismissed };
+    updatedLetters[letterIndex] = {
+      ...updatedLetters[letterIndex],
+      isDismissed,
+    };
     setLetters(updatedLetters);
 
     if (isDismissed) {
@@ -216,9 +222,7 @@ export default function Anagram() {
 
       setNewWord(updatedWord);
       setUndoStack((prev) => [...prev, indexOfNewWord]);
-      setIndexOfNewWord(
-        findNextBlankLetter(updatedWord, indexOfNewWord)
-      );
+      setIndexOfNewWord(findNextBlankLetter(updatedWord, indexOfNewWord));
     } else {
       const index = newWord.lastIndexOf(character);
 
@@ -244,7 +248,10 @@ export default function Anagram() {
         (l) => l.character === character && l.isDismissed
       );
       if (letterIdx > -1) {
-        updatedLetters[letterIdx] = { ...updatedLetters[letterIdx], isDismissed: false };
+        updatedLetters[letterIdx] = {
+          ...updatedLetters[letterIdx],
+          isDismissed: false,
+        };
         setLetters(updatedLetters);
       }
 
