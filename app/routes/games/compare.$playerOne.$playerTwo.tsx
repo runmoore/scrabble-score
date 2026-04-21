@@ -56,19 +56,19 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     : allRelevantGames;
 
   const playerOne = {
-    won: 0,
-    wonLastFive: 0,
     name: playerOneName,
   };
 
   const playerTwo = {
-    won: 0,
-    wonLastFive: 0,
     name: playerTwoName,
   };
 
-  let draws = 0;
-  let drawsLastFive = 0;
+  const record = {
+    playerOne: { won: 0, wonLastFive: 0 },
+    playerTwo: { won: 0, wonLastFive: 0 },
+    draws: 0,
+    drawsLastFive: 0,
+  };
 
   let highestScore: {
     score: number;
@@ -94,14 +94,14 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     // Track wins
     if (p1.totalScore > p2.totalScore) {
-      playerOne.won++;
-      if (index < 5) playerOne.wonLastFive++;
+      record.playerOne.won++;
+      if (index < 5) record.playerOne.wonLastFive++;
     } else if (p1.totalScore < p2.totalScore) {
-      playerTwo.won++;
-      if (index < 5) playerTwo.wonLastFive++;
+      record.playerTwo.won++;
+      if (index < 5) record.playerTwo.wonLastFive++;
     } else {
-      draws++;
-      if (index < 5) drawsLastFive++;
+      record.draws++;
+      if (index < 5) record.drawsLastFive++;
     }
 
     // Track highest score
@@ -128,8 +128,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return json({
     playerOne,
     playerTwo,
-    draws,
-    drawsLastFive,
+    record,
     relevantGames,
     highestScore,
     availableGameTypes,
@@ -203,10 +202,10 @@ export default function ComparePlayers() {
         <RecordCard
           title="All-Time Record"
           p1Label={loaderData.playerOne.name}
-          p1Count={loaderData.playerOne.won}
+          p1Count={loaderData.record.playerOne.won}
           p2Label={loaderData.playerTwo.name}
-          p2Count={loaderData.playerTwo.won}
-          draws={loaderData.draws}
+          p2Count={loaderData.record.playerTwo.won}
+          draws={loaderData.record.draws}
           color="blue"
         />
 
@@ -215,10 +214,10 @@ export default function ComparePlayers() {
           <RecordCard
             title="Last 5 Games"
             p1Label={loaderData.playerOne.name}
-            p1Count={loaderData.playerOne.wonLastFive}
+            p1Count={loaderData.record.playerOne.wonLastFive}
             p2Label={loaderData.playerTwo.name}
-            p2Count={loaderData.playerTwo.wonLastFive}
-            draws={loaderData.drawsLastFive}
+            p2Count={loaderData.record.playerTwo.wonLastFive}
+            draws={loaderData.record.drawsLastFive}
             color="green"
           />
         )}

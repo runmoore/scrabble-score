@@ -116,8 +116,8 @@ describe("compare loader", () => {
       );
       const data = await response.json();
 
-      expect(data.playerOne.won).toBe(2);
-      expect(data.playerTwo.won).toBe(0);
+      expect(data.record.playerOne.won).toBe(2);
+      expect(data.record.playerTwo.won).toBe(0);
       expect(data.highestScore.score).toBe(120);
     });
   });
@@ -148,8 +148,8 @@ describe("compare loader", () => {
       const response = await callLoader("http://localhost/games/compare/p1/p2");
       const data = await response.json();
 
-      expect(data.draws).toBe(0);
-      expect(data.drawsLastFive).toBe(0);
+      expect(data.record.draws).toBe(0);
+      expect(data.record.drawsLastFive).toBe(0);
     });
 
     test("counts draws correctly when games have equal scores", async () => {
@@ -197,10 +197,10 @@ describe("compare loader", () => {
       const response = await callLoader("http://localhost/games/compare/p1/p2");
       const data = await response.json();
 
-      expect(data.draws).toBe(2);
-      expect(data.drawsLastFive).toBe(2);
-      expect(data.playerOne.won).toBe(1);
-      expect(data.playerTwo.won).toBe(0);
+      expect(data.record.draws).toBe(2);
+      expect(data.record.drawsLastFive).toBe(2);
+      expect(data.record.playerOne.won).toBe(1);
+      expect(data.record.playerTwo.won).toBe(0);
     });
   });
 });
