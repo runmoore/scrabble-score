@@ -55,19 +55,19 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     : allRelevantGames;
 
   const playerOne = {
-    won: 0,
-    wonLastFive: 0,
     name: playerOneName,
   };
 
   const playerTwo = {
-    won: 0,
-    wonLastFive: 0,
     name: playerTwoName,
   };
 
-  let draws = 0;
-  let drawsLastFive = 0;
+  const record = {
+    playerOne: { won: 0, wonLastFive: 0 },
+    playerTwo: { won: 0, wonLastFive: 0 },
+    draws: 0,
+    drawsLastFive: 0,
+  };
 
   let highestScore: {
     score: number;
@@ -93,14 +93,14 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
     // Track wins
     if (p1.totalScore > p2.totalScore) {
-      playerOne.won++;
-      if (index < 5) playerOne.wonLastFive++;
+      record.playerOne.won++;
+      if (index < 5) record.playerOne.wonLastFive++;
     } else if (p1.totalScore < p2.totalScore) {
-      playerTwo.won++;
-      if (index < 5) playerTwo.wonLastFive++;
+      record.playerTwo.won++;
+      if (index < 5) record.playerTwo.wonLastFive++;
     } else {
-      draws++;
-      if (index < 5) drawsLastFive++;
+      record.draws++;
+      if (index < 5) record.drawsLastFive++;
     }
 
     // Track highest score
@@ -127,8 +127,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return json({
     playerOne,
     playerTwo,
-    draws,
-    drawsLastFive,
+    record,
     relevantGames,
     highestScore,
     availableGameTypes,
@@ -206,7 +205,7 @@ export default function ComparePlayers() {
                 {loaderData.playerOne.name}
               </div>
               <div className="text-3xl font-bold text-blue-primary dark:text-blue-400">
-                {loaderData.playerOne.won}
+                {loaderData.record.playerOne.won}
               </div>
             </div>
             <div className="text-2xl font-bold text-gray-400">-</div>
@@ -215,7 +214,7 @@ export default function ComparePlayers() {
                 {loaderData.playerTwo.name}
               </div>
               <div className="text-3xl font-bold text-blue-primary dark:text-blue-400">
-                {loaderData.playerTwo.won}
+                {loaderData.record.playerTwo.won}
               </div>
             </div>
             <div className="text-2xl font-bold text-gray-400">-</div>
@@ -224,7 +223,7 @@ export default function ComparePlayers() {
                 Draws
               </div>
               <div className="text-3xl font-bold text-gray-500 dark:text-gray-400">
-                {loaderData.draws}
+                {loaderData.record.draws}
               </div>
             </div>
           </div>
@@ -239,7 +238,7 @@ export default function ComparePlayers() {
                   {loaderData.playerOne.name}
                 </div>
                 <div className="text-3xl font-bold text-green-primary dark:text-green-400">
-                  {loaderData.playerOne.wonLastFive}
+                  {loaderData.record.playerOne.wonLastFive}
                 </div>
               </div>
               <div className="text-2xl font-bold text-gray-400">-</div>
@@ -248,7 +247,7 @@ export default function ComparePlayers() {
                   {loaderData.playerTwo.name}
                 </div>
                 <div className="text-3xl font-bold text-green-primary dark:text-green-400">
-                  {loaderData.playerTwo.wonLastFive}
+                  {loaderData.record.playerTwo.wonLastFive}
                 </div>
               </div>
               <div className="text-2xl font-bold text-gray-400">-</div>
@@ -257,7 +256,7 @@ export default function ComparePlayers() {
                   Draws
                 </div>
                 <div className="text-3xl font-bold text-gray-500 dark:text-gray-400">
-                  {loaderData.drawsLastFive}
+                  {loaderData.record.drawsLastFive}
                 </div>
               </div>
             </div>
