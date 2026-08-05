@@ -25,7 +25,7 @@ vi.mock("~/models/game.server", () => {
       {
         id: "g1",
         createdAt: new Date().toISOString(),
-        completed: false,
+        completed: true,
         gameType: gameTypeA,
         players,
         scores: [
@@ -36,7 +36,7 @@ vi.mock("~/models/game.server", () => {
       {
         id: "g2",
         createdAt: new Date().toISOString(),
-        completed: false,
+        completed: true,
         gameType: gameTypeB,
         players,
         scores: [
@@ -47,7 +47,7 @@ vi.mock("~/models/game.server", () => {
       {
         id: "g3",
         createdAt: new Date().toISOString(),
-        completed: false,
+        completed: true,
         gameType: gameTypeA,
         players,
         scores: [
@@ -58,7 +58,7 @@ vi.mock("~/models/game.server", () => {
       {
         id: "g4",
         createdAt: new Date().toISOString(),
-        completed: false,
+        completed: true,
         gameType: null,
         players,
         scores: [
