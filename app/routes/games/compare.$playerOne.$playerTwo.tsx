@@ -321,7 +321,12 @@ export default function ComparePlayers() {
                 (player) => player.name === loaderData.playerTwo.name
               );
               const winner = isDraw(game) ? "Draw" : getWinnersNames(game)[0];
-              const score = `${p1?.totalScore ?? 0} - ${p2?.totalScore ?? 0}`;
+              const p1Score = p1?.totalScore ?? 0;
+              const p2Score = p2?.totalScore ?? 0;
+              const score =
+                p1Score >= p2Score
+                  ? `${p1Score} - ${p2Score}`
+                  : `${p2Score} - ${p1Score}`;
 
               return (
                 <Link
