@@ -15,6 +15,7 @@ type Matchup = {
   playerTwo: PlayerSummary;
   gameCount: number;
   gameTypes: string[];
+  inProgressCount: number;
 };
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -31,11 +32,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       playerTwo: PlayerSummary;
       gameCount: number;
       gameTypes: Set<string>;
+      inProgressCount: number;
     }
   >();
 
   for (const game of games) {
-    if (!game.completed || game.players.length !== 2) continue;
+    if (game.players.length !== 2) continue;
 
     const [a, b] =
       game.players[0].id < game.players[1].id
@@ -50,24 +52,31 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         playerTwo: { id: b.id, name: b.name },
         gameCount: 0,
         gameTypes: new Set(),
+        inProgressCount: 0,
       };
       pairMap.set(key, entry);
     }
 
-    entry.gameCount++;
-    if (game.gameType) {
-      entry.gameTypes.add(game.gameType.name);
+    if (game.completed) {
+      entry.gameCount++;
+      if (game.gameType) {
+        entry.gameTypes.add(game.gameType.name);
+      }
+    } else {
+      entry.inProgressCount++;
     }
   }
 
   const matchups: Matchup[] = Array.from(pairMap.values())
+    .filter((entry) => entry.gameCount > 0)
     .sort((a, b) => b.gameCount - a.gameCount)
     .slice(0, 3)
-    .map(({ playerOne, playerTwo, gameCount, gameTypes }) => ({
+    .map(({ playerOne, playerTwo, gameCount, gameTypes, inProgressCount }) => ({
       playerOne,
       playerTwo,
       gameCount,
       gameTypes: Array.from(gameTypes).sort(),
+      inProgressCount,
     }));
 
   return json({ players, matchups });
@@ -127,6 +136,13 @@ export default function ComparePage() {
                   ? "1 game"
                   : `${matchup.gameCount} games`}
               </p>
+              {matchup.inProgressCount > 0 && (
+                <p className="mt-1 text-sm">
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">
+                    {`${matchup.inProgressCount} in progress`}
+                  </span>
+                </p>
+              )}
               {matchup.gameTypes.length > 0 && (
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   {matchup.gameTypes.join(", ")}

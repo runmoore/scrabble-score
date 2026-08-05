@@ -55,6 +55,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     ? allRelevantGames.filter((game) => game.gameType?.id === selectedTypeId)
     : allRelevantGames;
 
+  const completedGames = relevantGames.filter((game) => game.completed);
+
   const playerOne = {
     name: playerOneName,
   };
@@ -84,7 +86,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     gameTypeName: null,
   };
 
-  for (const [index, game] of relevantGames.entries()) {
+  for (const [index, game] of completedGames.entries()) {
     if (!game) continue;
 
     const p1 = game.players.find((player) => player.id === params.playerOne);
@@ -130,6 +132,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     playerTwo,
     record,
     relevantGames,
+    completedGameCount: completedGames.length,
     highestScore,
     availableGameTypes,
   });
@@ -209,8 +212,8 @@ export default function ComparePlayers() {
           color="blue"
         />
 
-        {/* Last 5 Games Card - Only show if more than 5 games played */}
-        {loaderData.relevantGames.length > 5 && (
+        {/* Last 5 Games Card - Only show if more than 5 completed games played */}
+        {loaderData.completedGameCount > 5 && (
           <RecordCard
             title="Last 5 Games"
             p1Label={loaderData.playerOne.name}
@@ -320,7 +323,12 @@ export default function ComparePlayers() {
               const p2 = game.players.find(
                 (player) => player.name === loaderData.playerTwo.name
               );
-              const winner = isDraw(game) ? "Draw" : getWinnersNames(game)[0];
+              const isInProgress = !game.completed;
+              const winner = isInProgress
+                ? null
+                : isDraw(game)
+                ? "Draw"
+                : getWinnersNames(game)[0];
               const p1Score = p1?.totalScore ?? 0;
               const p2Score = p2?.totalScore ?? 0;
               const score =
@@ -345,7 +353,13 @@ export default function ComparePlayers() {
                     {game.gameType?.name}
                   </div>
                   <div className="w-[22%] truncate text-center font-medium dark:text-gray-100">
-                    {winner}
+                    {isInProgress ? (
+                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">
+                        In Progress
+                      </span>
+                    ) : (
+                      winner
+                    )}
                   </div>
                   <div className="w-[30%] text-center text-gray-600 dark:text-gray-400">
                     {score}
