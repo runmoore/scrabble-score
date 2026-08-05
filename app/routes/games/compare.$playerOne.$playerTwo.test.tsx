@@ -203,4 +203,84 @@ describe("compare loader", () => {
       expect(data.record.playerTwo.won).toBe(0);
     });
   });
+
+  describe("in-progress games", () => {
+    test("stats exclude in-progress games", async () => {
+      const players = [
+        { id: "p1", name: "Alice" },
+        { id: "p2", name: "Bob" },
+      ];
+
+      vi.mocked(getAllGames).mockResolvedValueOnce([
+        {
+          id: "g1",
+          createdAt: new Date("2026-01-02").toISOString(),
+          completed: true,
+          gameType: null,
+          players,
+          scores: [
+            { playerId: "p1", points: 100 },
+            { playerId: "p2", points: 80 },
+          ],
+        },
+        {
+          id: "g2",
+          createdAt: new Date("2026-01-01").toISOString(),
+          completed: false,
+          gameType: null,
+          players,
+          scores: [
+            { playerId: "p1", points: 50 },
+            { playerId: "p2", points: 200 },
+          ],
+        },
+      ] as any);
+
+      const response = await callLoader("http://localhost/games/compare/p1/p2");
+      const data = await response.json();
+
+      // g2 is in-progress — Bob's 200 and his "win" must not count
+      expect(data.record.playerOne.won).toBe(1);
+      expect(data.record.playerTwo.won).toBe(0);
+      expect(data.highestScore.score).toBe(100);
+    });
+
+    test("in-progress games still appear in relevantGames list", async () => {
+      const players = [
+        { id: "p1", name: "Alice" },
+        { id: "p2", name: "Bob" },
+      ];
+
+      vi.mocked(getAllGames).mockResolvedValueOnce([
+        {
+          id: "g1",
+          createdAt: new Date("2026-01-02").toISOString(),
+          completed: true,
+          gameType: null,
+          players,
+          scores: [
+            { playerId: "p1", points: 100 },
+            { playerId: "p2", points: 80 },
+          ],
+        },
+        {
+          id: "g2",
+          createdAt: new Date("2026-01-01").toISOString(),
+          completed: false,
+          gameType: null,
+          players,
+          scores: [
+            { playerId: "p1", points: 50 },
+            { playerId: "p2", points: 60 },
+          ],
+        },
+      ] as any);
+
+      const response = await callLoader("http://localhost/games/compare/p1/p2");
+      const data = await response.json();
+
+      expect(data.relevantGames).toHaveLength(2);
+      expect(data.relevantGames.some((g: any) => !g.completed)).toBe(true);
+    });
+  });
 });
