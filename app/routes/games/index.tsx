@@ -67,6 +67,15 @@ export default function Games() {
               to={`/games/${game.id}/play/${nextPlayer.id}`}
               accent
             >
+              <div className="mb-3 flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                  In Progress
+                </span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {nextPlayer.name}'s turn
+                </span>
+              </div>
               <div className="space-y-1">
                 {playerTotals.map((pt) => (
                   <div
