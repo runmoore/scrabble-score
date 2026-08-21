@@ -13,15 +13,12 @@ describe("InProgressBadge", () => {
   });
 
   it("renders the dot indicator in standalone mode", () => {
-    const { container } = render(<InProgressBadge />);
-    // The dot is a decorative span — check it exists inside the badge
-    const dot = container.querySelector(".bg-amber-500");
-    expect(dot).toBeInTheDocument();
+    render(<InProgressBadge />);
+    expect(screen.getByTestId("in-progress-dot")).toBeInTheDocument();
   });
 
   it("renders the dot indicator in count mode", () => {
-    const { container } = render(<InProgressBadge count={2} />);
-    const dot = container.querySelector(".bg-amber-500");
-    expect(dot).toBeInTheDocument();
+    render(<InProgressBadge count={2} />);
+    expect(screen.getByTestId("in-progress-dot")).toBeInTheDocument();
   });
 });
