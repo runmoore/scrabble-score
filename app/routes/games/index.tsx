@@ -3,6 +3,7 @@ import { json } from "@remix-run/node";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { formatDistanceToNow, format } from "date-fns";
 import { getNextPlayerToPlay } from "~/game-utils";
+import { InProgressBadge } from "~/components/InProgressBadge";
 import {
   getLastCompletedGame,
   getTopGameTypes,
@@ -67,6 +68,12 @@ export default function Games() {
               to={`/games/${game.id}/play/${nextPlayer.id}`}
               accent
             >
+              <div className="mb-3 flex items-center gap-2">
+                <InProgressBadge />
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {nextPlayer.name}'s turn
+                </span>
+              </div>
               <div className="space-y-1">
                 {playerTotals.map((pt) => (
                   <div
