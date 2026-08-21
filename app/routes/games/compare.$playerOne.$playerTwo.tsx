@@ -3,6 +3,7 @@ import { json, type LoaderFunctionArgs } from "@remix-run/server-runtime";
 import { format } from "date-fns";
 import invariant from "tiny-invariant";
 import { Card } from "~/components/Card";
+import { InProgressBadge } from "~/components/InProgressBadge";
 import { RecordCard } from "~/components/RecordCard";
 import type { GameType } from "~/models/game.server";
 import { getAllGames, getPlayer } from "~/models/game.server";
@@ -353,13 +354,7 @@ export default function ComparePlayers() {
                     {game.gameType?.name}
                   </div>
                   <div className="w-[22%] truncate text-center font-medium dark:text-gray-100">
-                    {isInProgress ? (
-                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">
-                        In Progress
-                      </span>
-                    ) : (
-                      winner
-                    )}
+                    {isInProgress ? <InProgressBadge /> : winner}
                   </div>
                   <div className="w-[30%] text-center text-gray-600 dark:text-gray-400">
                     {score}

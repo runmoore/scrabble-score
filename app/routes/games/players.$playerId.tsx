@@ -9,6 +9,7 @@ import { json } from "@remix-run/node";
 import { format } from "date-fns";
 import invariant from "tiny-invariant";
 import { Card } from "~/components/Card";
+import { InProgressBadge } from "~/components/InProgressBadge";
 import type { GameType } from "~/models/game.server";
 import { getPlayer, getPlayerGames } from "~/models/game.server";
 import { enrichPlayerScores, assignPlaces } from "~/game-utils";
@@ -396,9 +397,7 @@ export default function PlayerDetail() {
                           : "—"}
                       </span>
                     ) : (
-                      <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                        In Progress
-                      </span>
+                      <InProgressBadge />
                     )}
                   </div>
                 </Link>

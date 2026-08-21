@@ -4,6 +4,7 @@ import { Form, useLoaderData } from "@remix-run/react";
 import React, { useState } from "react";
 
 import { Card } from "~/components/Card";
+import { InProgressBadge } from "~/components/InProgressBadge";
 import type { Player } from "~/models/game.server";
 import { getAllGames, getAllPlayers } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
@@ -138,9 +139,7 @@ export default function ComparePage() {
               </p>
               {matchup.inProgressCount > 0 && (
                 <p className="mt-1 text-sm">
-                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">
-                    {`${matchup.inProgressCount} in progress`}
-                  </span>
+                  <InProgressBadge count={matchup.inProgressCount} />
                 </p>
               )}
               {matchup.gameTypes.length > 0 && (
