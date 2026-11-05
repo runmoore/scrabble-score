@@ -1,0 +1,560 @@
+[
+  {
+    "id": 0,
+    "school_name": "Scotland all funded",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 76, "2021/22": 78, "2022/23": 80, "2023/24": 81, "2024/25": 81 }
+  },
+  {
+    "id": 1,
+    "school_name": "All publicly funded schools",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 81, "2021/22": 84, "2022/23": 84, "2023/24": 84, "2024/25": 85 }
+  },
+  {
+    "id": 2,
+    "school_name": "Abbeyhill Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 95, "2021/22": 85, "2022/23": 85, "2023/24": 80, "2024/25": 87.5 }
+  },
+  {
+    "id": 3,
+    "school_name": "Balgreen Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 57.5, "2021/22": 75, "2022/23": 77.5, "2023/24": 80, "2024/25": 75 }
+  },
+  {
+    "id": 4,
+    "school_name": "Blackhall Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 85, "2021/22": 90, "2022/23": 95, "2023/24": 92.5, "2024/25": 95 }
+  },
+  {
+    "id": 5,
+    "school_name": "Bonaly Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 95, "2021/22": 95, "2022/23": 95, "2023/24": 90, "2024/25": 92.5 }
+  },
+  {
+    "id": 6,
+    "school_name": "Broomhouse Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 85, "2021/22": 77.5, "2022/23": 82.5, "2023/24": 82.5, "2024/25": 75 }
+  },
+  {
+    "id": 7,
+    "school_name": "Broughton Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 80, "2021/22": 77.5, "2022/23": 72.5, "2023/24": 75, "2024/25": 77.5 }
+  },
+  {
+    "id": 8,
+    "school_name": "Brunstane Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 77.5, "2021/22": 87.5, "2022/23": 87.5, "2023/24": 87.5, "2024/25": 85 }
+  },
+  {
+    "id": 9,
+    "school_name": "Bruntsfield Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 95, "2021/22": 95, "2022/23": 90, "2023/24": 87.5, "2024/25": 95 }
+  },
+  {
+    "id": 10,
+    "school_name": "Buckstone Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 92.5, "2021/22": 90, "2022/23": 92.5, "2023/24": 95, "2024/25": 87.5 }
+  },
+  {
+    "id": 11,
+    "school_name": "Bun-sgoil Taobh na Pairce (Parkside P.)",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 85, "2021/22": 87.5, "2022/23": 90, "2023/24": 90, "2024/25": 90 }
+  },
+  {
+    "id": 12,
+    "school_name": "Canaan Lane Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": null, "2021/22": null, "2022/23": 95, "2023/24": 95, "2024/25": 95 }
+  },
+  {
+    "id": 13,
+    "school_name": "Canal View Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 75, "2021/22": 82.5, "2022/23": 65, "2023/24": 75, "2024/25": 75 }
+  },
+  {
+    "id": 14,
+    "school_name": "Carrick Knowe Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 82.5, "2021/22": 80, "2022/23": 87.5, "2023/24": 87.5, "2024/25": 82.5 }
+  },
+  {
+    "id": 15,
+    "school_name": "Castleview Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 60, "2021/22": 72.5, "2022/23": 77.5, "2023/24": 77.5, "2024/25": 87.5 }
+  },
+  {
+    "id": 16,
+    "school_name": "Clermiston Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 85, "2021/22": 85, "2022/23": 82.5, "2023/24": 85, "2024/25": 87.5 }
+  },
+  {
+    "id": 17,
+    "school_name": "Clovenstone Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 67.5, "2021/22": 70, "2022/23": 67.5, "2023/24": 75, "2024/25": 67.5 }
+  },
+  {
+    "id": 18,
+    "school_name": "Colinton Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 77.5, "2021/22": 85, "2022/23": 85, "2023/24": 92.5, "2024/25": 85 }
+  },
+  {
+    "id": 19,
+    "school_name": "Corstorphine Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 92.5, "2021/22": 92.5, "2022/23": 95, "2023/24": 92.5, "2024/25": 87.5 }
+  },
+  {
+    "id": 20,
+    "school_name": "Craigentinny Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 60, "2021/22": 57.5, "2022/23": 65, "2023/24": 75, "2024/25": 72.5 }
+  },
+  {
+    "id": 21,
+    "school_name": "Craiglockhart Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 90, "2021/22": 87.5, "2022/23": 85, "2023/24": 85, "2024/25": 87.5 }
+  },
+  {
+    "id": 22,
+    "school_name": "Craigour Park Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 67.5, "2021/22": 82.5, "2022/23": 82.5, "2023/24": 75, "2024/25": 82.5 }
+  },
+  {
+    "id": 23,
+    "school_name": "Craigroyston Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 45, "2021/22": 57.5, "2022/23": 65, "2023/24": 67.5, "2024/25": 80 }
+  },
+  {
+    "id": 24,
+    "school_name": "Cramond Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 82.5, "2021/22": 95, "2022/23": 87.5, "2023/24": 92.5, "2024/25": 87.5 }
+  },
+  {
+    "id": 25,
+    "school_name": "Currie Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 87.5, "2021/22": 82.5, "2022/23": 85, "2023/24": 90, "2024/25": 87.5 }
+  },
+  {
+    "id": 26,
+    "school_name": "Dalmeny Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 82.5, "2021/22": 87.5, "2022/23": 85, "2023/24": 95, "2024/25": 90 }
+  },
+  {
+    "id": 27,
+    "school_name": "Dalry Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 70, "2021/22": 75, "2022/23": 75, "2023/24": 70, "2024/25": 72.5 }
+  },
+  {
+    "id": 28,
+    "school_name": "Davidson's Mains Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 82.5, "2021/22": 87.5, "2022/23": 90, "2023/24": 82.5, "2024/25": 87.5 }
+  },
+  {
+    "id": 29,
+    "school_name": "Dean Park Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 92.5, "2021/22": 95, "2022/23": 95, "2023/24": 95, "2024/25": 95 }
+  },
+  {
+    "id": 30,
+    "school_name": "Duddingston Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 82.5, "2021/22": 87.5, "2022/23": 87.5, "2023/24": 87.5, "2024/25": 87.5 }
+  },
+  {
+    "id": 31,
+    "school_name": "East Craigs Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 72.5, "2021/22": 82.5, "2022/23": 85, "2023/24": 85, "2024/25": 92.5 }
+  },
+  {
+    "id": 32,
+    "school_name": "Echline Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 85, "2021/22": 87.5, "2022/23": 87.5, "2023/24": 92.5, "2024/25": 95 }
+  },
+  {
+    "id": 33,
+    "school_name": "Ferryhill Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 82.5, "2021/22": 72.5, "2022/23": 65, "2023/24": 72.5, "2024/25": 67.5 }
+  },
+  {
+    "id": 34,
+    "school_name": "Flora Stevenson Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 75, "2021/22": 82.5, "2022/23": 82.5, "2023/24": 87.5, "2024/25": 85 }
+  },
+  {
+    "id": 35,
+    "school_name": "Forthview Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 65, "2021/22": 67.5, "2022/23": 75, "2023/24": 72.5, "2024/25": 70 }
+  },
+  {
+    "id": 36,
+    "school_name": "Fox Covert Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 80, "2021/22": 85, "2022/23": 87.5, "2023/24": 87.5, "2024/25": 87.5 }
+  },
+  {
+    "id": 37,
+    "school_name": "Frogston Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 95, "2021/22": 90, "2022/23": 77.5, "2023/24": 82.5, "2024/25": 75 }
+  },
+  {
+    "id": 38,
+    "school_name": "Gilmerton Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 72.5, "2021/22": 72.5, "2022/23": 77.5, "2023/24": 77.5, "2024/25": 75 }
+  },
+  {
+    "id": 39,
+    "school_name": "Gracemount Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 72.5, "2021/22": 75, "2022/23": 70, "2023/24": 75, "2024/25": 75 }
+  },
+  {
+    "id": 40,
+    "school_name": "Granton Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 52.5, "2021/22": 52.5, "2022/23": 65, "2023/24": 67.5, "2024/25": 72.5 }
+  },
+  {
+    "id": 41,
+    "school_name": "Gylemuir Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 87.5, "2021/22": 87.5, "2022/23": 90, "2023/24": 87.5, "2024/25": 87.5 }
+  },
+  {
+    "id": 42,
+    "school_name": "Hermitage Park Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 72.5, "2021/22": 80, "2022/23": 77.5, "2023/24": 82.5, "2024/25": 70 }
+  },
+  {
+    "id": 43,
+    "school_name": "Hillwood Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 72.5, "2021/22": 72.5, "2022/23": 82.5, "2023/24": 82.5, "2024/25": 77.5 }
+  },
+  {
+    "id": 44,
+    "school_name": "Holy Cross RC Primary",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 95, "2021/22": 95, "2022/23": 95, "2023/24": 87.5, "2024/25": 90 }
+  },
+  {
+    "id": 45,
+    "school_name": "James Gillespie's Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 95, "2021/22": 92.5, "2022/23": 92.5, "2023/24": 92.5, "2024/25": 95 }
+  },
+  {
+    "id": 46,
+    "school_name": "Juniper Green Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 87.5, "2021/22": 90, "2022/23": 90, "2023/24": 92.5, "2024/25": 90 }
+  },
+  {
+    "id": 47,
+    "school_name": "Kirkliston Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 85, "2021/22": 87.5, "2022/23": 95, "2023/24": 87.5, "2024/25": 90 }
+  },
+  {
+    "id": 48,
+    "school_name": "Leith Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 72.5, "2021/22": 85, "2022/23": 80, "2023/24": 82.5, "2024/25": 85 }
+  },
+  {
+    "id": 49,
+    "school_name": "Leith Walk Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 92.5, "2021/22": 85, "2022/23": 57.5, "2023/24": 72.5, "2024/25": 75 }
+  },
+  {
+    "id": 50,
+    "school_name": "Liberton Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 75, "2021/22": 82.5, "2022/23": 80, "2023/24": 85, "2024/25": 82.5 }
+  },
+  {
+    "id": 51,
+    "school_name": "Longstone Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 72.5, "2021/22": 80, "2022/23": 80, "2023/24": 87.5, "2024/25": 85 }
+  },
+  {
+    "id": 52,
+    "school_name": "Lorne Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 80, "2021/22": 80, "2022/23": 75, "2023/24": 75, "2024/25": 75 }
+  },
+  {
+    "id": 53,
+    "school_name": "Maybury Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": null, "2021/22": null, "2022/23": null, "2023/24": null, "2024/25": 92.5 }
+  },
+  {
+    "id": 54,
+    "school_name": "Murrayburn Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 80, "2021/22": 87.5, "2022/23": 80, "2023/24": 85, "2024/25": 77.5 }
+  },
+  {
+    "id": 55,
+    "school_name": "Nether Currie Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 82.5, "2021/22": 90, "2022/23": 90, "2023/24": 92.5, "2024/25": 92.5 }
+  },
+  {
+    "id": 56,
+    "school_name": "Newcraighall Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 80, "2021/22": 80, "2022/23": 77.5, "2023/24": 80, "2024/25": 77.5 }
+  },
+  {
+    "id": 57,
+    "school_name": "Niddrie Mill Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 82.5, "2021/22": 82.5, "2022/23": 82.5, "2023/24": 80, "2024/25": 85 }
+  },
+  {
+    "id": 58,
+    "school_name": "Oxgangs Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 85, "2021/22": 80, "2022/23": 82.5, "2023/24": 85, "2024/25": 95 }
+  },
+  {
+    "id": 59,
+    "school_name": "Parsons Green Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 87.5, "2021/22": 85, "2022/23": 85, "2023/24": 82.5, "2024/25": 85 }
+  },
+  {
+    "id": 60,
+    "school_name": "Pentland Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 87.5, "2021/22": 87.5, "2022/23": 92.5, "2023/24": 95, "2024/25": 87.5 }
+  },
+  {
+    "id": 61,
+    "school_name": "Pirniehall Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 45, "2021/22": 62.5, "2022/23": 67.5, "2023/24": 67.5, "2024/25": 70 }
+  },
+  {
+    "id": 62,
+    "school_name": "Preston Street Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 85, "2021/22": 92.5, "2022/23": 90, "2023/24": 85, "2024/25": 92.5 }
+  },
+  {
+    "id": 63,
+    "school_name": "Prestonfield Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 87.5, "2021/22": 80, "2022/23": 82.5, "2023/24": 85, "2024/25": 87.5 }
+  },
+  {
+    "id": 64,
+    "school_name": "Queensferry Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 90, "2021/22": 87.5, "2022/23": 95, "2023/24": 90, "2024/25": 87.5 }
+  },
+  {
+    "id": 65,
+    "school_name": "Ratho Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 85, "2021/22": 80, "2022/23": 77.5, "2023/24": 87.5, "2024/25": 87.5 }
+  },
+  {
+    "id": 66,
+    "school_name": "Roseburn Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 92.5, "2021/22": 90, "2022/23": 92.5, "2023/24": 92.5, "2024/25": 90 }
+  },
+  {
+    "id": 67,
+    "school_name": "Royal Mile Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 55, "2021/22": 77.5, "2022/23": 80, "2023/24": 85, "2024/25": 85 }
+  },
+  {
+    "id": 68,
+    "school_name": "Sciennes Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 95, "2021/22": 95, "2022/23": 95, "2023/24": 95, "2024/25": 95 }
+  },
+  {
+    "id": 69,
+    "school_name": "Sighthill Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 67.5, "2021/22": 72.5, "2022/23": 67.5, "2023/24": 77.5, "2024/25": 77.5 }
+  },
+  {
+    "id": 70,
+    "school_name": "South Morningside Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 95, "2021/22": 95, "2022/23": 95, "2023/24": 95, "2024/25": 95 }
+  },
+  {
+    "id": 71,
+    "school_name": "St Andrew's Fox Covert RC P.",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 82.5, "2021/22": 75, "2022/23": 82.5, "2023/24": 80, "2024/25": 80 }
+  },
+  {
+    "id": 72,
+    "school_name": "St Catherine's RC Primary",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 55, "2021/22": 80, "2022/23": 75, "2023/24": 82.5, "2024/25": 82.5 }
+  },
+  {
+    "id": 73,
+    "school_name": "St Cuthbert's RC Primary",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 85, "2021/22": 82.5, "2022/23": 85, "2023/24": 85, "2024/25": 87.5 }
+  },
+  {
+    "id": 74,
+    "school_name": "St David's RC Primary",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 50, "2021/22": 62.5, "2022/23": 72.5, "2023/24": 77.5, "2024/25": 77.5 }
+  },
+  {
+    "id": 75,
+    "school_name": "St Francis' RC Primary",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 87.5, "2021/22": 82.5, "2022/23": 90, "2023/24": 90, "2024/25": 92.5 }
+  },
+  {
+    "id": 76,
+    "school_name": "St John Vianney RC Primary",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 82.5, "2021/22": 80, "2022/23": 85, "2023/24": 87.5, "2024/25": 92.5 }
+  },
+  {
+    "id": 77,
+    "school_name": "St John's RC Primary",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 82.5, "2021/22": 87.5, "2022/23": 92.5, "2023/24": 90, "2024/25": 87.5 }
+  },
+  {
+    "id": 78,
+    "school_name": "St Joseph's RC Primary",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 87.5, "2021/22": 85, "2022/23": 70, "2023/24": 80, "2024/25": 85 }
+  },
+  {
+    "id": 79,
+    "school_name": "St Margaret's RC Primary",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 85, "2021/22": 82.5, "2022/23": 80, "2023/24": 80, "2024/25": 80 }
+  },
+  {
+    "id": 80,
+    "school_name": "St Mark's RC Primary",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 72.5, "2021/22": 95, "2022/23": 95, "2023/24": 80, "2024/25": 75 }
+  },
+  {
+    "id": 81,
+    "school_name": "St Mary's RC P.  (Edinburgh)",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 85, "2021/22": 90, "2022/23": 85, "2023/24": 90, "2024/25": 90 }
+  },
+  {
+    "id": 82,
+    "school_name": "St Mary's RC Primary  (Leith)",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 82.5, "2021/22": 85, "2022/23": 85, "2023/24": 85, "2024/25": 85 }
+  },
+  {
+    "id": 83,
+    "school_name": "St Ninian's RC Primary",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 75, "2021/22": 70, "2022/23": 65, "2023/24": 65, "2024/25": 77.5 }
+  },
+  {
+    "id": 84,
+    "school_name": "St Peter's RC Primary",
+    "isRomanCatholic": true,
+    "scores": { "2020/21": 92.5, "2021/22": 90, "2022/23": 92.5, "2023/24": 92.5, "2024/25": 87.5 }
+  },
+  {
+    "id": 85,
+    "school_name": "Stenhouse Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 70, "2021/22": 70, "2022/23": 72.5, "2023/24": 70, "2024/25": 67.5 }
+  },
+  {
+    "id": 86,
+    "school_name": "Stockbridge Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 80, "2021/22": 92.5, "2022/23": 87.5, "2023/24": 87.5, "2024/25": 87.5 }
+  },
+  {
+    "id": 87,
+    "school_name": "The Royal High Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 85, "2021/22": 82.5, "2022/23": 82.5, "2023/24": 80, "2024/25": 82.5 }
+  },
+  {
+    "id": 88,
+    "school_name": "Tollcross Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 90, "2021/22": 87.5, "2022/23": 95, "2023/24": 90, "2024/25": 85 }
+  },
+  {
+    "id": 89,
+    "school_name": "Towerbank Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 82.5, "2021/22": 90, "2022/23": 87.5, "2023/24": 92.5, "2024/25": 95 }
+  },
+  {
+    "id": 90,
+    "school_name": "Trinity Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 87.5, "2021/22": 85, "2022/23": 82.5, "2023/24": 87.5, "2024/25": 85 }
+  },
+  {
+    "id": 91,
+    "school_name": "Victoria Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 87.5, "2021/22": 80, "2022/23": 85, "2023/24": 82.5, "2024/25": 80 }
+  },
+  {
+    "id": 92,
+    "school_name": "Wardie Primary",
+    "isRomanCatholic": false,
+    "scores": { "2020/21": 87.5, "2021/22": 92.5, "2022/23": 95, "2023/24": 87.5, "2024/25": 90 }
+  }
+]
