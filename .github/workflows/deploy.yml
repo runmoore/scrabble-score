@@ -99,12 +99,6 @@ jobs:
         run: npm run build
 
       - name: 🌳 Cypress run
-        # v6 bundles got@11.8.6, which emits ERR_SOCKET_CLOSED_BEFORE_CONNECTION
-        # ("Socket closed before the connection was established") when pinging
-        # `localhost` on Node >=24.20 - the version GitHub's Actions runner now
-        # forces all actions to run on. Fixed upstream in got@16, shipped in
-        # cypress-io/github-action@7.4.4; v6 is deprecated and won't get it.
-        # See https://github.com/cypress-io/github-action/issues/1873
         uses: cypress-io/github-action@v7
         with:
           start: npm run start:mocks
