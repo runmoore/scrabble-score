@@ -131,7 +131,7 @@ export default function Play() {
       <div className="mb-8">
         <ScoreTable players={game.players} topScore={topScore} />
       </div>
-      <h1 className="mb-4 dark:text-gray-100">
+      <h1 className="mb-4 dark:text-gray-100" data-testid="current-turn">
         It's <span className="font-bold">{player.name}'s</span> turn
       </h1>
       <Form method="post" action="" key={playerId}>

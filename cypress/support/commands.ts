@@ -29,13 +29,16 @@ declare global {
 
       /**
        * Extends the standard visit command to wait for the page to load
+       * and hydrate before the next command runs.
        *
+       * @param url - The path to visit
+       * @param timeout - Max time (ms) to wait for hydration
        * @returns {typeof visitAndCheck}
        * @memberof Chainable
        * @example
        *    cy.visitAndCheck('/')
        *  @example
-       *    cy.visitAndCheck('/', 500)
+       *    cy.visitAndCheck('/', 10000)
        */
       visitAndCheck: typeof visitAndCheck;
 
@@ -147,14 +150,13 @@ function deleteUserByEmail(email: string) {
   cy.clearCookie("__session");
 }
 
-// We're waiting a second because of this issue happen randomly
-// https://github.com/cypress-io/cypress/issues/7306
-// Also added custom types to avoid getting detached
-// https://github.com/cypress-io/cypress/issues/7306#issuecomment-1152752612
-// ===========================================================
-function visitAndCheck(url: string, waitTime: number = 1500) {
+// Interacting with a page before hydration can drop input or detach
+// elements mid-command. Waits for app/root.tsx's data-hydrated marker
+// rather than a fixed sleep, which is unreliable under varying load.
+function visitAndCheck(url: string, timeout = Cypress.config("defaultCommandTimeout")) {
   cy.visit(url);
-  cy.location("pathname").should("contain", url).wait(waitTime);
+  cy.location("pathname").should("contain", url);
+  cy.get("body", { timeout }).should("have.attr", "data-hydrated", "true");
 }
 
 export const registerCommands = () => {
@@ -256,6 +258,12 @@ function createGameWithPlayers(players: string[] | number, gameType?: string) {
   // Ensure the game interface is loaded
   cy.findByRole("spinbutton", { name: /score/i }).should("be.visible");
 
+  // Typing before hydration attaches the score input's onChange handler can
+  // silently drop keystrokes. The submit button is enabled pre-hydration
+  // regardless of score, then disabled once hydrated with an empty score —
+  // a reliable signal hydration is done.
+  cy.findByRole("button", { name: /submit score/i }).should("be.disabled");
+
   // Return player names for further use
   return cy.wrap(playerNames);
 }
@@ -291,6 +299,15 @@ function createGameType(name: string) {
 }
 
 function submitScore(score: string) {
+  // data-testid, not role/heading: every /games/* page also has its own
+  // top-level "Games" link <h1>, which makes heading queries ambiguous here.
+  let turnHeadingBeforeSubmit = "";
+  cy.findByTestId("current-turn")
+    .invoke("text")
+    .then((text) => {
+      turnHeadingBeforeSubmit = text;
+    });
+
   if (score) {
     cy.findByRole("spinbutton", { name: /score/i })
       .should("be.visible")
@@ -307,6 +324,17 @@ function submitScore(score: string) {
   cy.wait("@submitScore").then((interception) => {
     expect(interception.response?.statusCode).to.be.oneOf([200, 204]);
   });
+
+  // The score input remounts for the next player, which can happen after
+  // this intercept resolves — a following command touching the input could
+  // race that remount. The input's value briefly reads "" twice (once
+  // optimistically, before the remount) so it's not a safe thing to wait
+  // on; the turn heading only changes once the remount is actually done.
+  cy.findByTestId("current-turn")
+    .invoke("text")
+    .should((text) => {
+      expect(text).not.to.equal(turnHeadingBeforeSubmit);
+    });
 }
 
 function checkButtonStates(minusEnabled: boolean, plusEnabled: boolean) {
