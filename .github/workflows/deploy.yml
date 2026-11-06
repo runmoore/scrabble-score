@@ -120,18 +120,12 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v7
 
-      - name: 👀 Read app name
-        uses: SebRollen/toml-action@v1.2.0
-        id: app_name
-        with:
-          file: fly.toml
-          field: app
-
       - name: 🎈 Setup Fly
         uses: superfly/flyctl-actions/setup-flyctl@v1
 
       - name: 🚀 Deploy Production
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} --app ${{ steps.app_name.outputs.value }}
+        # App name must match the `app` field in fly.toml
+        run: flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} --app scrabble-score-e630
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
