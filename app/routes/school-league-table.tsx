@@ -12,10 +12,7 @@ import {
 } from "~/utils/school-league-table";
 import type { TableState } from "~/utils/school-league-table";
 
-const BENCHMARK_NAMES = new Set([
-  "Scotland all funded",
-  "All publicly funded schools",
-]);
+const BENCHMARK_IDS = new Set([0, 1]);
 
 export const loader = async () => {
   return json({ rows: getSchoolLeagueTableData() });
@@ -142,7 +139,7 @@ export default function SchoolLeagueTable() {
           </thead>
           <tbody>
             {displayedRows.map((row) => {
-              const isBenchmark = BENCHMARK_NAMES.has(row.school_name);
+              const isBenchmark = BENCHMARK_IDS.has(row.id);
               const isFavourite = state.favouriteIds.has(row.id);
 
               return (
