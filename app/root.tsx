@@ -12,6 +12,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { useEffect, useState } from "react";
 
 import BackButton from "~/components/BackButton";
 import { getUser } from "./session.server";
@@ -37,6 +38,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function App() {
+  // Exposed via data-hydrated below so e2e tests can wait for hydration
+  // instead of guessing a fixed delay.
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
   return (
     <html lang="en" className="h-full bg-white dark:bg-gray-900">
       <head>
@@ -47,7 +55,10 @@ export default function App() {
         <Links />
         <link rel="manifest" href="/manifest.json"></link>
       </head>
-      <body className="h-full bg-white dark:bg-gray-900">
+      <body
+        className="h-full bg-white dark:bg-gray-900"
+        data-hydrated={isHydrated ? "true" : undefined}
+      >
         <Outlet />
         <BackButton />
         <ScrollRestoration />
