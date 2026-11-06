@@ -17,14 +17,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: ⎔ Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           cache: npm
           cache-dependency-path: ./package.json
-          node-version: 20
+          node-version: 24
 
       - name: 📥 Install deps
         run: npm install
@@ -37,14 +37,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: ⎔ Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           cache: npm
           cache-dependency-path: ./package.json
-          node-version: 20
+          node-version: 24
 
       - name: 📥 Install deps
         run: npm install
@@ -57,14 +57,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: ⎔ Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           cache: npm
           cache-dependency-path: ./package.json
-          node-version: 20
+          node-version: 24
 
       - name: 📥 Install deps
         run: npm install
@@ -77,17 +77,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 🏄 Copy test env vars
         run: cp .env.example .env
 
       - name: ⎔ Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           cache: npm
           cache-dependency-path: ./package.json
-          node-version: 20
+          node-version: 24
 
       - name: 📥 Install deps
         run: npm install
@@ -118,7 +118,7 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 👀 Read app name
         uses: SebRollen/toml-action@v1.2.0
