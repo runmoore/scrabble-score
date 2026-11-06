@@ -99,10 +99,13 @@ jobs:
         run: npm run build
 
       - name: 🌳 Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: npm run start:mocks
-          wait-on: http://localhost:8811
+          # Belt-and-suspenders: use the IPv4 loopback address directly
+          # rather than `localhost`, so there's no IPv4/IPv6 dual-resolution
+          # race to begin with, regardless of the HTTP client's own behavior.
+          wait-on: http://127.0.0.1:8811
         env:
           PORT: 8811
 
