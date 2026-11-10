@@ -111,7 +111,7 @@ export function SchoolLeagueChart({
           <li
             key={row.id}
             data-testid={`chart-legend-item-${row.id}`}
-            className="flex cursor-default items-center gap-2"
+            className="flex cursor-default items-center gap-2 text-gray-900 dark:text-gray-200"
             onMouseEnter={() => setHoveredId(row.id)}
             onMouseLeave={() => setHoveredId(null)}
           >
