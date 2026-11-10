@@ -83,7 +83,7 @@ export default function SchoolLeagueTable() {
       </header>
 
       <div className="mb-4 flex flex-wrap items-center gap-4">
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex items-center gap-2 text-sm text-gray-900 dark:text-gray-200">
           <input
             type="checkbox"
             checked={state.rcOnly}
@@ -92,7 +92,7 @@ export default function SchoolLeagueTable() {
           Roman Catholic schools only
         </label>
 
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex items-center gap-2 text-sm text-gray-900 dark:text-gray-200">
           <input
             type="checkbox"
             checked={state.favOnly}
@@ -115,15 +115,20 @@ export default function SchoolLeagueTable() {
         Showing {filteredRows.length} of {rows.length} rows
       </p>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="w-full border-collapse text-sm">
-          <thead>
+          <thead className="bg-gray-100 dark:bg-gray-800">
             <tr>
-              <th className="p-2 text-left">Favourite</th>
+              <th className="p-2 text-left text-gray-900 dark:text-gray-100">
+                Favourite
+              </th>
               {columns.map((column) => {
                 const isActive = state.sortKey === column.key;
                 return (
-                  <th key={column.key} className="p-2 text-left">
+                  <th
+                    key={column.key}
+                    className="p-2 text-left text-gray-900 dark:text-gray-100"
+                  >
                     <button
                       type="button"
                       onClick={() => handleSort(column.key)}
@@ -145,11 +150,11 @@ export default function SchoolLeagueTable() {
               return (
                 <tr
                   key={row.id}
-                  className={
+                  className={`text-gray-900 dark:text-gray-200 ${
                     isBenchmark
                       ? "bg-blue-50 dark:bg-blue-900/30"
-                      : "odd:bg-gray-50 dark:odd:bg-gray-800/50"
-                  }
+                      : "odd:bg-gray-50 even:bg-white dark:odd:bg-gray-800/50 dark:even:bg-gray-900"
+                  }`}
                 >
                   <td className="p-2">
                     <button
