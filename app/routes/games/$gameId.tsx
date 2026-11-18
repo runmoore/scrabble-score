@@ -201,6 +201,7 @@ export default function GamePage() {
               Delete game
             </button>
           </div>
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click only; Escape already closes a modal dialog natively */}
           <dialog
             ref={dialogRef}
             className="rounded-lg bg-white p-0 shadow-xl backdrop:bg-black/50 dark:bg-gray-800"

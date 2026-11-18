@@ -170,6 +170,7 @@ export default function Play() {
             aria-label="score"
             value={score}
             onChange={(e) => setScore(e.target.value)}
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- see https://github.com/runmoore/scrabble-score/issues/90
             autoFocus
           />
         </div>
