@@ -91,6 +91,7 @@ export default defineConfig([
       "no-template-curly-in-string": "warn",
       // Conventions:
       "import/first": "error",
+      "import/no-duplicates": "error",
       "jsx-a11y/lang": "warn",
       "@typescript-eslint/consistent-type-imports": "warn",
 
