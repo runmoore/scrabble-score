@@ -32,7 +32,7 @@ npm run validate         # Run all tests, lint, typecheck, and e2e
 ### Code Quality
 
 ```bash
-npm run lint             # Run ESLint
+npm run lint             # Run ESLint 9 (flat config in eslint.config.mjs)
 npm run typecheck        # Run TypeScript type checking
 npm run format           # Format code with Prettier
 ```
