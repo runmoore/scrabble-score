@@ -71,7 +71,7 @@ export default function Games() {
               <div className="mb-3 flex items-center gap-2">
                 <InProgressBadge />
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {nextPlayer.name}'s turn
+                  {nextPlayer.name}&apos;s turn
                 </span>
               </div>
               <div className="space-y-1">

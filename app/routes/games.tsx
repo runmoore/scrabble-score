@@ -77,10 +77,10 @@ function GamesMenu({
 }: {
   games: {
     id: Game["id"];
-    players: any[];
+    players: unknown[];
     createdAt: string;
     completed: Game["completed"];
-    scores: any[];
+    scores: unknown[];
     gameType: { id: string; name: string } | null;
   }[];
   className?: string;

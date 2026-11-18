@@ -313,7 +313,7 @@ export default function ComparePlayers() {
         </h2>
         {loaderData.relevantGames.length === 0 ? (
           <div className="py-8 text-center text-gray-600 dark:text-gray-400">
-            You haven't played any games yet
+            You haven&apos;t played any games yet
           </div>
         ) : (
           <div className="max-h-96 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700">

@@ -266,8 +266,7 @@ export function ErrorBoundary() {
     <div className="dark:text-gray-200">
       <h1>Uh oh ...</h1>
       <p>Something went wrong.</p>
-      {/* @ts-ignore */}
-      <pre>{error?.message}</pre>
+      <pre>{error instanceof Error ? error.message : null}</pre>
     </div>
   );
 }
