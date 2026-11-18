@@ -1,7 +1,7 @@
 # React 19 Upgrade Roadmap
 
 Date: 2026-11-17
-Status: Approved design. PR 1 merged. PR 2 (Remix 2.17.5) in progress.
+Status: Approved design. PRs 1 and 2 merged. PR 3 (ESLint 9) in progress.
 Last re-ordered 2026-11-17 (see "Ordering change").
 
 ## Progress tracker
@@ -12,8 +12,8 @@ this first to see where things stand.
 | #   | PR                                    | Status      | Branch              | PR link | Merged commit | Deploy verified                                                                      |
 | --- | ------------------------------------- | ----------- | ------------------- | ------- | ------------- | ------------------------------------------------------------------------------------ |
 | 1   | happy-dom 2.55 -> 21                  | Merged      | `deps/happy-dom-21` | #86     | `fb09398`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 2   | Remix 2.12 -> 2.17.5                  | In progress | `deps/remix-2.17`   |         |               |                                                                                      |
-| 3   | ESLint 8 -> 9 flat config             | Not started |                     |         |               |                                                                                      |
+| 2   | Remix 2.12 -> 2.17.5                  | Merged      | `deps/remix-2.17`   | #87     | `4f9a596`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 3   | ESLint 8 -> 9 flat config             | In progress | `deps/eslint-9`     |         |               |                                                                                      |
 | 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Not started |                     |         |               |                                                                                      |
 | 5   | Low-risk Remix future flags           | Not started |                     |         |               |                                                                                      |
 | 6   | `v3_singleFetch`                      | Not started |                     |         |               |                                                                                      |
@@ -75,6 +75,10 @@ The aim is to stay on supported versions. It is not to adopt React 19 features.
 - **Vite 6.4+ is the one version accepted by Remix 2.17, React Router 7.11 and
   Vitest 5, but only once Remix is on 2.17.**
 - `eslint-plugin-react` supports ESLint up to 9.x. ESLint 10 is not usable yet.
+- `@remix-run/eslint-config@2.17.5` does **not** depend on `@remix-run/dev`
+  (an earlier version of this spec said it did). Its blockers are the peers
+  `eslint ^8` and `react ^18`, plus bundled typescript-eslint v5 and
+  `eslint-plugin-node`.
 - `@remix-run/v1-route-convention@0.1.4` peers `@remix-run/dev`. This may need
   an npm `overrides` entry after PR 8 until PR 10 removes the package.
 - `@testing-library/react@16.3.3` already supports React 18 and 19.
@@ -101,18 +105,18 @@ The aim is to stay on supported versions. It is not to adopt React 19 features.
 
 ## Roadmap
 
-| #   | PR                                    | Why here                                                                                                                            | Main work                                                                                                                                                                                                                                                                                                                                                                                   |
-| --- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | happy-dom 2.55 -> 21                  | Oldest dependency (March 2022), and the biggest risk for React 19 DOM tests                                                         | Bump. Delete the `globalThis.URL` workaround in `test/setup-test-env.ts`. Fix any component test failures. Keep `installGlobals()`.                                                                                                                                                                                                                                                         |
-| 2   | Remix 2.12 -> 2.17.5                  | Same major. `@remix-run/dev@2.12.1` peers Vite 5 only, so this unblocks Vite 6 (see Ordering change). Also moves to the latest 2.x. | Version bump of all `@remix-run/*` packages, including `@remix-run/eslint-config`. Check the peer ranges and the build and tests. No code changes expected.                                                                                                                                                                                                                                 |
-| 3   | ESLint 8 -> 9 flat config             | ESLint 8 is end of life, and `@remix-run/eslint-config` depends on `@remix-run/dev`, which goes away in PR 8.                       | Replace `.eslintrc.js` with `eslint.config.js` using typescript-eslint, react, react-hooks, jsx-a11y, testing-library, jest-dom and prettier. Remove `@remix-run/eslint-config`. Update CLAUDE.md.                                                                                                                                                                                          |
-| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Vitest 1 is four majors behind. Vite 6.4 is the version Remix 2.17, React Router 7 and Vitest 5 all accept. Needs PR 2 first.       | Bump Vite to `^6.4.6`, Vitest and `@vitest/coverage-v8` to `^5.1.0`, `@vitejs/plugin-react` to `^5.2.0` (not 6.x, which needs Vite 8). Update `vitest.config.mts` and fix test API changes after reading the Vitest 2 to 5 migration guides. Vite is only used by Vitest at this stage, so the app build is untouched. Update CLAUDE.md.                                                    |
-| 5   | Low-risk future flags                 | Small behaviour changes, isolated.                                                                                                  | `v3_fetcherPersist`, `v3_relativeSplatPath`, `v3_throwAbortReason`, `v3_lazyRouteDiscovery`.                                                                                                                                                                                                                                                                                                |
-| 6   | `v3_singleFetch`                      | Largest code change. Separate PR makes Cypress problems easy to trace.                                                              | Replace 24 `json()` calls with plain objects or `data()`. Rewrite about 46 `.json()` test reads, with a shared helper. Check Cypress status-code assertions and `useLoaderData<typeof loader>` inference.                                                                                                                                                                                   |
-| 7   | Classic compiler -> Remix Vite plugin | Required before React Router 7.                                                                                                     | `vite.config.ts`, `app/routes.ts` with the v1-convention adapter (`v3_routeConfig`), `postcss.config.js`, `?url` CSS import, ESM and `"type": "module"` (port `mocks/index.js` and other `require` users), `build/server` paths, Dockerfile and start scripts, dev on port 3000 with MSW, remove `<LiveReload />`. Update CLAUDE.md. Screenshots likely differ if the CSS pipeline changes. |
-| 8   | Remix 2 -> React Router 7             | The framework is now ready.                                                                                                         | Official `remix/2/react-router/upgrade` codemod, `@react-router/*` packages, remove `installGlobals`, `remix-routes-option-adapter`, possible npm `overrides`. Update CLAUDE.md.                                                                                                                                                                                                            |
-| 9   | React 18 -> 19                        | The goal.                                                                                                                           | `react`, `react-dom`, `@types/react`, `@types/react-dom`. Fix `JSX.Element` in `cryptogram.tsx`. Testing-library minor bumps.                                                                                                                                                                                                                                                               |
-| 10  | Flat routes (follow-up)               | Removes the legacy adapter.                                                                                                         | Move to `@react-router/fs-routes`, rename route files and tests, drop `@remix-run/v1-route-convention`. Update CLAUDE.md.                                                                                                                                                                                                                                                                   |
+| #   | PR                                    | Why here                                                                                                                               | Main work                                                                                                                                                                                                                                                                                                                                                                                   |
+| --- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | happy-dom 2.55 -> 21                  | Oldest dependency (March 2022), and the biggest risk for React 19 DOM tests                                                            | Bump. Delete the `globalThis.URL` workaround in `test/setup-test-env.ts`. Fix any component test failures. Keep `installGlobals()`.                                                                                                                                                                                                                                                         |
+| 2   | Remix 2.12 -> 2.17.5                  | Same major. `@remix-run/dev@2.12.1` peers Vite 5 only, so this unblocks Vite 6 (see Ordering change). Also moves to the latest 2.x.    | Version bump of all `@remix-run/*` packages, including `@remix-run/eslint-config`. Check the peer ranges and the build and tests. No code changes expected.                                                                                                                                                                                                                                 |
+| 3   | ESLint 8 -> 9 flat config             | ESLint 8 is end of life. `@remix-run/eslint-config` peers `eslint ^8` and `react ^18`, so it blocks ESLint 9 now and React 19 in PR 9. | Replace `.eslintrc.js` with `eslint.config.js` using typescript-eslint, react, react-hooks, jsx-a11y, testing-library, jest-dom and prettier. Remove `@remix-run/eslint-config`. Update CLAUDE.md.                                                                                                                                                                                          |
+| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Vitest 1 is four majors behind. Vite 6.4 is the version Remix 2.17, React Router 7 and Vitest 5 all accept. Needs PR 2 first.          | Bump Vite to `^6.4.6`, Vitest and `@vitest/coverage-v8` to `^5.1.0`, `@vitejs/plugin-react` to `^5.2.0` (not 6.x, which needs Vite 8). Update `vitest.config.mts` and fix test API changes after reading the Vitest 2 to 5 migration guides. Vite is only used by Vitest at this stage, so the app build is untouched. Update CLAUDE.md.                                                    |
+| 5   | Low-risk future flags                 | Small behaviour changes, isolated.                                                                                                     | `v3_fetcherPersist`, `v3_relativeSplatPath`, `v3_throwAbortReason`, `v3_lazyRouteDiscovery`.                                                                                                                                                                                                                                                                                                |
+| 6   | `v3_singleFetch`                      | Largest code change. Separate PR makes Cypress problems easy to trace.                                                                 | Replace 24 `json()` calls with plain objects or `data()`. Rewrite about 46 `.json()` test reads, with a shared helper. Check Cypress status-code assertions and `useLoaderData<typeof loader>` inference.                                                                                                                                                                                   |
+| 7   | Classic compiler -> Remix Vite plugin | Required before React Router 7.                                                                                                        | `vite.config.ts`, `app/routes.ts` with the v1-convention adapter (`v3_routeConfig`), `postcss.config.js`, `?url` CSS import, ESM and `"type": "module"` (port `mocks/index.js` and other `require` users), `build/server` paths, Dockerfile and start scripts, dev on port 3000 with MSW, remove `<LiveReload />`. Update CLAUDE.md. Screenshots likely differ if the CSS pipeline changes. |
+| 8   | Remix 2 -> React Router 7             | The framework is now ready.                                                                                                            | Official `remix/2/react-router/upgrade` codemod, `@react-router/*` packages, remove `installGlobals`, `remix-routes-option-adapter`, possible npm `overrides`. Update CLAUDE.md.                                                                                                                                                                                                            |
+| 9   | React 18 -> 19                        | The goal.                                                                                                                              | `react`, `react-dom`, `@types/react`, `@types/react-dom`. Fix `JSX.Element` in `cryptogram.tsx`. Testing-library minor bumps.                                                                                                                                                                                                                                                               |
+| 10  | Flat routes (follow-up)               | Removes the legacy adapter.                                                                                                            | Move to `@react-router/fs-routes`, rename route files and tests, drop `@remix-run/v1-route-convention`. Update CLAUDE.md.                                                                                                                                                                                                                                                                   |
 
 Each PR gets its own short design and plan when it starts. PRs 6, 7 and 8 are
 the riskiest and each deserve a fuller design before work begins.
@@ -205,25 +209,78 @@ Merged as `fb09398` (#86). happy-dom 21's `URL` extends Node's, so the
 stays until PR 8. Vitest 1.6 worked with happy-dom 21. The first CI run failed
 because the lockfile contained Artifactory URLs (see Working agreements).
 
-## PR 2 design: Remix 2.12.1 -> 2.17.5
+## PR 2 (done): Remix 2.12.1 -> 2.17.5
 
-- **Why:** unblocks Vite 6 (see Ordering change). 2.17.5 is the latest 2.x
-  release. Whether it adds future flags needed by PRs 5 to 7 is to be confirmed
-  from the release notes during this PR.
-- **Packages (all pinned exactly, as they are today):** `@remix-run/dev`,
-  `@remix-run/node`, `@remix-run/react`, `@remix-run/serve`,
-  `@remix-run/server-runtime` and `@remix-run/eslint-config`, all to `2.17.5`.
-  `@remix-run/v1-route-convention` is left at 0.1.4 (its peer is
-  `@remix-run/dev ^1.15.0 || ^2.0.0`).
-- **Install (run by the user):**
-  `npm install --registry=https://registry.npmjs.org @remix-run/node@2.17.5 @remix-run/react@2.17.5 @remix-run/serve@2.17.5 @remix-run/server-runtime@2.17.5 && npm install --save-dev --registry=https://registry.npmjs.org @remix-run/dev@2.17.5 @remix-run/eslint-config@2.17.5`
-- **Checks:** read the 2.12 to 2.17 release notes for breaking changes, then
-  `npm run test -- --run`, lint, typecheck, `npm run build`, `npm run validate`.
-  Confirm the lockfile has no `artifactory` references.
-- **Visual check:** Remix runtime changes only, but the classic compiler output
-  is rebuilt, so compare the production build output against `main` in a
-  separate git worktree if any doubt remains.
-- **Tracker:** this PR also marks PR 1 as merged and records the new order.
+Merged as `4f9a596` (#87). All six `@remix-run/*` packages are pinned exactly at
+2.17.5. No app code changed. Checked in Chrome on the dev server: sign-up, game
+flow, scoring, players, compare, school league table, anagram, cryptogram and
+mobile. A leftover `remix-serve` held port 3000, so `remix dev` picked a random
+free port. This is existing `remix-serve` behaviour (since 2.0.0), not a
+regression. Consider setting `PORT=3000` explicitly in PR 7.
+
+## PR 3 design: ESLint 8 -> 9 flat config
+
+- **Why:** see the roadmap row. The Remix eslint-config blocks both ESLint 9 and
+  React 19.
+- **Goal:** the same rules enforced on a supported toolchain. Baseline before
+  the change: 95 effective rules on app files, 138 on test files, 96 on
+  `cypress/`, 94 on plain `.js`. Lint was clean and the code has no
+  `eslint-disable` comments.
+- **Approach (parity first):** build the flat config from each plugin's presets,
+  then diff effective rules (severity and options) against the "before"
+  snapshots (`eslint --print-config` output saved before the change). Close every
+  difference explicitly. Record any intentional difference in the PR description.
+  Fix new lint violations only if the parity diff forces it.
+- **Packages (dev):** `eslint@^9.39.5` (stay on 9: `eslint-plugin-react` peers up
+  to 9), `typescript-eslint@^8.73.0`, `eslint-plugin-react@^7.37.5`,
+  `eslint-plugin-react-hooks@^7.1.1` (enable only `rules-of-hooks` and
+  `exhaustive-deps`, since the v7 preset adds React Compiler rules),
+  `eslint-plugin-jsx-a11y@^6.10.2`, `eslint-plugin-import@^2.32.0`,
+  `eslint-plugin-jest@^29.17.1`, `eslint-plugin-jest-dom@^5.10.2`,
+  `eslint-plugin-testing-library@^7.16.2`, `eslint-config-prettier@^10.1.8`,
+  `globals@^17.14.0`, and `eslint-import-resolver-node@^0.3.10` (see below).
+  Remove `@remix-run/eslint-config` and `@types/eslint`.
+- **Files:** add `eslint.config.mjs` (`.mjs` so it works before and after the
+  ESM switch in PR 7). Delete `.eslintrc.js` and `cypress/.eslintrc.js`. Move
+  `eslintIgnore` from `package.json` into `ignores`.
+- **Carry over:** React `formComponents: ["Form"]` and `linkComponents`
+  (Link/NavLink on `to`); `jest.version: 27` (Jest cannot be detected, we use
+  Vitest); `parserOptions.project` for `cypress/`. Keep `eslint-plugin-jest`
+  for Vitest as today. The `import/*` settings are carried over, minus the
+  TypeScript resolver.
+- **Correction:** an earlier version of this design said the four import rules do
+  not resolve modules, so no resolver was needed. That was wrong:
+  `import/no-duplicates` resolves modules. The resolver that ships with
+  `eslint-plugin-import` is nested and cannot be found, so
+  `eslint-import-resolver-node` is a direct dev dependency (the old Remix config
+  pinned it too).
+- **Intentional differences from the old config** (all listed in the PR):
+  - Renamed in newer plugin versions, same meaning:
+    `testing-library/await-async-query` -> `await-async-queries`,
+    `no-await-sync-query` -> `no-await-sync-queries`,
+    `no-render-in-setup` -> `no-render-in-lifecycle`.
+  - No longer exist, so dropped: `jest/no-jest-import`,
+    `testing-library/no-wait-for-empty-callback`,
+    `testing-library/prefer-wait-for`. Test files go from 138 to 135 rules.
+  - `coverage/` is ignored. It is generated and gitignored, and ESLint 9 now
+    warns on unused `eslint-disable` comments in those files.
+  - The TypeScript import resolver is not carried over (only matters for
+    `import/no-duplicates` on `~/` aliased imports).
+  - `react/display-name` stays on everywhere except `**/routes/**` and
+    `app/root.*`, as before.
+- **Checks (all done against the real config):**
+  - Rule-parity diff for app, test, Cypress and JS files: severity and every
+    explicit option match (ESLint 9 only adds default options), and the set of
+    linted files is identical (77 plus 3 ignored `coverage/*.js` = the old 80).
+  - **Break a rule on purpose** in each file type (app, test, Cypress, plain JS)
+    and confirm `npm run lint` fails on it, then revert. This proves the new
+    config is actually enforcing rules, not just passing.
+  - `npm run lint`, `typecheck`, `npm run test -- --run`, `npm run build`.
+  - Lockfile has no `artifactory` URLs.
+  - No browser run: dev tooling only, bundle untouched.
+- **Risks:** typescript-eslint 8 renamed or changed some rules and defaults
+  (replicate options exactly, for example `no-unused-vars`); plain `.js` files
+  move from `@babel/eslint-parser` to the default parser.
 
 ## Out of scope
 
