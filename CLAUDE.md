@@ -37,6 +37,11 @@ npm run typecheck        # Run TypeScript type checking
 npm run format           # Format code with Prettier
 ```
 
+Lint rule exceptions: prefer fixing the code. If a rule does not fit the project,
+turn it off in `eslint.config.mjs` with a comment saying why. If fixing needs a
+bigger change, add an inline `eslint-disable-next-line <rule> -- <issue URL>` that
+links a follow-up GitHub issue (ESLint warns when a disable is no longer needed).
+
 ### Database
 
 ```bash
