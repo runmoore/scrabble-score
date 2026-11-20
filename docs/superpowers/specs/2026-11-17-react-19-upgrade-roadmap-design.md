@@ -1,7 +1,7 @@
 # React 19 Upgrade Roadmap
 
 Date: 2026-11-17
-Status: Approved design. PRs 1 to 3 merged. PR 3b (ESLint presets) in progress.
+Status: Approved design. PRs 1 to 3b merged. PR 4 (Vite 6 / Vitest 5) in progress.
 Last re-ordered 2026-11-17 (see "Ordering change").
 
 ## Progress tracker
@@ -14,8 +14,8 @@ this first to see where things stand.
 | 1   | happy-dom 2.55 -> 21                  | Merged      | `deps/happy-dom-21`    | #86     | `fb09398`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
 | 2   | Remix 2.12 -> 2.17.5                  | Merged      | `deps/remix-2.17`      | #87     | `4f9a596`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
 | 3   | ESLint 8 -> 9 flat config             | Merged      | `deps/eslint-9`        | #88     | `0e26e25`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 3b  | ESLint config on plugin presets       | In progress | `chore/eslint-presets` |         |               |                                                                                      |
-| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Not started |                        |         |               |                                                                                      |
+| 3b  | ESLint config on plugin presets       | Merged      | `chore/eslint-presets` | #92     | `dd3c1f4`     | Fly release check pending user                                                       |
+| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | In progress | `deps/vite-vitest`     |         |               |                                                                                      |
 | 5   | Low-risk Remix future flags           | Not started |                        |         |               |                                                                                      |
 | 6   | `v3_singleFetch`                      | Not started |                        |         |               |                                                                                      |
 | 7   | Classic compiler -> Remix Vite plugin | Not started |                        |         |               |                                                                                      |
@@ -162,6 +162,16 @@ the riskiest and each deserve a fuller design before work begins.
   `flyctl status -a scrabble-score-e630` and
   `flyctl releases -a scrabble-score-e630` and confirms the release matches the
   merged commit.
+- **Vitest and `@vitest/coverage-v8` pin each other to an exact version**
+  (5.1.1 needs 5.1.1). Installing both in one command fails with ERESOLVE while
+  the old coverage package is still in the tree. Upgrade in three steps:
+  `npm uninstall @vitest/coverage-v8`, then install `vite`, `vitest` and
+  `@vitejs/plugin-react`, then install `@vitest/coverage-v8`. Always keep
+  `--registry=https://registry.npmjs.org`.
+- **Shell quirks.** `rg` is not installed (use `grep`). In zsh, quote globs such
+  as `--include='*.ts'`. The agent's shell runs Node 22.22.2 while CI and the
+  user run Node 24. `rm` is denied; `unlink` works. `gh issue create` and
+  `gh pr edit` work.
 - Check `origin/main` before opening each PR, because the user also pushes to
   `main`, and rebase if it moved.
 
@@ -246,7 +256,9 @@ Three commits, then a fourth small one:
    `@eslint/js` as a direct dev dependency. Lint is red after this commit by
    design.
 2. **Fixes (11).** `&apos;` in JSX text (6), `@ts-ignore` replaced by an `Error`
-   check, `isUser(unknown)`, `players`/`scores` props typed `unknown[]`, and a
+   check, `isUser(unknown)`, the `GamesMenu` `games` prop typed as
+   `SerializeFrom<typeof loader>["games"]` (derived from the loader, no
+   hand-copied shape), and a
    type-only import in `compare.tsx`.
 3. **Inline disables (11 findings, 8 comments).** Five `no-autofocus` and four
    anagram keyboard findings link #90 and #91; the `<dialog>` backdrop click is
@@ -285,6 +297,20 @@ blocks. `vitest.config.mts` is now linted (the old patterns missed `.mts`). Issu
 Verification: break-a-rule across app, component, test, Cypress and plain JS
 (kept rules fire, deliberately-off rules stay silent), enabled-rule comparison to
 the pre-PR snapshot, typecheck, build, Vitest (159) and Cypress (38/38).
+
+## PR 4 (done): Vite 5 -> 6.4, Vitest 1 -> 5
+
+Vite 6.4.6, Vitest and `@vitest/coverage-v8` 5.1.1, `@vitejs/plugin-react` 5.2.0
+(6.x needs Vite 8). `vite-tsconfig-paths` stays at 4.3.2. The only code change:
+`test/setup-test-env.ts` imports `@testing-library/jest-dom/vitest`, because
+Vitest 5 no longer reads the global `jest.Matchers` types (17 typecheck errors
+otherwise). All 159 tests passed unchanged. Mocking is the main Vitest 3 to 5
+risk area here (17 top-level `vi.mock`, 34 `vi.fn`, 11 `vi.clearAllMocks`) and
+nothing needed changing: `clearMocks` now defaults to on, which makes the explicit
+`vi.clearAllMocks()` calls redundant but harmless. Coverage reports only loaded
+files now (`coverage.all` was removed in Vitest 4); there are no thresholds, so
+CI is unaffected. The tree now has one Vite 6.4.6 plus the pre-existing nested
+Vite 4.5.2 under `@remix-run/dev` (`@vanilla-extract`).
 
 ## Out of scope
 
