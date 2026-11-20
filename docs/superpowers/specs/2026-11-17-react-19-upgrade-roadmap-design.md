@@ -1,7 +1,7 @@
 # React 19 Upgrade Roadmap
 
 Date: 2026-11-17
-Status: Approved design. PRs 1 to 3b merged. PR 4 (Vite 6 / Vitest 5) in progress.
+Status: Approved design. PRs 1 to 4 merged. PR 5 (low-risk Remix future flags) in progress.
 Last re-ordered 2026-11-17 (see "Ordering change").
 
 ## Progress tracker
@@ -9,19 +9,19 @@ Last re-ordered 2026-11-17 (see "Ordering change").
 Update this table when each PR is opened and merged. A new session should read
 this first to see where things stand.
 
-| #   | PR                                    | Status      | Branch                 | PR link | Merged commit | Deploy verified                                                                      |
-| --- | ------------------------------------- | ----------- | ---------------------- | ------- | ------------- | ------------------------------------------------------------------------------------ |
-| 1   | happy-dom 2.55 -> 21                  | Merged      | `deps/happy-dom-21`    | #86     | `fb09398`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 2   | Remix 2.12 -> 2.17.5                  | Merged      | `deps/remix-2.17`      | #87     | `4f9a596`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 3   | ESLint 8 -> 9 flat config             | Merged      | `deps/eslint-9`        | #88     | `0e26e25`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 3b  | ESLint config on plugin presets       | Merged      | `chore/eslint-presets` | #92     | `dd3c1f4`     | Fly release check pending user                                                       |
-| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | In progress | `deps/vite-vitest`     |         |               |                                                                                      |
-| 5   | Low-risk Remix future flags           | Not started |                        |         |               |                                                                                      |
-| 6   | `v3_singleFetch`                      | Not started |                        |         |               |                                                                                      |
-| 7   | Classic compiler -> Remix Vite plugin | Not started |                        |         |               |                                                                                      |
-| 8   | Remix 2 -> React Router 7             | Not started |                        |         |               |                                                                                      |
-| 9   | React 18 -> 19                        | Not started |                        |         |               |                                                                                      |
-| 10  | Flat routes (follow-up)               | Not started |                        |         |               |                                                                                      |
+| #   | PR                                    | Status      | Branch                     | PR link | Merged commit | Deploy verified                                                                      |
+| --- | ------------------------------------- | ----------- | -------------------------- | ------- | ------------- | ------------------------------------------------------------------------------------ |
+| 1   | happy-dom 2.55 -> 21                  | Merged      | `deps/happy-dom-21`        | #86     | `fb09398`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 2   | Remix 2.12 -> 2.17.5                  | Merged      | `deps/remix-2.17`          | #87     | `4f9a596`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 3   | ESLint 8 -> 9 flat config             | Merged      | `deps/eslint-9`            | #88     | `0e26e25`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 3b  | ESLint config on plugin presets       | Merged      | `chore/eslint-presets`     | #92     | `dd3c1f4`     | Fly release check pending user                                                       |
+| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged      | `deps/vite-vitest`         | #93     | `e53149f`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 5   | Low-risk Remix future flags           | In progress | `chore/remix-future-flags` |         |               |                                                                                      |
+| 6   | `v3_singleFetch`                      | Not started |                            |         |               |                                                                                      |
+| 7   | Classic compiler -> Remix Vite plugin | Not started |                            |         |               |                                                                                      |
+| 8   | Remix 2 -> React Router 7             | Not started |                            |         |               |                                                                                      |
+| 9   | React 18 -> 19                        | Not started |                            |         |               |                                                                                      |
+| 10  | Flat routes (follow-up)               | Not started |                            |         |               |                                                                                      |
 
 ## Ordering change
 
@@ -311,6 +311,34 @@ nothing needed changing: `clearMocks` now defaults to on, which makes the explic
 files now (`coverage.all` was removed in Vitest 4); there are no thresholds, so
 CI is unaffected. The tree now has one Vite 6.4.6 plus the pre-existing nested
 Vite 4.5.2 under `@remix-run/dev` (`@vanilla-extract`).
+
+## PR 5: low-risk Remix future flags
+
+`remix.config.js` gets `future: { v3_fetcherPersist, v3_relativeSplatPath,
+v3_throwAbortReason, v3_lazyRouteDiscovery }` all `true`. No app code changes.
+`v3_singleFetch` (PR 6) and `v3_routeConfig` (PR 7) stay off. The build warnings
+drop from five to one (single fetch).
+
+Impact check, flag by flag:
+
+- `v3_fetcherPersist`: the only fetchers are the two `useFetcher` calls in
+  `games/new.tsx`; `useFetchers` is unused.
+- `v3_relativeSplatPath`: the only splat route (`$.tsx`) is a loader that throws a
+  404 and renders no links; every relative `to=` lives in a non-splat route.
+- `v3_throwAbortReason`: `entry.server.tsx` only calls `abort` on a timer and has
+  no custom error handler.
+- `v3_lazyRouteDiscovery`: no `prefetch` or `reloadDocument` in the app, and the
+  Cypress intercepts only match POSTs, so the new `GET /__manifest` requests do
+  not interfere.
+
+Verification: the four flags are `true` in the built server bundle; unit tests
+(159), lint, typecheck and build pass; Cypress passes 38/38. The server log of the
+passing run shows 26 `GET /__manifest` requests, all 200, and no 4xx or 5xx
+responses, which confirms lazy route discovery is exercised. One earlier Cypress
+run crashed the Electron renderer in the cryptogram spec (which uses none of
+these flags) and then hung; it left a `remix-serve` process behind that had to be
+killed with `kill -9`. A rerun passed. If it recurs, run Cypress under
+`timeout` and check for leftover processes on port 8811.
 
 ## Out of scope
 
