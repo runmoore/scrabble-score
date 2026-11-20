@@ -2,11 +2,10 @@ import { Form, Link, useLoaderData, Outlet, NavLink } from "@remix-run/react";
 import { useUser } from "~/utils";
 import { json } from "@remix-run/server-runtime";
 import { requireUserId } from "~/session.server";
-import type { Game } from "~/models/game.server";
 import { getAllGames } from "~/models/game.server";
 import { format } from "date-fns";
 import { useState } from "react";
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs, SerializeFrom } from "@remix-run/node";
 
 import MenuIcon from "../icons/menu";
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -75,14 +74,7 @@ function GamesMenu({
   className,
   onLinkClick = () => {},
 }: {
-  games: {
-    id: Game["id"];
-    players: any[];
-    createdAt: string;
-    completed: Game["completed"];
-    scores: any[];
-    gameType: { id: string; name: string } | null;
-  }[];
+  games: SerializeFrom<typeof loader>["games"];
   className?: string;
   onLinkClick?: () => void;
 }) {

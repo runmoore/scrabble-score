@@ -91,6 +91,7 @@ export default function Join() {
                 ref={emailRef}
                 id="email"
                 required
+                // eslint-disable-next-line jsx-a11y/no-autofocus -- see https://github.com/runmoore/scrabble-score/issues/90
                 autoFocus={true}
                 name="email"
                 type="text"

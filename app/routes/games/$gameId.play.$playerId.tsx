@@ -132,7 +132,7 @@ export default function Play() {
         <ScoreTable players={game.players} topScore={topScore} />
       </div>
       <h1 className="mb-4 dark:text-gray-100" data-testid="current-turn">
-        It's <span className="font-bold">{player.name}'s</span> turn
+        It&apos;s <span className="font-bold">{player.name}&apos;s</span> turn
       </h1>
       <Form method="post" action="" key={playerId}>
         <div className="flex gap-2">
@@ -170,6 +170,7 @@ export default function Play() {
             aria-label="score"
             value={score}
             onChange={(e) => setScore(e.target.value)}
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- see https://github.com/runmoore/scrabble-score/issues/90
             autoFocus
           />
         </div>
@@ -215,7 +216,7 @@ export default function Play() {
                   className="mb-4 rounded bg-purple-primary py-2 px-4 text-white hover:bg-purple-secondary focus:bg-purple-secondary dark:bg-purple-700 dark:hover:bg-purple-600"
                 >
                   <Link to={`/games/${game.id}/play/${p.id}`}>
-                    Switch to {p.name}'s turn
+                    Switch to {p.name}&apos;s turn
                   </Link>
                 </button>
               ))}

@@ -75,6 +75,7 @@ function Letter({
     ? "text-gray-300 dark:text-gray-600"
     : "dark:text-gray-100";
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- see https://github.com/runmoore/scrabble-score/issues/91
     <div
       data-testid={id}
       className={`letter absolute m-4 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-lg font-bold ${dismissedStyle}`}
@@ -382,6 +383,7 @@ export default function Anagram() {
       {searchQuery && (
         <div className="align-center mt-8 flex flex-wrap justify-center">
           {newWord.map((letter, i) => (
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- see https://github.com/runmoore/scrabble-score/issues/91
             <div
               key={i}
               className={`m-2 flex h-4 w-4 cursor-pointer items-center justify-center border-b-2 pl-2 pr-2 pb-2 leading-normal dark:text-gray-100 ${

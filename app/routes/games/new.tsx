@@ -188,6 +188,7 @@ export default function NewGamePage() {
                     name="gameTypeName"
                     aria-label="game type name"
                     className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    // eslint-disable-next-line jsx-a11y/no-autofocus -- see https://github.com/runmoore/scrabble-score/issues/90
                     autoFocus
                   />
                   <button
@@ -250,6 +251,7 @@ export default function NewGamePage() {
                     name="name"
                     aria-label="name"
                     className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    // eslint-disable-next-line jsx-a11y/no-autofocus -- see https://github.com/runmoore/scrabble-score/issues/90
                     autoFocus
                   />
                   <button

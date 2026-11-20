@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import React, { useState } from "react";
+import { useState, type ChangeEventHandler } from "react";
 
 import { Card } from "~/components/Card";
 import { InProgressBadge } from "~/components/InProgressBadge";
@@ -97,7 +97,7 @@ function SelectPlayer({
   name,
 }: {
   players: Array<{ id: string; name: string }>;
-  onChange: React.ChangeEventHandler<HTMLSelectElement>;
+  onChange: ChangeEventHandler<HTMLSelectElement>;
   name: string;
 }) {
   return (
