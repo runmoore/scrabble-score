@@ -5,7 +5,7 @@ import {
   useSearchParams,
 } from "@remix-run/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+
 import { format } from "date-fns";
 import invariant from "tiny-invariant";
 import { Card } from "~/components/Card";
@@ -51,7 +51,7 @@ interface TypeAccumulator {
   totalScore: number;
   highestScore: number;
   highestScoreGameId: string;
-  highestScoreGameDate: string;
+  highestScoreGameDate: Date | null;
   count: number;
 }
 
@@ -65,7 +65,7 @@ function computeAggregateStats(
   let totalScore = 0;
   let highestScore = -Infinity;
   let highestScoreGameId = "";
-  let highestScoreGameDate = "";
+  let highestScoreGameDate: Date | null = null;
   const typeAccumulators = new Map<string, TypeAccumulator>();
 
   for (const game of completedGames) {
@@ -79,7 +79,7 @@ function computeAggregateStats(
     if (thisPlayer.totalScore > highestScore) {
       highestScore = thisPlayer.totalScore;
       highestScoreGameId = game.id;
-      highestScoreGameDate = new Date(game.createdAt).toISOString();
+      highestScoreGameDate = game.createdAt;
     }
 
     const typeId = game.gameType?.id;
@@ -90,7 +90,7 @@ function computeAggregateStats(
         totalScore: 0,
         highestScore: -Infinity,
         highestScoreGameId: "",
-        highestScoreGameDate: "",
+        highestScoreGameDate: null,
         count: 0,
       };
       acc.count++;
@@ -99,7 +99,7 @@ function computeAggregateStats(
       if (thisPlayer.totalScore > acc.highestScore) {
         acc.highestScore = thisPlayer.totalScore;
         acc.highestScoreGameId = game.id;
-        acc.highestScoreGameDate = new Date(game.createdAt).toISOString();
+        acc.highestScoreGameDate = game.createdAt;
       }
       typeAccumulators.set(typeId, acc);
     }
@@ -201,10 +201,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const stats = computeStats(allGames, params.playerId, selectedTypeId);
 
-  return json({
+  return {
     player,
     ...stats,
-  });
+  };
 };
 
 export default function PlayerDetail() {

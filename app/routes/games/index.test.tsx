@@ -40,8 +40,7 @@ describe("games index loader", () => {
     mockGetTopGameTypes.mockResolvedValueOnce(topGameTypes);
     mockGetTopPlayers.mockResolvedValueOnce(topPlayers);
 
-    const response = await callLoader();
-    const data = await response.json();
+    const data = await callLoader();
 
     expect(data.topGameTypes).toEqual(topGameTypes);
     expect(data.topPlayers).toEqual(topPlayers);
@@ -64,8 +63,7 @@ describe("games index loader", () => {
   });
 
   test("returns empty arrays when no stats data exists", async () => {
-    const response = await callLoader();
-    const data = await response.json();
+    const data = await callLoader();
 
     expect(data.topGameTypes).toEqual([]);
     expect(data.topPlayers).toEqual([]);

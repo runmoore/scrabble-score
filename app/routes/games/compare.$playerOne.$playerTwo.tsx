@@ -1,5 +1,5 @@
 import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
-import { json, type LoaderFunctionArgs } from "@remix-run/server-runtime";
+import { type LoaderFunctionArgs } from "@remix-run/server-runtime";
 import { format } from "date-fns";
 import invariant from "tiny-invariant";
 import { Card } from "~/components/Card";
@@ -128,7 +128,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     }
   }
 
-  return json({
+  return {
     playerOne,
     playerTwo,
     record,
@@ -136,7 +136,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     completedGameCount: completedGames.length,
     highestScore,
     availableGameTypes,
-  });
+  };
 };
 
 const getWinnersNames = (game: {

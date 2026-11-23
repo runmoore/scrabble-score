@@ -54,7 +54,7 @@ describe("compare loader – matchup aggregation", () => {
       makeGame("g5", [p3, p4]),
     ]);
 
-    const data = await (await callLoader()).json();
+    const data = await callLoader();
 
     expect(data.matchups).toHaveLength(2);
     expect(data.matchups[0].gameCount).toBe(3);
@@ -75,7 +75,7 @@ describe("compare loader – matchup aggregation", () => {
       makeGame("g10", [p2, p4]),
     ]);
 
-    const data = await (await callLoader()).json();
+    const data = await callLoader();
 
     expect(data.matchups).toHaveLength(3);
     expect(data.matchups[0].gameCount).toBe(4);
@@ -90,7 +90,7 @@ describe("compare loader – matchup aggregation", () => {
       makeGame("g3", [p1, p2], { completed: false }),
     ]);
 
-    const data = await (await callLoader()).json();
+    const data = await callLoader();
 
     expect(data.matchups).toHaveLength(1);
     expect(data.matchups[0].gameCount).toBe(1);
@@ -103,7 +103,7 @@ describe("compare loader – matchup aggregation", () => {
       makeGame("g3", [p1]),
     ]);
 
-    const data = await (await callLoader()).json();
+    const data = await callLoader();
 
     expect(data.matchups).toHaveLength(1);
     expect(data.matchups[0].gameCount).toBe(1);
@@ -122,7 +122,7 @@ describe("compare loader – matchup aggregation", () => {
       }),
     ]);
 
-    const data = await (await callLoader()).json();
+    const data = await callLoader();
 
     expect(data.matchups[0].gameTypes).toEqual([
       "Scrabble",
@@ -136,7 +136,7 @@ describe("compare loader – matchup aggregation", () => {
       makeGame("g2", [p1, p2], { gameType: null }),
     ]);
 
-    const data = await (await callLoader()).json();
+    const data = await callLoader();
 
     expect(data.matchups[0].gameTypes).toEqual([]);
   });
@@ -144,7 +144,7 @@ describe("compare loader – matchup aggregation", () => {
   test("returns empty matchups when no 2-player completed games exist", async () => {
     mockGetAllGames.mockResolvedValueOnce([]);
 
-    const data = await (await callLoader()).json();
+    const data = await callLoader();
 
     expect(data.matchups).toEqual([]);
   });
@@ -155,7 +155,7 @@ describe("compare loader – matchup aggregation", () => {
       makeGame("g2", [p1, p2]),
     ]);
 
-    const data = await (await callLoader()).json();
+    const data = await callLoader();
 
     expect(data.matchups).toHaveLength(1);
     expect(data.matchups[0].gameCount).toBe(2);

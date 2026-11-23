@@ -3,7 +3,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { json } from "@remix-run/node";
+
 import {
   Links,
   LiveReload,
@@ -32,9 +32,9 @@ export const meta: MetaFunction = () => [
 ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  return json({
+  return {
     user: await getUser(request),
-  });
+  };
 };
 
 export default function App() {

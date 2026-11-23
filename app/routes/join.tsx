@@ -3,7 +3,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { data, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import * as React from "react";
 
@@ -15,7 +15,7 @@ import { safeRedirect } from "~/utils";
 export async function loader({ request }: LoaderFunctionArgs) {
   const userId = await getUserId(request);
   if (userId) return redirect("/");
-  return json({});
+  return {};
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -25,7 +25,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
   if (typeof password !== "string" || password.length === 0) {
-    return json(
+    return data(
       { errors: { email: null, password: "Password is required" } },
       { status: 400 }
     );
@@ -33,7 +33,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const existingUser = await getUserByEmail(email);
   if (existingUser) {
-    return json(
+    return data(
       {
         errors: {
           email: "A user already exists with this email",

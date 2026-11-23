@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { data, redirect } from "@remix-run/node";
 import {
   Form,
   useActionData,
@@ -32,7 +32,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     getAllGameTypes({ userId }),
   ]);
 
-  return json({ players, gameTypes });
+  return { players, gameTypes };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -46,7 +46,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const gameTypeId = (formData.get("gameTypeId") as string) || null;
 
       if (players.length < 2) {
-        return json(
+        return data(
           { errors: "You must select at least 2 players to play" },
           { status: 400 }
         );
@@ -60,23 +60,23 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     case "add-player": {
       const name = (formData.get("name") as string)?.trim();
       if (!name) {
-        return json({ errors: "empty name" });
+        return { errors: "empty name" };
       }
       const existingPlayers = await getAllPlayers({ userId });
       if (
         existingPlayers.some((p) => p.name.toLowerCase() === name.toLowerCase())
       ) {
-        return json({ errors: "player name already exists" });
+        return { errors: "player name already exists" };
       }
       await addPlayer({ userId, name });
 
-      return json({ errors: "" });
+      return { errors: "" };
     }
 
     case "add-game-type": {
       const name = (formData.get("gameTypeName") as string)?.trim();
       if (!name) {
-        return json({ errors: "empty game type name" });
+        return { errors: "empty game type name" };
       }
       const existingGameTypes = await getAllGameTypes({ userId });
       if (
@@ -84,11 +84,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
           (gt) => gt.name.toLowerCase() === name.toLowerCase()
         )
       ) {
-        return json({ errors: "game type name already exists" });
+        return { errors: "game type name already exists" };
       }
       await addGameType({ userId, name });
 
-      return json({ errors: "" });
+      return { errors: "" };
     }
 
     default: {

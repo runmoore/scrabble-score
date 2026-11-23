@@ -34,7 +34,7 @@ vi.mock("~/models/game.server", () => {
   };
 });
 describe("loader function for completed game", () => {
-  let loaderResponse: any;
+  let data: any;
 
   beforeEach(async () => {
     vi.mocked(getGame).mockResolvedValueOnce({
@@ -49,24 +49,14 @@ describe("loader function for completed game", () => {
       scores: [],
     } satisfies EnhancedGame);
 
-    loaderResponse = await loader({
+    data = await loader({
       request: new Request("https://url"),
       params: { gameId: "1" },
       context: {},
     });
   });
 
-  test("returns a response", () => {
-    expect(loaderResponse).toBeInstanceOf(Response);
-  });
-
-  test("returns a 200 response", () => {
-    expect(loaderResponse.status).toEqual(200);
-  });
-
   test("returns the returned game", async () => {
-    const data = await loaderResponse.json();
-
     expect(data.game).toMatchObject({
       id: "1",
       completed: true,
@@ -80,8 +70,6 @@ describe("loader function for completed game", () => {
   });
 
   test("returns the 1 winner", async () => {
-    const data = await loaderResponse.json();
-
     expect(data.winners.length).toEqual(1);
     expect(data.winners).toMatchObject([
       { id: "1", name: "alice", totalScore: 5, place: 1 },
@@ -89,8 +77,6 @@ describe("loader function for completed game", () => {
   });
 
   test("returns the top score", async () => {
-    const data = await loaderResponse.json();
-
     expect(data.topScore).toEqual(5);
   });
 
@@ -101,11 +87,11 @@ describe("loader function for completed game", () => {
 
 describe("loader function for in-progress game", () => {
   test("redirects to the play screen for the next player", async () => {
-    const response = await loader({
+    const response = (await loader({
       request: new Request("https://url"),
       params: { gameId: "1" },
       context: {},
-    });
+    })) as Response;
 
     expect(response.status).toEqual(302);
     expect(response.headers.get("Location")).toEqual("/games/1/play/1");

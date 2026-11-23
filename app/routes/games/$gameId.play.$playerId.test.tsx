@@ -27,25 +27,14 @@ vi.mock("~/models/game.server", () => {
 });
 
 describe("play loader function", () => {
-  let loaderResponse: any;
   let data: any;
 
   beforeEach(async () => {
-    loaderResponse = await loader({
+    data = await loader({
       request: new Request("https://url"),
       params: { gameId: "123", playerId: "987" },
       context: {},
     });
-
-    data = await loaderResponse.json();
-  });
-
-  test("returns a response", () => {
-    expect(loaderResponse).toBeInstanceOf(Response);
-  });
-
-  test("returns a 200 response", () => {
-    expect(loaderResponse.status).toEqual(200);
   });
 
   test("returns the game Id", async () => {

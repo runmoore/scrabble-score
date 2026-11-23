@@ -16,7 +16,7 @@ import {
 import invariant from "tiny-invariant";
 
 import type { EnhancedGame } from "~/game-utils";
-import { json } from "@remix-run/node";
+
 import { getNextPlayerToPlay } from "~/game-utils";
 import { requireUserId } from "~/session.server";
 import { useEffect, useState } from "react";
@@ -46,7 +46,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     gameTypes = await getAllGameTypes({ userId });
   }
 
-  return json({ game, playerId: params.playerId, topScore, gameTypes });
+  return { game, playerId: params.playerId, topScore, gameTypes };
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -88,7 +88,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     if (gameTypeId) {
       await setGameType({ id: gameId, userId, gameTypeId });
     }
-    return json({});
+    return {};
   }
 };
 

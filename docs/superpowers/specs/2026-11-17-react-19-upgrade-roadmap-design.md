@@ -1,7 +1,7 @@
 # React 19 Upgrade Roadmap
 
 Date: 2026-11-17
-Status: Approved design. PRs 1 to 5 merged. PR 6 (Single Fetch) in progress; PR 6b (remove json()) is next.
+Status: Approved design. PRs 1 to 6 merged. PR 6b (remove json(), native Dates) in progress; PR 7 (Vite plugin) is next.
 Last re-ordered 2026-11-17 (see "Ordering change").
 
 ## Progress tracker
@@ -17,8 +17,8 @@ this first to see where things stand.
 | 3b  | ESLint config on plugin presets       | Merged      | `chore/eslint-presets`     | #92     | `dd3c1f4`     | Fly release check pending user                                                       |
 | 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged      | `deps/vite-vitest`         | #93     | `e53149f`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
 | 5   | Low-risk Remix future flags           | Merged      | `chore/remix-future-flags` | #94     | `b5294f5`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 6   | `v3_singleFetch` (flag only)          | In progress | `chore/single-fetch`       |         |               |                                                                                      |
-| 6b  | Remove `json()`, native `Date`s       | Not started |                            |         |               |                                                                                      |
+| 6   | `v3_singleFetch` (flag only)          | Merged      | `chore/single-fetch`       | #95     | `3d00d64`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 6b  | Remove `json()`, native `Date`s       | In progress | `chore/remove-json`        |         |               |                                                                                      |
 | 7   | Classic compiler -> Remix Vite plugin | Not started |                            |         |               |                                                                                      |
 | 8   | Remix 2 -> React Router 7             | Not started |                            |         |               |                                                                                      |
 | 9   | React 18 -> 19                        | Not started |                            |         |               |                                                                                      |
@@ -197,8 +197,8 @@ Never log in to production. The user does their own testing there.
    workaround was removed with no test changes.
 2. **Single fetch (PR 6, 6b).** Action redirects answer 202 (confirmed; the Cypress
    assertion was widened in PR 6). Type inference changes via the `Future`
-   augmentation (done in PR 6). PR 6b still needs a small shared "read loader
-   result" test helper so 46 call sites do not each reinvent it.
+   augmentation (done in PR 6). PR 6b needed no shared test helper (see the
+   PR 6b section).
 3. **ESM switch (PR 7).** `mocks/index.js`, `remix.config.js` and other
    `require` users must become `.cjs` or be ported. `binode --require ./mocks`
    must keep working with `remix vite:dev`, and later `react-router dev`.
@@ -373,26 +373,44 @@ lookup and the `games` list on every navigation; no `shouldRevalidate` or
 `clientLoader` exists), and a 4xx/5xx action response no longer revalidates (forms
 show errors from `actionData`).
 
-## PR 6b: remove `json()` and use native `Date`s (scope)
+## PR 6b: remove `json()` and use native `Date`s
 
 `json()` and `defer()` are deprecated in Remix 2 ("deprecated in favor of opting
 into Single Fetch") and removed in React Router 7.0.0 (`Response.json` is the
 suggested fallback; `data()` replaces `json()` when a status or headers are
-needed). Date workarounds to remove, found by grep:
+needed).
 
-- `app/game-utils.ts:55-56`: `Omit<Score, "scoredAt">[]` with the comment that the
-  Date "is not serializable and messes up TS checks". Drop the `Omit`.
-- `new Date(x.createdAt)` wrappers: `games.tsx` (2 sites) and `games/index.tsx`
-  (3 sites).
-- `games/players.$playerId.tsx:82,102`: `new Date(...).toISOString()` into
-  `highestScoreGameDate: string` with an empty-string sentinel. Keep a `Date`,
-  and use `Date | null`.
-- `SerializeFrom<typeof loader>["games"]` in `games.tsx` stays valid and will
-  start inferring `Date`.
+Commit 1, loaders and actions: 27 `json()` calls (the earlier estimate of 24
+missed three written as `json<ActionData>(...)` in `login.tsx`). 21 became plain
+returns; 6 carry `{ status: 400 }` (`login` x3, `join` x2, `new` x1) and became
+`data(..., { status: 400 })`. `redirect()` and the thrown 404 `Response`s are
+unchanged. The source typechecked immediately; only tests needed work. The 46
+`.json()` reads needed no helper: loaders that return plain values are read
+directly (`const data = await loader(...)`); redirect assertions are the original
+`expect(response.status).toEqual(302)` lines with the result typed as `Response`;
+and the 400 error actions assert the whole result with Remix's own `data()`, for
+example `expect(response).toEqual(data({ errors: "..." }, { status: 400 }))`,
+which checks payload and status together (a probe confirmed it fails on a wrong
+status, a wrong payload, or a plain object). An earlier version of this PR added
+a `test/loader-result.ts` helper (`dataOf`, `statusOf`, `responseOf`). It was
+removed: about two thirds of its calls were identity functions on plain loaders,
+and it duck-typed Remix's internal `DataWithResponseInit` shape, which was
+brittle (its first version broke on that). Four tests were removed (2 in each of
+`$gameid.test.tsx` and `$gameId.play.$playerId.test.tsx`): they only asserted
+"returns a Response" and "status is 200", which describe the old transport; the
+tests beside them check the content. Test count 159 -> 155.
 
-Do not remove the `new Date(...)` wrappers before the loaders stop returning
-`json()`: until then the values are still strings at runtime. TypeScript will
-point at any site missed.
+Commit 2, Dates: dropped the 5 `new Date(x.createdAt)` wrappers (`games.tsx` x2,
+`games/index.tsx` x3); the player page keeps a `Date | null` for the highest-score
+date instead of an ISO string with an empty-string sentinel; and
+`getNextPlayerToPlay` takes `Pick<Score, "playerId">[]` instead of
+`Omit<Score, "scoredAt">[]`, because it only reads `playerId`. A type probe
+(deleted afterwards) confirmed `createdAt` now infers exactly `Date` from both
+loaders. `format()` accepts strings as well, so a green typecheck alone would not
+have shown this.
+
+Verification: typecheck, lint, build, 155 unit tests, Cypress 38/38 with no 4xx or
+5xx in the server log.
 
 ## Out of scope
 

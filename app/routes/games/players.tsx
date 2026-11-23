@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from "@remix-run/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+
 import { getAllPlayersWithGameCount } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 import { Card } from "~/components/Card";
@@ -8,7 +8,7 @@ import { Card } from "~/components/Card";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
   const players = await getAllPlayersWithGameCount({ userId });
-  return json({ players });
+  return { players };
 };
 
 export default function PlayersIndex() {

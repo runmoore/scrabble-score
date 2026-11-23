@@ -106,8 +106,7 @@ describe("players.$playerId loader", () => {
   });
 
   test("returns empty stats when no games exist", async () => {
-    const response = await callLoader("p1");
-    const data = await response.json();
+    const data = await callLoader("p1");
 
     expect(data.player.name).toBe("Alice");
     expect(data.gamesPlayed).toBe(0);
@@ -144,8 +143,7 @@ describe("players.$playerId loader", () => {
       }),
     ]);
 
-    const response = await callLoader("p1");
-    const data = await response.json();
+    const data = await callLoader("p1");
 
     expect(data.gamesPlayed).toBe(3);
     expect(data.wins).toBe(1);
@@ -174,8 +172,7 @@ describe("players.$playerId loader", () => {
       }),
     ]);
 
-    const response = await callLoader("p1");
-    const data = await response.json();
+    const data = await callLoader("p1");
 
     expect(data.perTypeStats).toHaveLength(2);
     const scrabble = data.perTypeStats.find(
@@ -211,8 +208,7 @@ describe("players.$playerId loader", () => {
       }),
     ]);
 
-    const response = await callLoader("p1", { type: "gt-scrabble" });
-    const data = await response.json();
+    const data = await callLoader("p1", { type: "gt-scrabble" });
 
     expect(data.gamesPlayed).toBe(1);
     expect(data.averageScore).toBe(300);
@@ -242,8 +238,7 @@ describe("players.$playerId loader", () => {
       }),
     ]);
 
-    const response = await callLoader("p1");
-    const data = await response.json();
+    const data = await callLoader("p1");
 
     expect(data.gamesPlayed).toBe(1); // only completed
     expect(data.history).toHaveLength(2); // both games
@@ -272,8 +267,7 @@ describe("players.$playerId loader", () => {
       }),
     ]);
 
-    const response = await callLoader("p1");
-    const data = await response.json();
+    const data = await callLoader("p1");
 
     // Both count in overall stats
     expect(data.gamesPlayed).toBe(2);
@@ -294,8 +288,7 @@ describe("players.$playerId loader", () => {
       }),
     ]);
 
-    const response = await callLoader("p1");
-    const data = await response.json();
+    const data = await callLoader("p1");
 
     expect(data.availableGameTypes).toEqual([
       gameTypeScrabble,
