@@ -6,7 +6,6 @@ import type {
 
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -16,7 +15,7 @@ import { useEffect, useState } from "react";
 
 import BackButton from "~/components/BackButton";
 import { getUser } from "./session.server";
-import stylesheet from "~/tailwind.css";
+import stylesheet from "~/tailwind.css?url";
 
 export const links: LinksFunction = () => {
   return [
@@ -63,7 +62,6 @@ export default function App() {
         <BackButton />
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
       </body>
     </html>
   );

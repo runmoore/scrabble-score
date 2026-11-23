@@ -1,7 +1,7 @@
 # React 19 Upgrade Roadmap
 
 Date: 2026-11-17
-Status: Approved design. PRs 1 to 6 merged. PR 6b (remove json(), native Dates) in progress; PR 7 (Vite plugin) is next.
+Status: Approved design. PRs 1 to 6b merged. PR 7 (classic compiler -> Remix Vite plugin) is implemented on `chore/remix-vite` and awaiting review; `v3_routeConfig` is deferred to PR 7b.
 Last re-ordered 2026-11-17 (see "Ordering change").
 
 ## Progress tracker
@@ -9,20 +9,21 @@ Last re-ordered 2026-11-17 (see "Ordering change").
 Update this table when each PR is opened and merged. A new session should read
 this first to see where things stand.
 
-| #   | PR                                    | Status      | Branch                     | PR link | Merged commit | Deploy verified                                                                      |
-| --- | ------------------------------------- | ----------- | -------------------------- | ------- | ------------- | ------------------------------------------------------------------------------------ |
-| 1   | happy-dom 2.55 -> 21                  | Merged      | `deps/happy-dom-21`        | #86     | `fb09398`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 2   | Remix 2.12 -> 2.17.5                  | Merged      | `deps/remix-2.17`          | #87     | `4f9a596`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 3   | ESLint 8 -> 9 flat config             | Merged      | `deps/eslint-9`            | #88     | `0e26e25`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 3b  | ESLint config on plugin presets       | Merged      | `chore/eslint-presets`     | #92     | `dd3c1f4`     | Fly release check pending user                                                       |
-| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged      | `deps/vite-vitest`         | #93     | `e53149f`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 5   | Low-risk Remix future flags           | Merged      | `chore/remix-future-flags` | #94     | `b5294f5`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 6   | `v3_singleFetch` (flag only)          | Merged      | `chore/single-fetch`       | #95     | `3d00d64`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 6b  | Remove `json()`, native `Date`s       | In progress | `chore/remove-json`        |         |               |                                                                                      |
-| 7   | Classic compiler -> Remix Vite plugin | Not started |                            |         |               |                                                                                      |
-| 8   | Remix 2 -> React Router 7             | Not started |                            |         |               |                                                                                      |
-| 9   | React 18 -> 19                        | Not started |                            |         |               |                                                                                      |
-| 10  | Flat routes (follow-up)               | Not started |                            |         |               |                                                                                      |
+| #   | PR                                    | Status                 | Branch                     | PR link | Merged commit | Deploy verified                                                                      |
+| --- | ------------------------------------- | ---------------------- | -------------------------- | ------- | ------------- | ------------------------------------------------------------------------------------ |
+| 1   | happy-dom 2.55 -> 21                  | Merged                 | `deps/happy-dom-21`        | #86     | `fb09398`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 2   | Remix 2.12 -> 2.17.5                  | Merged                 | `deps/remix-2.17`          | #87     | `4f9a596`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 3   | ESLint 8 -> 9 flat config             | Merged                 | `deps/eslint-9`            | #88     | `0e26e25`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 3b  | ESLint config on plugin presets       | Merged                 | `chore/eslint-presets`     | #92     | `dd3c1f4`     | Fly release check pending user                                                       |
+| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged                 | `deps/vite-vitest`         | #93     | `e53149f`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 5   | Low-risk Remix future flags           | Merged                 | `chore/remix-future-flags` | #94     | `b5294f5`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 6   | `v3_singleFetch` (flag only)          | Merged                 | `chore/single-fetch`       | #95     | `3d00d64`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 6b  | Remove `json()`, native `Date`s       | Merged                 | `chore/remove-json`        | #96     | `2dd90e0`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
+| 7   | Classic compiler -> Remix Vite plugin | Implemented, in review | `chore/remix-vite`         |         |               |                                                                                      |
+| 7b  | `v3_routeConfig` and `app/routes.ts`  | Not started            |                            |         |               |                                                                                      |
+| 8   | Remix 2 -> React Router 7             | Not started            |                            |         |               |                                                                                      |
+| 9   | React 18 -> 19                        | Not started            |                            |         |               |                                                                                      |
+| 10  | Flat routes (follow-up)               | Not started            |                            |         |               |                                                                                      |
 
 ## Ordering change
 
@@ -34,6 +35,23 @@ it. Remix 2.17.5 accepts Vite `^5.1.0 || ^6.0.0`, so the Remix bump has to land
 first. The original check had only looked at 2.17.5's peers, not the version
 actually installed. Lesson: check peer ranges of the **currently installed**
 versions, not only the targets.
+
+## Handoff (read this first in a new session)
+
+- **State:** `main` has PRs 1 to 6b. PR 7 (Remix Vite plugin) is on `chore/remix-vite`,
+  awaiting push and review. Remix is 2.17.5 with every `v3_*` flag on except
+  `v3_routeConfig` (PR 7b); Vite 6.4.6, Vitest 5, ESLint 9 (flat config on presets).
+- **Next:** push `chore/remix-vite` (it also carries the unpushed handoff and
+  `CLAUDE.md` commits) and open PR 7, then watch the first Fly deploy. After that,
+  PR 7b (`v3_routeConfig`) and PR 8.
+- **Pending on the user:** confirm the Fly release for PRs 3, 3b, 4, 5, 6 and 6b with
+  `flyctl status -a scrabble-score-e630` and `flyctl releases -a scrabble-score-e630`
+  (the agent cannot run `flyctl`).
+- **Test data in the dev database:** user `future-flags-check@example.com`, players
+  Alice and Bob, game type Boggle and two completed games.
+- **How we work:** see "Working agreements" below (the user runs installs and pushes;
+  check `grep -c artifactory package-lock.json` is 0 before committing a lockfile;
+  PR descriptions lead with why and say what was not tested).
 
 ## Why
 
@@ -411,6 +429,82 @@ have shown this.
 
 Verification: typecheck, lint, build, 155 unit tests, Cypress 38/38 with no 4xx or
 5xx in the server log.
+
+## PR 7: classic compiler -> Remix Vite plugin
+
+Why: React Router 7 builds with Vite, so the app has to be on Vite before the swap
+(PR 8). This PR changes how the app is built and served, nothing else. Vite 6.4.6,
+`@remix-run/dev` 2.17.5 (which ships the plugin), `vite-tsconfig-paths`, `tailwindcss`,
+`postcss` and `autoprefixer` are already installed, so **no installs are expected**.
+
+Changes:
+
+1. **`vite.config.ts`** (new): the `remix` plugin with the five `future` flags moved
+   from `remix.config.js`, `routes()` using `createRoutesFromFolders` (the plugin
+   accepts the same `routes` function, so the v1 folder layout stays), `tsconfigPaths()`,
+   and `server.port: 3000` (Vite defaults to 5173; Cypress `test:e2e:dev` expects 3000).
+   `vitest.config.mts` stays separate, and Vitest prefers it.
+2. **ESM:** the Vite server build is ESM, so `package.json` gets `"type": "module"`.
+   CommonJS files must change: `tailwind.config.js` -> `.cjs`, `mocks/index.js` ->
+   `.cjs` (`binode --require ./mocks/index.cjs`), and `remix.config.js` is deleted.
+   The ESLint config already allows `require()` in `**/*.cjs`.
+3. **CSS:** add `postcss.config.js` (`tailwindcss`, `autoprefixer`); the classic
+   compiler did this implicitly. `root.tsx` imports `~/tailwind.css?url`.
+4. **`root.tsx`:** remove `<LiveReload />` (Vite has HMR).
+5. **Scripts:** `build` = `remix vite:build`; `dev` = `... remix vite:dev`; `start` and
+   `start:mocks` serve `./build/server/index.js` (output moves to `build/server` and
+   `build/client`). The Dockerfile copies `build/` and `public/`, so it should not need
+   changes, but the first deploy must be watched.
+6. **TypeScript:** align `tsconfig.json` with Remix's Vite template (`module: ESNext`,
+   `moduleResolution: Bundler`, `types` gain `vite/client`), replacing
+   `remix.env.d.ts`. Typecheck is the safety net; the Cypress tsconfig already uses
+   `Bundler`. Cypress's user scripts run through `tsx` (`cy.exec`), which handles both
+   module systems.
+7. **Docs:** update `CLAUDE.md` (commands, build output, dev port, CSS pipeline).
+
+Decision (made by the user): **`v3_routeConfig` and `app/routes.ts` are deferred** to a small PR 7b. It needs two new packages (`@remix-run/route-config` and the routes
+adapter), and the plugin's `routes()` already supports the v1 layout, so combining
+them makes a failure harder to attribute.
+
+Risks to check, in order: (a) the plugin rejects `.server` modules imported into
+client code (the build will say where); (b) `recharts` under Vite SSR (ESM/CJS
+interop on the school league table page); (c) MSW `--require` still runs in the dev
+process under `vite:dev`; (d) Tailwind output parity, so compare the built CSS and
+take before/after screenshots at 375, 768 and 1920px (the spec's visual check) using a
+`main` worktree; (e) `/manifest.json`, `/anagram-manifest.json`, icons and other
+`public/` assets are still served from `build/client`; (f) `npm run test:e2e:dev`
+(port 3000) and `test:e2e:run` (build + `start:mocks` on 8811) both work; (g) the
+first Fly deploy, which Dockerfile and start path changes make the likeliest place for
+a surprise.
+
+### PR 7 result
+
+Implemented as designed with no installs. Notes beyond the design:
+
+- The `remix` plugin takes `ignoredRouteFiles`, `future` and `routes()` exactly as
+  `remix.config.js` did, so the v1 layout and all five flags carried over unchanged.
+  `remix.config.js` and `remix.env.d.ts` are deleted; `tsconfig.json` gets
+  `module: ESNext`, `moduleResolution: Bundler` and `types: [@remix-run/node, vite/client, vitest/globals]`.
+- Output is `build/client` (served assets plus a copy of `public/`) and `build/server/index.js`.
+  Every bare import in the server bundle is a production dependency, so the Dockerfile's
+  `npm prune --omit=dev` stage still works. Docker was not available to run the image build.
+- CSS parity: the same 436 rules plus one. The only differences are vendor prefixes added by
+  autoprefixer (`-webkit-user-select`, `-webkit-text-decoration-line`, `-moz-tab-size` and
+  similar) and `:nth-child(even)` minified to `:nth-child(2n)`.
+- Visual check: before (`main` built by the classic compiler) and after screenshots of login,
+  games, new game, play, summary, players, a player, compare, a matchup, school league table,
+  anagram and cryptogram at 375, 768 and 1920px (1280px wide in Cypress's Electron). A pixel
+  diff shows 16 of 36 pairs differ, all only in the same 23x16px box: the minutes of the game
+  timestamp in the sidebar (two runs two minutes apart). No screenshots committed.
+- `npm run validate` passes (155 Vitest, lint, typecheck, Cypress 38/38). `smoke` and
+  `negative-score` also pass against `npm run dev` on port 3000. `/healthcheck`, both manifests,
+  icons and `/school-league-table` (recharts under SSR) return 200 from the built server.
+- MSW: the "Mock server running" line prints in the process that hosts the Vite dev server and
+  the SSR modules, so the preload applies there. No handlers are registered, so this is
+  a check that it loads, not that it intercepts.
+- `prettier-plugin-tailwindcss` 0.2 is unaffected by the `.cjs` rename (same 7 pre-existing
+  files flagged before and after).
+- The old `public/build` directory is a stale artifact of the classic compiler (gitignored).
 
 ## Out of scope
 
