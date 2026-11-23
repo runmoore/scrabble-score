@@ -1,4 +1,3 @@
-import { json } from "@remix-run/node";
 import { useLoaderData, useSearchParams } from "@remix-run/react";
 
 import { SchoolLeagueChart } from "~/components/SchoolLeagueChart";
@@ -15,7 +14,7 @@ import type { TableState } from "~/utils/school-league-table";
 const BENCHMARK_IDS = new Set([0, 1]);
 
 export const loader = async () => {
-  return json({ rows: getSchoolLeagueTableData() });
+  return { rows: getSchoolLeagueTableData() };
 };
 
 type Column = { key: string; label: string };
@@ -200,7 +199,10 @@ export default function SchoolLeagueTable() {
         <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
           Compare favourites
         </h2>
-        <SchoolLeagueChart favouritedRows={favouritedRows} yearKeys={yearKeys} />
+        <SchoolLeagueChart
+          favouritedRows={favouritedRows}
+          yearKeys={yearKeys}
+        />
       </section>
     </div>
   );

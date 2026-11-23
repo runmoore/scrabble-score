@@ -5,7 +5,7 @@ import {
   useSearchParams,
 } from "@remix-run/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+
 import { format } from "date-fns";
 import invariant from "tiny-invariant";
 import { Card } from "~/components/Card";
@@ -201,10 +201,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const stats = computeStats(allGames, params.playerId, selectedTypeId);
 
-  return json({
+  return {
     player,
     ...stats,
-  });
+  };
 };
 
 export default function PlayerDetail() {

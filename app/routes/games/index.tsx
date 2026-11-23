@@ -1,5 +1,5 @@
 import { Link, useLoaderData, useRouteLoaderData } from "@remix-run/react";
-import { json } from "@remix-run/node";
+
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { formatDistanceToNow, format } from "date-fns";
 import { getNextPlayerToPlay } from "~/game-utils";
@@ -21,7 +21,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     getTopGameTypes({ userId, limit: 3 }),
     getTopPlayers({ userId, limit: 3 }),
   ]);
-  return json({ lastCompletedGame, topGameTypes, topPlayers });
+  return { lastCompletedGame, topGameTypes, topPlayers };
 };
 
 export default function Games() {

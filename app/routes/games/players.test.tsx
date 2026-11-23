@@ -1,4 +1,5 @@
 import { loader } from "./players";
+import { dataOf } from "../../../test/loader-result";
 
 vi.mock("~/session.server", () => ({
   requireUserId: vi.fn().mockResolvedValue("user-1"),
@@ -25,7 +26,7 @@ describe("players loader", () => {
       context: {},
     });
 
-    const data = await response.json();
+    const data = dataOf(response);
 
     expect(getAllPlayersWithGameCount).toHaveBeenCalledWith({
       userId: "user-1",
@@ -46,7 +47,7 @@ describe("players loader", () => {
       context: {},
     });
 
-    const data = await response.json();
+    const data = dataOf(response);
     expect(data.players).toEqual([]);
   });
 });

@@ -1,6 +1,6 @@
 import { Form, Link, useLoaderData, Outlet, NavLink } from "@remix-run/react";
 import { useUser } from "~/utils";
-import { json } from "@remix-run/server-runtime";
+
 import { requireUserId } from "~/session.server";
 import { getAllGames } from "~/models/game.server";
 import { format } from "date-fns";
@@ -12,7 +12,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const userId = await requireUserId(request);
   const games = await getAllGames({ userId });
 
-  return json({ games });
+  return { games };
 }
 
 export default function GamesPage() {

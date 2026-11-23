@@ -5,7 +5,7 @@ import {
   useLoaderData,
   useRouteError,
 } from "@remix-run/react";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { useState, useRef } from "react";
 import invariant from "tiny-invariant";
 
@@ -89,7 +89,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     gameTypes = await getAllGameTypes({ userId });
   }
 
-  return json({ game: { ...game, players }, winners, topScore, gameTypes });
+  return { game: { ...game, players }, winners, topScore, gameTypes };
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -128,7 +128,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     if (gameTypeId) {
       await setGameType({ id: gameId, userId, gameTypeId });
     }
-    return json({});
+    return {};
   }
 
   if (formData.get("action") === "delete") {

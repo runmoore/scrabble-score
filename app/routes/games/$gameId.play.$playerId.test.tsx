@@ -1,4 +1,5 @@
 import { loader } from "./$gameId.play.$playerId";
+import { dataOf } from "../../../test/loader-result";
 
 vi.mock("~/session.server", () => {
   return {
@@ -37,15 +38,7 @@ describe("play loader function", () => {
       context: {},
     });
 
-    data = await loaderResponse.json();
-  });
-
-  test("returns a response", () => {
-    expect(loaderResponse).toBeInstanceOf(Response);
-  });
-
-  test("returns a 200 response", () => {
-    expect(loaderResponse.status).toEqual(200);
+    data = dataOf(loaderResponse);
   });
 
   test("returns the game Id", async () => {

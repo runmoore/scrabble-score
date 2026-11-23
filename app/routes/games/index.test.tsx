@@ -1,4 +1,5 @@
 import { loader } from "./index";
+import { dataOf } from "../../../test/loader-result";
 
 vi.mock("~/session.server", () => ({
   requireUserId: vi.fn().mockResolvedValue("user-1"),
@@ -41,7 +42,7 @@ describe("games index loader", () => {
     mockGetTopPlayers.mockResolvedValueOnce(topPlayers);
 
     const response = await callLoader();
-    const data = await response.json();
+    const data = dataOf(response);
 
     expect(data.topGameTypes).toEqual(topGameTypes);
     expect(data.topPlayers).toEqual(topPlayers);
@@ -65,7 +66,7 @@ describe("games index loader", () => {
 
   test("returns empty arrays when no stats data exists", async () => {
     const response = await callLoader();
-    const data = await response.json();
+    const data = dataOf(response);
 
     expect(data.topGameTypes).toEqual([]);
     expect(data.topPlayers).toEqual([]);

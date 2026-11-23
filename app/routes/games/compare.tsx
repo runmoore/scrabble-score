@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { useState, type ChangeEventHandler } from "react";
 
@@ -80,7 +80,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       inProgressCount,
     }));
 
-  return json({ players, matchups });
+  return { players, matchups };
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {

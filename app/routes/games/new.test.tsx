@@ -8,6 +8,7 @@ import {
   addPlayer,
   addGameType,
 } from "~/models/game.server";
+import { dataOf, responseOf, statusOf } from "../../../test/loader-result";
 
 vi.mock("~/session.server", () => {
   return {
@@ -38,7 +39,7 @@ describe("new lodaer function", () => {
       context: {},
     });
 
-    data = await loaderResponse.json();
+    data = dataOf(loaderResponse);
   });
 
   test("makes a request for all players for that user", () => {
@@ -89,8 +90,10 @@ describe("start new game function", () => {
   });
 
   test("redirects to the play page after", () => {
-    expect(actionResponse.status).toEqual(302);
-    expect(actionResponse.headers.get("Location")).toEqual("/games/736/play/1");
+    expect(responseOf(actionResponse).status).toEqual(302);
+    expect(responseOf(actionResponse).headers.get("Location")).toEqual(
+      "/games/736/play/1"
+    );
   });
 });
 
@@ -115,8 +118,8 @@ describe("start-new-game validation", () => {
       context: {},
     });
 
-    expect(response.status).toEqual(400);
-    const data = await response.json();
+    expect(statusOf(response)).toEqual(400);
+    const data = dataOf(response);
     expect(data.errors).toBe("You must select at least 2 players to play");
     expect(createGame).not.toHaveBeenCalled();
   });
@@ -131,8 +134,8 @@ describe("start-new-game validation", () => {
       context: {},
     });
 
-    expect(response.status).toEqual(400);
-    const data = await response.json();
+    expect(statusOf(response)).toEqual(400);
+    const data = dataOf(response);
     expect(data.errors).toBe("You must select at least 2 players to play");
   });
 });
@@ -148,7 +151,7 @@ describe("add-player action", () => {
       params: {},
       context: {},
     });
-    const data = await response.json();
+    const data = dataOf(response);
     expect(data.errors).toBe("empty name");
     expect(addPlayer).not.toHaveBeenCalled();
   });
@@ -159,7 +162,7 @@ describe("add-player action", () => {
       params: {},
       context: {},
     });
-    const data = await response.json();
+    const data = dataOf(response);
     expect(data.errors).toBe("empty name");
     expect(addPlayer).not.toHaveBeenCalled();
   });
@@ -179,7 +182,7 @@ describe("add-player action", () => {
       params: {},
       context: {},
     });
-    const data = await response.json();
+    const data = dataOf(response);
     expect(data.errors).toBe("player name already exists");
     expect(addPlayer).not.toHaveBeenCalled();
   });
@@ -190,7 +193,7 @@ describe("add-player action", () => {
       params: {},
       context: {},
     });
-    const data = await response.json();
+    const data = dataOf(response);
     expect(data.errors).toBe("player name already exists");
     expect(addPlayer).not.toHaveBeenCalled();
   });
@@ -201,7 +204,7 @@ describe("add-player action", () => {
       params: {},
       context: {},
     });
-    const data = await response.json();
+    const data = dataOf(response);
     expect(data.errors).toBe("");
   });
 });
@@ -217,7 +220,7 @@ describe("add-game-type action", () => {
       params: {},
       context: {},
     });
-    const data = await response.json();
+    const data = dataOf(response);
     expect(data.errors).toBe("empty game type name");
     expect(addGameType).not.toHaveBeenCalled();
   });
@@ -228,7 +231,7 @@ describe("add-game-type action", () => {
       params: {},
       context: {},
     });
-    const data = await response.json();
+    const data = dataOf(response);
     expect(data.errors).toBe("empty game type name");
     expect(addGameType).not.toHaveBeenCalled();
   });
@@ -254,7 +257,7 @@ describe("add-game-type action", () => {
       params: {},
       context: {},
     });
-    const data = await response.json();
+    const data = dataOf(response);
     expect(data.errors).toBe("game type name already exists");
     expect(addGameType).not.toHaveBeenCalled();
   });
@@ -268,7 +271,7 @@ describe("add-game-type action", () => {
       params: {},
       context: {},
     });
-    const data = await response.json();
+    const data = dataOf(response);
     expect(data.errors).toBe("game type name already exists");
     expect(addGameType).not.toHaveBeenCalled();
   });
@@ -279,7 +282,7 @@ describe("add-game-type action", () => {
       params: {},
       context: {},
     });
-    const data = await response.json();
+    const data = dataOf(response);
     expect(data.errors).toBe("");
   });
 });
