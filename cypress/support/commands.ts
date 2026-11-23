@@ -322,7 +322,10 @@ function submitScore(score: string) {
   cy.intercept("POST", "**/play/**").as("submitScore");
   cy.findByRole("button", { name: /submit score/i }).click();
   cy.wait("@submitScore").then((interception) => {
-    expect(interception.response?.statusCode).to.be.oneOf([200, 204]);
+    // Single Fetch answers an action that redirects (as this one does, to the
+    // next player's turn) with 202, not a 30x. 200/204 cover non-redirecting
+    // responses.
+    expect(interception.response?.statusCode).to.be.oneOf([200, 202, 204]);
   });
 
   // The score input remounts for the next player, which can happen after

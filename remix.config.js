@@ -14,6 +14,7 @@ module.exports = {
     v3_relativeSplatPath: true,
     v3_throwAbortReason: true,
     v3_lazyRouteDiscovery: true,
+    v3_singleFetch: true,
   },
   routes(defineRoutes) {
     // uses the v1 convention, works in v1.15+ and v2
