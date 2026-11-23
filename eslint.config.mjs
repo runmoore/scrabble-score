@@ -128,15 +128,10 @@ export default defineConfig([
     rules: { "react/display-name": "off" },
   },
 
-  // CommonJS config files cannot use `import`. Revisit when the repo moves to
-  // ESM (React 19 upgrade roadmap, step 7).
+  // CommonJS files (`.cjs`) cannot use `import`. The repo is ESM
+  // (`"type": "module"`); only the MSW preload and the Tailwind config stay CJS.
   {
-    files: [
-      "mocks/**/*.js",
-      "remix.config.js",
-      "tailwind.config.js",
-      "**/*.cjs",
-    ],
+    files: ["**/*.cjs"],
     rules: { "@typescript-eslint/no-require-imports": "off" },
   },
 

@@ -13,8 +13,8 @@ This is a Scrabble score tracking application built with the Remix Indie Stack. 
 ### Development
 
 ```bash
-npm run dev              # Start development server with MSW mocks
-npm run build            # Build production bundle
+npm run dev              # Start the Vite dev server (port 3000) with MSW mocks
+npm run build            # Build production bundle (build/client and build/server)
 npm start                # Run production server
 npm run start:mocks      # Run production server with MSW mocks
 ```
@@ -150,7 +150,7 @@ The `EnhancedGame` type augments Prisma's Game model with:
 
 ### Routes & User Flow
 
-**File-based routing** (Remix v1 convention via `@remix-run/v1-route-convention`):
+**File-based routing** (Remix v1 convention via `@remix-run/v1-route-convention`, wired up in `vite.config.ts`):
 
 - **app/routes/games/new.tsx**: Create game by selecting existing players or adding new ones
 - **app/routes/games/$gameId.tsx**: Game summary showing final scores and winner
@@ -243,7 +243,7 @@ The `EnhancedGame` type augments Prisma's Game model with:
 
 **Why This Matters**: Our score input uses `<input type="number">` with React `onChange` handlers. The DOM and React state don't update instantly - there's an asynchronous delay. Tests that don't wait for actual state changes will see stale values and fail intermittently, especially in CI environments that may be slower than local development machines.
 
-**MSW (Mock Service Worker)**: API mocking for development and testing. Configured in `mocks/` directory.
+**MSW (Mock Service Worker)**: API mocking for development and testing. Configured in `mocks/` directory. It is a CommonJS file (`mocks/index.cjs`) preloaded with `binode --require`, because the repo is ESM (`"type": "module"`).
 
 ### CI/CD
 
@@ -256,7 +256,7 @@ The `EnhancedGame` type augments Prisma's Game model with:
 
 ### Styling
 
-- **Tailwind CSS** for all styling
+- **Tailwind CSS** for all styling. The app is built by Vite with the Remix plugin (`vite.config.ts`); Tailwind and autoprefixer run through `postcss.config.js`, and `tailwind.config.cjs` stays CommonJS. `root.tsx` imports the stylesheet as `~/tailwind.css?url`
 - **Avoid inline `style` attributes**: Use Tailwind utility classes instead of inline styles wherever possible. Only use inline styles when absolutely necessary (e.g., dynamic values that can't be predetermined)
 - Custom colors: `blue-primary`, `green-primary/secondary`, `purple-primary/secondary`, `red-primary/secondary`
 - Mobile-first responsive design (primary target: iPhone)
