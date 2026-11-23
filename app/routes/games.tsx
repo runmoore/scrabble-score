@@ -121,10 +121,10 @@ function GamesMenu({
                 {game.completed ? "🏆" : "🎯"}{" "}
                 {game.gameType
                   ? `${game.gameType.name} - ${format(
-                      new Date(game.createdAt),
+                      game.createdAt,
                       "PPP HH:mm"
                     )}`
-                  : format(new Date(game.createdAt), "PPP HH:mm")}
+                  : format(game.createdAt, "PPP HH:mm")}
               </NavLink>
             </li>
           ))}

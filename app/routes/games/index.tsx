@@ -52,11 +52,10 @@ export default function Games() {
           }));
 
           const title = game.gameType
-            ? `${game.gameType.name} · ${formatDistanceToNow(
-                new Date(game.createdAt),
-                { addSuffix: true }
-              )}`
-            : formatDistanceToNow(new Date(game.createdAt), {
+            ? `${game.gameType.name} · ${formatDistanceToNow(game.createdAt, {
+                addSuffix: true,
+              })}`
+            : formatDistanceToNow(game.createdAt, {
                 addSuffix: true,
               });
 
@@ -166,7 +165,7 @@ export default function Games() {
             to={`/games/${lastCompletedGame.id}`}
           >
             <p className="mb-3 text-sm text-gray-600 dark:text-gray-400">
-              {format(new Date(lastCompletedGame.createdAt), "do MMM yyyy")}
+              {format(lastCompletedGame.createdAt, "do MMM yyyy")}
             </p>
             <Leaderboard players={lastCompletedGame.players} />
           </Card>
