@@ -179,6 +179,8 @@ The `EnhancedGame` type augments Prisma's Game model with:
 - app/models/game.server.test.ts
 - app/routes/games/\*.test.tsx
 
+**Writing tests:** assert behaviour inline, and keep each test readable at a glance. Do not assert transport details (such as "returns a Response" or "status is 200"); assert the data or outcome that matters. Avoid helpers that wrap or unwrap results or depend on framework internals, since they hide what is being checked. Share a helper only when the same non-trivial setup repeats across several files.
+
 **Cypress** (e2e tests): Located in `cypress/e2e/`:
 
 - **cypress/support/commands.ts**: Custom commands for game workflows:
@@ -273,6 +275,7 @@ The `EnhancedGame` type augments Prisma's Game model with:
 5. **iOS considerations**: Uses `inputMode="numeric"` with +/- buttons instead of negative number input (iOS doesn't show minus key on number pad)
 6. **Authorization**: All database queries include userId filtering to ensure users can only access their own data
 7. **PWA-first design**: All features should be optimized for mobile use and work when installed as a PWA on iPhone home screen
+8. **Keep framework usage minimal**: return plain values from loaders and actions, use framework wrappers only when needed (a status, headers, a redirect), and avoid deprecated ones
 
 ## Active Technologies
 
