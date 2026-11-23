@@ -1,7 +1,7 @@
 # React 19 Upgrade Roadmap
 
 Date: 2026-11-17
-Status: Approved design. PRs 1 to 6b merged. PR 7 (classic compiler -> Remix Vite plugin) is implemented on `chore/remix-vite` and awaiting review; `v3_routeConfig` is deferred to PR 7b.
+Status: Approved design. PRs 1 to 7 merged (PR 7 moved the build to the Remix Vite plugin); `v3_routeConfig` is deferred to PR 7b.
 Last re-ordered 2026-11-17 (see "Ordering change").
 
 ## Progress tracker
@@ -9,21 +9,21 @@ Last re-ordered 2026-11-17 (see "Ordering change").
 Update this table when each PR is opened and merged. A new session should read
 this first to see where things stand.
 
-| #   | PR                                    | Status                 | Branch                     | PR link | Merged commit | Deploy verified                                                                      |
-| --- | ------------------------------------- | ---------------------- | -------------------------- | ------- | ------------- | ------------------------------------------------------------------------------------ |
-| 1   | happy-dom 2.55 -> 21                  | Merged                 | `deps/happy-dom-21`        | #86     | `fb09398`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 2   | Remix 2.12 -> 2.17.5                  | Merged                 | `deps/remix-2.17`          | #87     | `4f9a596`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 3   | ESLint 8 -> 9 flat config             | Merged                 | `deps/eslint-9`            | #88     | `0e26e25`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 3b  | ESLint config on plugin presets       | Merged                 | `chore/eslint-presets`     | #92     | `dd3c1f4`     | Fly release check pending user                                                       |
-| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged                 | `deps/vite-vitest`         | #93     | `e53149f`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 5   | Low-risk Remix future flags           | Merged                 | `chore/remix-future-flags` | #94     | `b5294f5`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 6   | `v3_singleFetch` (flag only)          | Merged                 | `chore/single-fetch`       | #95     | `3d00d64`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 6b  | Remove `json()`, native `Date`s       | Merged                 | `chore/remove-json`        | #96     | `2dd90e0`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user |
-| 7   | Classic compiler -> Remix Vite plugin | Implemented, in review | `chore/remix-vite`         |         |               |                                                                                      |
-| 7b  | `v3_routeConfig` and `app/routes.ts`  | Not started            |                            |         |               |                                                                                      |
-| 8   | Remix 2 -> React Router 7             | Not started            |                            |         |               |                                                                                      |
-| 9   | React 18 -> 19                        | Not started            |                            |         |               |                                                                                      |
-| 10  | Flat routes (follow-up)               | Not started            |                            |         |               |                                                                                      |
+| #   | PR                                    | Status      | Branch                     | PR link | Merged commit | Deploy verified                                                                                              |
+| --- | ------------------------------------- | ----------- | -------------------------- | ------- | ------------- | ------------------------------------------------------------------------------------------------------------ |
+| 1   | happy-dom 2.55 -> 21                  | Merged      | `deps/happy-dom-21`        | #86     | `fb09398`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user                         |
+| 2   | Remix 2.12 -> 2.17.5                  | Merged      | `deps/remix-2.17`          | #87     | `4f9a596`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user                         |
+| 3   | ESLint 8 -> 9 flat config             | Merged      | `deps/eslint-9`            | #88     | `0e26e25`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user                         |
+| 3b  | ESLint config on plugin presets       | Merged      | `chore/eslint-presets`     | #92     | `dd3c1f4`     | Fly release check pending user                                                                               |
+| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged      | `deps/vite-vitest`         | #93     | `e53149f`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user                         |
+| 5   | Low-risk Remix future flags           | Merged      | `chore/remix-future-flags` | #94     | `b5294f5`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user                         |
+| 6   | `v3_singleFetch` (flag only)          | Merged      | `chore/single-fetch`       | #95     | `3d00d64`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user                         |
+| 6b  | Remove `json()`, native `Date`s       | Merged      | `chore/remove-json`        | #96     | `2dd90e0`     | Actions run (incl. Deploy) green, `/healthcheck` 200. Fly release check pending user                         |
+| 7   | Classic compiler -> Remix Vite plugin | Merged      | `chore/remix-vite`         | #97     | `c03bdec`     | Actions run (incl. Deploy) green, `/healthcheck` 200, new `/assets/` CSS 200. Fly release check pending user |
+| 7b  | `v3_routeConfig` and `app/routes.ts`  | Not started |                            |         |               |                                                                                                              |
+| 8   | Remix 2 -> React Router 7             | Not started |                            |         |               |                                                                                                              |
+| 9   | React 18 -> 19                        | Not started |                            |         |               |                                                                                                              |
+| 10  | Flat routes (follow-up)               | Not started |                            |         |               |                                                                                                              |
 
 ## Ordering change
 
@@ -38,13 +38,10 @@ versions, not only the targets.
 
 ## Handoff (read this first in a new session)
 
-- **State:** `main` has PRs 1 to 6b. PR 7 (Remix Vite plugin) is on `chore/remix-vite`,
-  awaiting push and review. Remix is 2.17.5 with every `v3_*` flag on except
+- **State:** `main` has PRs 1 to 7. The app builds with the Remix Vite plugin. Remix is 2.17.5 with every `v3_*` flag on except
   `v3_routeConfig` (PR 7b); Vite 6.4.6, Vitest 5, ESLint 9 (flat config on presets).
-- **Next:** push `chore/remix-vite` (it also carries the unpushed handoff and
-  `CLAUDE.md` commits) and open PR 7, then watch the first Fly deploy. After that,
-  PR 7b (`v3_routeConfig`) and PR 8.
-- **Pending on the user:** confirm the Fly release for PRs 3, 3b, 4, 5, 6 and 6b with
+- **Next:** PR 7b (`v3_routeConfig`), then PR 8.
+- **Pending on the user:** confirm the Fly release for PRs 3, 3b, 4, 5, 6, 6b and 7 with
   `flyctl status -a scrabble-score-e630` and `flyctl releases -a scrabble-score-e630`
   (the agent cannot run `flyctl`).
 - **Test data in the dev database:** user `future-flags-check@example.com`, players
