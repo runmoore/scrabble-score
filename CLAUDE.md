@@ -150,7 +150,7 @@ The `EnhancedGame` type augments Prisma's Game model with:
 
 ### Routes & User Flow
 
-**File-based routing** (Remix v1 convention via `@remix-run/v1-route-convention`, wired up in `vite.config.ts`):
+**File-based routing** (Remix v1 convention via `@remix-run/v1-route-convention`, wired up in `app/routes.ts` through `remixRoutesOptionAdapter`, with the `v3_routeConfig` flag in `vite.config.ts`):
 
 - **app/routes/games/new.tsx**: Create game by selecting existing players or adding new ones
 - **app/routes/games/$gameId.tsx**: Game summary showing final scores and winner

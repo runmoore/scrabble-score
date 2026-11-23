@@ -20,7 +20,7 @@ this first to see where things stand.
 | 6   | `v3_singleFetch` (flag only)          | Merged      | `chore/single-fetch`       | #95     | `3d00d64`     |
 | 6b  | Remove `json()`, native `Date`s       | Merged      | `chore/remove-json`        | #96     | `2dd90e0`     |
 | 7   | Classic compiler -> Remix Vite plugin | Merged      | `chore/remix-vite`         | #97     | `c03bdec`     |
-| 7b  | `v3_routeConfig` and `app/routes.ts`  | Not started |                            |         |               |
+| 7b  | `v3_routeConfig` and `app/routes.ts`  | In review   | `chore/route-config`       |         |               |
 | 8   | Remix 2 -> React Router 7             | Not started |                            |         |               |
 | 9   | React 18 -> 19                        | Not started |                            |         |               |
 | 10  | Flat routes (follow-up)               | Not started |                            |         |               |
@@ -39,7 +39,7 @@ versions, not only the targets.
 ## Handoff (read this first in a new session)
 
 - **State:** `main` has PRs 1 to 7. The app builds with the Remix Vite plugin. Remix is 2.17.5 with every `v3_*` flag on except
-  `v3_routeConfig` (PR 7b); Vite 6.4.6, Vitest 5, ESLint 9 (flat config on presets).
+  `v3_routeConfig` (PR 7b, in review); Vite 6.4.6, Vitest 5, ESLint 9 (flat config on presets).
 - **Next:** PR 7b (`v3_routeConfig`), then PR 8.
 - **Test data in the dev database:** user `future-flags-check@example.com`, players
   Alice and Bob, game type Boggle and two completed games.
@@ -481,6 +481,26 @@ Implemented as designed with no installs. Notes beyond the design:
 - `prettier-plugin-tailwindcss` 0.2 is unaffected by the `.cjs` rename (same 7 pre-existing
   files flagged before and after).
 - The old `public/build` directory is a stale artifact of the classic compiler (gitignored).
+
+## PR 7b: `v3_routeConfig` and `app/routes.ts`
+
+Why: React Router 7 reads routes from `app/routes.ts`, so the app has to be on it before
+the swap (PR 8). Kept out of PR 7 so a build failure and a routing failure could not be
+confused.
+
+Changes: `app/routes.ts` wraps the same `createRoutesFromFolders` call in
+`remixRoutesOptionAdapter`; `vite.config.ts` sets `v3_routeConfig: true` and drops
+`routes()` and `ignoredRouteFiles` (the plugin errors if `routes` is set next to
+`routes.ts`; `ignoredRouteFiles` only fed the flat-routes scan that the flag turns off).
+New dev dependencies, pinned exactly with the other Remix packages:
+`@remix-run/route-config` and `@remix-run/routes-option-adapter` 2.17.5. They are
+build-time only, so the production image does not need them.
+
+Verification: the built server's route table is identical to the one on `main` (19 routes,
+same ids, parents and paths). Built CSS has the same hash, so there is nothing to compare
+visually and no screenshots were taken. In `npm run dev`, adding and deleting a route file
+is picked up without a restart. `npm run validate` passes (155 Vitest, lint, typecheck,
+Cypress 38/38).
 
 ## Out of scope
 
