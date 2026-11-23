@@ -197,8 +197,8 @@ Never log in to production. The user does their own testing there.
    workaround was removed with no test changes.
 2. **Single fetch (PR 6, 6b).** Action redirects answer 202 (confirmed; the Cypress
    assertion was widened in PR 6). Type inference changes via the `Future`
-   augmentation (done in PR 6). PR 6b added the shared test helper
-   (`test/loader-result.ts`) that the 46 call sites use.
+   augmentation (done in PR 6). PR 6b needed no shared test helper (see the
+   PR 6b section).
 3. **ESM switch (PR 7).** `mocks/index.js`, `remix.config.js` and other
    `require` users must become `.cjs` or be ported. `binode --require ./mocks`
    must keep working with `remix vite:dev`, and later `react-router dev`.
@@ -384,10 +384,18 @@ Commit 1, loaders and actions: 27 `json()` calls (the earlier estimate of 24
 missed three written as `json<ActionData>(...)` in `login.tsx`). 21 became plain
 returns; 6 carry `{ status: 400 }` (`login` x3, `join` x2, `new` x1) and became
 `data(..., { status: 400 })`. `redirect()` and the thrown 404 `Response`s are
-unchanged. The source typechecked immediately; only tests needed work. A shared
-helper, `test/loader-result.ts`, gives `dataOf` (unwraps `data()` or passes plain
-values through), `statusOf`, and `responseOf` (for redirect assertions). All 46
-`.json()` reads use it. Four tests were removed (2 in each of
+unchanged. The source typechecked immediately; only tests needed work. The 46
+`.json()` reads needed no helper: loaders that return plain values are read
+directly (`const data = await loader(...)`); redirect assertions are the original
+`expect(response.status).toEqual(302)` lines with the result typed as `Response`;
+and the 400 error actions assert the whole result with Remix's own `data()`, for
+example `expect(response).toEqual(data({ errors: "..." }, { status: 400 }))`,
+which checks payload and status together (a probe confirmed it fails on a wrong
+status, a wrong payload, or a plain object). An earlier version of this PR added
+a `test/loader-result.ts` helper (`dataOf`, `statusOf`, `responseOf`). It was
+removed: about two thirds of its calls were identity functions on plain loaders,
+and it duck-typed Remix's internal `DataWithResponseInit` shape, which was
+brittle (its first version broke on that). Four tests were removed (2 in each of
 `$gameid.test.tsx` and `$gameId.play.$playerId.test.tsx`): they only asserted
 "returns a Response" and "status is 200", which describe the old transport; the
 tests beside them check the content. Test count 159 -> 155.

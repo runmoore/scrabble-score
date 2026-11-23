@@ -1,5 +1,4 @@
 import { loader } from "./players";
-import { dataOf } from "../../../test/loader-result";
 
 vi.mock("~/session.server", () => ({
   requireUserId: vi.fn().mockResolvedValue("user-1"),
@@ -20,13 +19,11 @@ describe("players loader", () => {
   test("returns all players sorted by game count", async () => {
     const { getAllPlayersWithGameCount } = await import("~/models/game.server");
 
-    const response = await loader({
+    const data = await loader({
       request: new Request("http://localhost/games/players"),
       params: {},
       context: {},
     });
-
-    const data = dataOf(response);
 
     expect(getAllPlayersWithGameCount).toHaveBeenCalledWith({
       userId: "user-1",
@@ -41,13 +38,11 @@ describe("players loader", () => {
     const { getAllPlayersWithGameCount } = await import("~/models/game.server");
     vi.mocked(getAllPlayersWithGameCount).mockResolvedValueOnce([]);
 
-    const response = await loader({
+    const data = await loader({
       request: new Request("http://localhost/games/players"),
       params: {},
       context: {},
     });
-
-    const data = dataOf(response);
     expect(data.players).toEqual([]);
   });
 });

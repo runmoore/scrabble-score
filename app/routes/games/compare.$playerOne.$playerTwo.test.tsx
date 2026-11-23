@@ -1,6 +1,5 @@
 import { loader } from "./compare.$playerOne.$playerTwo";
 import { getAllGames } from "~/models/game.server";
-import { dataOf } from "../../../test/loader-result";
 
 vi.mock("~/session.server", () => {
   return {
@@ -81,17 +80,15 @@ const callLoader = (url: string) =>
 describe("compare loader", () => {
   describe("filtering by game type", () => {
     test("no type params returns all games", async () => {
-      const response = await callLoader("http://localhost/games/compare/p1/p2");
-      const data = dataOf(response);
+      const data = await callLoader("http://localhost/games/compare/p1/p2");
 
       expect(data.relevantGames).toHaveLength(4);
     });
 
     test("single type param filters to matching games", async () => {
-      const response = await callLoader(
+      const data = await callLoader(
         "http://localhost/games/compare/p1/p2?type=type-a"
       );
-      const data = dataOf(response);
 
       expect(data.relevantGames).toHaveLength(2);
       expect(
@@ -100,10 +97,9 @@ describe("compare loader", () => {
     });
 
     test("untyped games are excluded when type filter is active", async () => {
-      const response = await callLoader(
+      const data = await callLoader(
         "http://localhost/games/compare/p1/p2?type=type-a"
       );
-      const data = dataOf(response);
 
       expect(data.relevantGames.some((g: any) => g.gameType === null)).toBe(
         false
@@ -112,10 +108,9 @@ describe("compare loader", () => {
 
     test("stats are computed from filtered games only", async () => {
       // type-a games: g1 (Alice 100, Bob 80) and g3 (Alice 120, Bob 95) — Alice wins both
-      const response = await callLoader(
+      const data = await callLoader(
         "http://localhost/games/compare/p1/p2?type=type-a"
       );
-      const data = dataOf(response);
 
       expect(data.record.playerOne.won).toBe(2);
       expect(data.record.playerTwo.won).toBe(0);
@@ -125,8 +120,7 @@ describe("compare loader", () => {
 
   describe("availableGameTypes", () => {
     test("returns distinct game types from unfiltered games sorted alphabetically", async () => {
-      const response = await callLoader("http://localhost/games/compare/p1/p2");
-      const data = dataOf(response);
+      const data = await callLoader("http://localhost/games/compare/p1/p2");
 
       expect(data.availableGameTypes).toEqual([
         { id: "type-a", name: "Standard" },
@@ -135,10 +129,9 @@ describe("compare loader", () => {
     });
 
     test("available types are unaffected by active filter", async () => {
-      const response = await callLoader(
+      const data = await callLoader(
         "http://localhost/games/compare/p1/p2?type=type-a"
       );
-      const data = dataOf(response);
 
       expect(data.availableGameTypes).toHaveLength(2);
     });
@@ -146,8 +139,7 @@ describe("compare loader", () => {
 
   describe("draw counts", () => {
     test("returns 0 draws when no games are drawn", async () => {
-      const response = await callLoader("http://localhost/games/compare/p1/p2");
-      const data = dataOf(response);
+      const data = await callLoader("http://localhost/games/compare/p1/p2");
 
       expect(data.record.draws).toBe(0);
       expect(data.record.drawsLastFive).toBe(0);
@@ -195,8 +187,7 @@ describe("compare loader", () => {
         },
       ] as any);
 
-      const response = await callLoader("http://localhost/games/compare/p1/p2");
-      const data = dataOf(response);
+      const data = await callLoader("http://localhost/games/compare/p1/p2");
 
       expect(data.record.draws).toBe(2);
       expect(data.record.drawsLastFive).toBe(2);
@@ -237,8 +228,7 @@ describe("compare loader", () => {
         },
       ] as any);
 
-      const response = await callLoader("http://localhost/games/compare/p1/p2");
-      const data = dataOf(response);
+      const data = await callLoader("http://localhost/games/compare/p1/p2");
 
       // g2 is in-progress — Bob's 200 and his "win" must not count
       expect(data.record.playerOne.won).toBe(1);
@@ -277,8 +267,7 @@ describe("compare loader", () => {
         },
       ] as any);
 
-      const response = await callLoader("http://localhost/games/compare/p1/p2");
-      const data = dataOf(response);
+      const data = await callLoader("http://localhost/games/compare/p1/p2");
 
       expect(data.relevantGames).toHaveLength(2);
       expect(data.relevantGames.some((g: any) => !g.completed)).toBe(true);

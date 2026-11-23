@@ -1,5 +1,4 @@
 import { loader } from "./$gameId.play.$playerId";
-import { dataOf } from "../../../test/loader-result";
 
 vi.mock("~/session.server", () => {
   return {
@@ -28,17 +27,14 @@ vi.mock("~/models/game.server", () => {
 });
 
 describe("play loader function", () => {
-  let loaderResponse: any;
   let data: any;
 
   beforeEach(async () => {
-    loaderResponse = await loader({
+    data = await loader({
       request: new Request("https://url"),
       params: { gameId: "123", playerId: "987" },
       context: {},
     });
-
-    data = dataOf(loaderResponse);
   });
 
   test("returns the game Id", async () => {
