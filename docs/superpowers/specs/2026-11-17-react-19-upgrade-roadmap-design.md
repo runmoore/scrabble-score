@@ -1,7 +1,7 @@
 # React 19 Upgrade Roadmap
 
 Date: 2026-11-17
-Status: Approved design. PRs 1 to 7b merged. PR 8 (React Router 7.11.0) is merged. PR 9 (React 19) is implemented on `chore/react-19` and awaiting review.
+Status: Approved design. PRs 1 to 9 merged (the app is on React 19). The React Router 7.11.0 -> 7.18.6 follow-up (9b) is in review; flat routes (PR 10) is optional and not started.
 Last re-ordered 2026-11-17 (see "Ordering change").
 
 ## Progress tracker
@@ -22,7 +22,8 @@ this first to see where things stand.
 | 7   | Classic compiler -> Remix Vite plugin | Merged      | `chore/remix-vite`         | #97     | `c03bdec`     |
 | 7b  | `v3_routeConfig` and `app/routes.ts`  | Merged      | `chore/route-config`       | #98     | `53c99a9`     |
 | 8   | Remix 2 -> React Router 7             | Merged      | `chore/react-router-7`     | #99     | `d6b2a77`     |
-| 9   | React 18 -> 19                        | In review   | `chore/react-19`           |         |               |
+| 9   | React 18 -> 19                        | Merged      | `chore/react-19`           | #100    | `6dcba48`     |
+| 9b  | React Router 7.11.0 -> 7.18.6         | In review   | `deps/react-router-7.18`   |         |               |
 | 10  | Flat routes (optional follow-up)      | Not started |                            |         |               |
 
 ## Ordering change
@@ -38,9 +39,10 @@ versions, not only the targets.
 
 ## Handoff (read this first in a new session)
 
-- **State:** `main` has PRs 1 to 8 (React Router 7.11.0 on the Vite plugin, React 18; Vite 6.4.6,
-  Vitest 5, ESLint 9). PR 9 (React 19) is on `chore/react-19`, awaiting push and review.
-- **Next:** the 7.11.0 -> 7.18.6 follow-up, then the optional flat-routes PR. The user runs the installs.
+- **State:** `main` has PRs 1 to 9 (React 19.3.1 and React Router 7.11.0 on the Vite plugin; Vite 6.4.6,
+  Vitest 5, ESLint 9). PR 9b (React Router 7.18.6) is on `deps/react-router-7.18`, awaiting push and review.
+- **Next:** merge 9b, then the optional flat-routes PR (10). If form posts fail on Fly after 9b, add
+  `allowedActionOrigins` to `react-router.config.ts` (see "PR 9b").
 - **Test data in the dev database:** user `future-flags-check@example.com`, players
   Alice and Bob, game type Boggle and two completed games.
 - **How we work:** see "Working agreements" below (the user runs installs and pushes;
@@ -173,6 +175,11 @@ the riskiest and each deserve a fuller design before work begins.
   `github_destination_not_sanctioned`). The user pushes, including any
   `--force-with-lease` after a rebase. `gh pr create` and `gh run` work.
 - **The agent cannot run `rm`.** Use `unlink`.
+- **`react-router`, `@react-router/node`, `@react-router/serve` and `@react-router/express` pin
+  each other to the exact same version**, and `@react-router/dev` needs the matching `react-router`
+  already installed. Moving them one at a time, or editing `package.json` and running a plain
+  `npm install`, fails with ERESOLVE. What worked: `npm uninstall` all four, then install the three
+  runtime packages with `--save-exact`, then `@react-router/dev` with `--save-dev --save-exact`.
 - **Vitest and `@vitest/coverage-v8` pin each other to an exact version**
   (5.1.1 needs 5.1.1). Installing both in one command fails with ERESOLVE while
   the old coverage package is still in the tree. Upgrade in three steps:
@@ -630,6 +637,42 @@ Known issues, deliberately not worked around:
   reloaded. It is a dev-only Vite behaviour that also made the hydration-flaky Cypress runs in PR 8;
   it was not compared against React 18 here.
 - `react-dom` 19 and `react` must stay in step; both use `^19.3.1`.
+
+## PR 9b: React Router 7.11.0 -> 7.18.6
+
+Why: 7.11.0 was the starting point chosen for the migration, and 7.12 to 7.18 carry security
+fixes (action origin checks, redirect and URL validation, turbo-stream hardening). Peers fit
+(Vite 6.4.6, TypeScript 5.6, React 19, Node 24). The lockfile moves only the five framework
+packages and `@remix-run/node-fetch-server` (a transitive dependency of `@react-router/dev`).
+
+Code changes, all in tests: 7.15.0 stabilised `unstable_pattern` as `pattern`, and 7.18.6's
+`LoaderFunctionArgs` and `ActionFunctionArgs` require a `url: URL`. The 28 hand-built argument
+objects in 8 route test files got the rename and an inline `url: new URL(...)` matching their
+request (no helper, by decision). An earlier note in this spec said no code changes were
+expected; that was wrong, because the changelog rename was missed.
+
+Verification: typecheck, lint, prettier, 156 Vitest tests and Cypress 38/38 pass, with no 4xx or
+5xx in the server log. The build prints five React Router v8 future-flag warnings (middleware,
+route module splitting, Vite Environment API, request handling, data request URLs); none are
+adopted here. No visual comparison was done (a patch-level framework bump).
+
+**Known risk, shipped on purpose.** Since 7.12, React Router rejects a form POST whose `Origin`
+does not match the request URL's origin (scheme, host and port). `react-router-serve` builds the
+request URL from Express's `req.protocol`, which stays `http` because it does not trust the
+proxy. Fly ends TLS and forwards HTTP to port 8080, while browsers send
+`Origin: https://scrabble-score-e630.fly.dev`, so the origins differ in scheme. Local POSTs to
+`/login` with matching `fly.dev` host and origin and `X-Forwarded-Proto: https` returned 400
+"Bad Request"; the same request with an `http://` origin, and same-origin `localhost` requests,
+reached the app; a foreign origin was blocked. This is inferred from the code and a local
+simulation, not observed on Fly. The user chose to merge without the fix to confirm the problem
+in production. **If login or any form post fails on Fly, add this to `react-router.config.ts`:**
+
+```ts
+allowedActionOrigins: ["scrabble-score-e630.fly.dev"],
+```
+
+(matched on the host alone, so the scheme mismatch is covered; foreign origins stay blocked).
+Rolling back is one revert of the 9b merge commit.
 
 ## Out of scope
 
