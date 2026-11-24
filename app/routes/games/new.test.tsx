@@ -34,9 +34,10 @@ describe("new lodaer function", () => {
   beforeEach(async () => {
     loaderData = await loader({
       request: new Request("https://url"),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
   });
 
@@ -74,9 +75,10 @@ describe("start new game function", () => {
         method: "POST",
         body,
       }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
   });
 
@@ -111,9 +113,10 @@ describe("start-new-game validation", () => {
 
     const response = await action({
       request: new Request("https://url", { method: "POST", body }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
 
     expect(response).toEqual(
@@ -131,9 +134,10 @@ describe("start-new-game validation", () => {
 
     const response = await action({
       request: new Request("https://url", { method: "POST", body }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
 
     expect(response).toEqual(
@@ -153,9 +157,10 @@ describe("add-player action", () => {
   test("returns error for empty name", async () => {
     const result = await action({
       request: makeRequest({ action: "add-player", name: "" }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "empty name" });
     expect(addPlayer).not.toHaveBeenCalled();
@@ -164,9 +169,10 @@ describe("add-player action", () => {
   test("returns error for whitespace-only name", async () => {
     const result = await action({
       request: makeRequest({ action: "add-player", name: "   " }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "empty name" });
     expect(addPlayer).not.toHaveBeenCalled();
@@ -175,9 +181,10 @@ describe("add-player action", () => {
   test("trims whitespace from valid name", async () => {
     await action({
       request: makeRequest({ action: "add-player", name: "  Alice  " }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
     expect(addPlayer).toHaveBeenCalledWith({ userId: 123, name: "Alice" });
   });
@@ -185,9 +192,10 @@ describe("add-player action", () => {
   test("returns error for duplicate name", async () => {
     const result = await action({
       request: makeRequest({ action: "add-player", name: "Eric" }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "player name already exists" });
     expect(addPlayer).not.toHaveBeenCalled();
@@ -196,9 +204,10 @@ describe("add-player action", () => {
   test("returns error for duplicate name with different casing", async () => {
     const result = await action({
       request: makeRequest({ action: "add-player", name: "eric" }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "player name already exists" });
     expect(addPlayer).not.toHaveBeenCalled();
@@ -207,9 +216,10 @@ describe("add-player action", () => {
   test("returns empty errors on success", async () => {
     const result = await action({
       request: makeRequest({ action: "add-player", name: "Bob" }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "" });
   });
@@ -223,9 +233,10 @@ describe("add-game-type action", () => {
   test("returns error for empty name", async () => {
     const result = await action({
       request: makeRequest({ action: "add-game-type", gameTypeName: "" }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "empty game type name" });
     expect(addGameType).not.toHaveBeenCalled();
@@ -234,9 +245,10 @@ describe("add-game-type action", () => {
   test("returns error for whitespace-only name", async () => {
     const result = await action({
       request: makeRequest({ action: "add-game-type", gameTypeName: "   " }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "empty game type name" });
     expect(addGameType).not.toHaveBeenCalled();
@@ -248,9 +260,10 @@ describe("add-game-type action", () => {
         action: "add-game-type",
         gameTypeName: "  Words  ",
       }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
     expect(addGameType).toHaveBeenCalledWith({ userId: 123, name: "Words" });
   });
@@ -261,9 +274,10 @@ describe("add-game-type action", () => {
         action: "add-game-type",
         gameTypeName: "Scrabble",
       }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "game type name already exists" });
     expect(addGameType).not.toHaveBeenCalled();
@@ -275,9 +289,10 @@ describe("add-game-type action", () => {
         action: "add-game-type",
         gameTypeName: "scrabble",
       }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "game type name already exists" });
     expect(addGameType).not.toHaveBeenCalled();
@@ -286,9 +301,10 @@ describe("add-game-type action", () => {
   test("returns empty errors on success", async () => {
     const result = await action({
       request: makeRequest({ action: "add-game-type", gameTypeName: "Words" }),
+      url: new URL("https://url"),
       params: {},
       context: {},
-      unstable_pattern: "/games/new",
+      pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "" });
   });

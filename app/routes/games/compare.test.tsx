@@ -22,9 +22,10 @@ vi.mock("~/models/game.server", () => ({
 const callLoader = () =>
   loader({
     request: new Request("http://localhost/games/compare"),
+    url: new URL("http://localhost/games/compare"),
     params: {},
     context: {},
-    unstable_pattern: "/games/compare",
+    pattern: "/games/compare",
   });
 
 function makeGame(

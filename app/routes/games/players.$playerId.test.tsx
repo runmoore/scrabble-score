@@ -60,9 +60,10 @@ const callLoader = (
   }
   return loader({
     request: new Request(url.toString()),
+    url,
     params: { playerId },
     context: {},
-    unstable_pattern: "/games/players/:playerId",
+    pattern: "/games/players/:playerId",
   });
 };
 

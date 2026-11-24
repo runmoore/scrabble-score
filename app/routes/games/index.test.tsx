@@ -18,9 +18,10 @@ vi.mock("~/models/game.server", () => ({
 const callLoader = () =>
   loader({
     request: new Request("http://localhost/games"),
+    url: new URL("http://localhost/games"),
     params: {},
     context: {},
-    unstable_pattern: "/games",
+    pattern: "/games",
   });
 
 describe("games index loader", () => {

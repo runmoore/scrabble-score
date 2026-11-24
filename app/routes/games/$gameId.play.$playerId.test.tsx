@@ -32,9 +32,10 @@ describe("play loader function", () => {
   beforeEach(async () => {
     data = await loader({
       request: new Request("https://url"),
+      url: new URL("https://url"),
       params: { gameId: "123", playerId: "987" },
       context: {},
-      unstable_pattern: "/games/:gameId/play/:playerId",
+      pattern: "/games/:gameId/play/:playerId",
     });
   });
 

@@ -73,9 +73,10 @@ vi.mock("~/models/game.server", () => {
 const callLoader = (url: string) =>
   loader({
     request: new Request(url),
+    url: new URL(url),
     params: { playerOne: "p1", playerTwo: "p2" },
     context: {},
-    unstable_pattern: "/games/compare/:playerOne/:playerTwo",
+    pattern: "/games/compare/:playerOne/:playerTwo",
   });
 
 describe("compare loader", () => {
