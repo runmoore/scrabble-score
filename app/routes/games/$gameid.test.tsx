@@ -51,9 +51,10 @@ describe("loader function for completed game", () => {
 
     data = await loader({
       request: new Request("https://url"),
+      url: new URL("https://url"),
       params: { gameId: "1" },
       context: {},
-      unstable_pattern: "/games/:gameId",
+      pattern: "/games/:gameId",
     });
   });
 
@@ -90,9 +91,10 @@ describe("loader function for in-progress game", () => {
   test("redirects to the play screen for the next player", async () => {
     const response = (await loader({
       request: new Request("https://url"),
+      url: new URL("https://url"),
       params: { gameId: "1" },
       context: {},
-      unstable_pattern: "/games/:gameId",
+      pattern: "/games/:gameId",
     })) as Response;
 
     expect(response.status).toEqual(302);
@@ -112,9 +114,10 @@ describe("action function for reopen game", () => {
         method: "POST",
         body: formData,
       }),
+      url: new URL("https://url"),
       params: { gameId: "123" },
       context: {},
-      unstable_pattern: "/games/:gameId",
+      pattern: "/games/:gameId",
     });
   });
 
@@ -144,9 +147,10 @@ describe("action function for rematch game", () => {
         method: "POST",
         body: formData,
       }),
+      url: new URL("https://url"),
       params: { gameId: "123" },
       context: {},
-      unstable_pattern: "/games/:gameId",
+      pattern: "/games/:gameId",
     });
   });
 
@@ -180,9 +184,10 @@ describe("action function for delete game", () => {
         method: "POST",
         body: formData,
       }),
+      url: new URL("https://url"),
       params: { gameId: "123" },
       context: {},
-      unstable_pattern: "/games/:gameId",
+      pattern: "/games/:gameId",
     });
   });
 

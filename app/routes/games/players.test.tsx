@@ -21,9 +21,10 @@ describe("players loader", () => {
 
     const data = await loader({
       request: new Request("http://localhost/games/players"),
+      url: new URL("http://localhost/games/players"),
       params: {},
       context: {},
-      unstable_pattern: "/games/players",
+      pattern: "/games/players",
     });
 
     expect(getAllPlayersWithGameCount).toHaveBeenCalledWith({
@@ -41,9 +42,10 @@ describe("players loader", () => {
 
     const data = await loader({
       request: new Request("http://localhost/games/players"),
+      url: new URL("http://localhost/games/players"),
       params: {},
       context: {},
-      unstable_pattern: "/games/players",
+      pattern: "/games/players",
     });
     expect(data.players).toEqual([]);
   });
