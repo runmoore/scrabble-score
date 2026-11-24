@@ -62,6 +62,7 @@ const callLoader = (
     request: new Request(url.toString()),
     params: { playerId },
     context: {},
+    unstable_pattern: "/games/players/:playerId",
   });
 };
 

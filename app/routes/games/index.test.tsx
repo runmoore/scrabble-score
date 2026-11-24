@@ -20,6 +20,7 @@ const callLoader = () =>
     request: new Request("http://localhost/games"),
     params: {},
     context: {},
+    unstable_pattern: "/games",
   });
 
 describe("games index loader", () => {

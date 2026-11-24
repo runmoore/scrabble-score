@@ -1,6 +1,6 @@
-import { Link, useLoaderData, useRouteLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useRouteLoaderData } from "react-router";
 
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 import { formatDistanceToNow, format } from "date-fns";
 import { getNextPlayerToPlay } from "~/game-utils";
 import { InProgressBadge } from "~/components/InProgressBadge";

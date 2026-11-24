@@ -24,6 +24,7 @@ const callLoader = () =>
     request: new Request("http://localhost/games/compare"),
     params: {},
     context: {},
+    unstable_pattern: "/games/compare",
   });
 
 function makeGame(

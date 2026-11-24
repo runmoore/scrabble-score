@@ -1,11 +1,12 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { data, redirect } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import {
+  data,
+  redirect,
   Form,
   useActionData,
   useFetcher,
   useLoaderData,
-} from "@remix-run/react";
+} from "react-router";
 
 import {
   addGameType,

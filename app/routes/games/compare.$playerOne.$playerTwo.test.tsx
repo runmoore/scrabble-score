@@ -75,6 +75,7 @@ const callLoader = (url: string) =>
     request: new Request(url),
     params: { playerOne: "p1", playerTwo: "p2" },
     context: {},
+    unstable_pattern: "/games/compare/:playerOne/:playerTwo",
   });
 
 describe("compare loader", () => {

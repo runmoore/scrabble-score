@@ -1,4 +1,4 @@
-import { useLoaderData, useSearchParams } from "@remix-run/react";
+import { useLoaderData, useSearchParams } from "react-router";
 
 import { SchoolLeagueChart } from "~/components/SchoolLeagueChart";
 import { getSchoolLeagueTableData } from "~/models/school-league-table.server";

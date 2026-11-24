@@ -18,3 +18,4 @@ tsconfig.tsbuildinfo
 
 # Compound Engineering
 compound-engineering.local.md
+.react-router/

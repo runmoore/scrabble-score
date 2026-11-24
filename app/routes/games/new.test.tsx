@@ -1,4 +1,4 @@
-import { data } from "@remix-run/node";
+import { data } from "react-router";
 import { loader, action } from "./new";
 import type { LoaderData } from "./new";
 
@@ -36,6 +36,7 @@ describe("new lodaer function", () => {
       request: new Request("https://url"),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
   });
 
@@ -75,6 +76,7 @@ describe("start new game function", () => {
       }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
   });
 
@@ -111,6 +113,7 @@ describe("start-new-game validation", () => {
       request: new Request("https://url", { method: "POST", body }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
 
     expect(response).toEqual(
@@ -130,6 +133,7 @@ describe("start-new-game validation", () => {
       request: new Request("https://url", { method: "POST", body }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
 
     expect(response).toEqual(
@@ -151,6 +155,7 @@ describe("add-player action", () => {
       request: makeRequest({ action: "add-player", name: "" }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "empty name" });
     expect(addPlayer).not.toHaveBeenCalled();
@@ -161,6 +166,7 @@ describe("add-player action", () => {
       request: makeRequest({ action: "add-player", name: "   " }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "empty name" });
     expect(addPlayer).not.toHaveBeenCalled();
@@ -171,6 +177,7 @@ describe("add-player action", () => {
       request: makeRequest({ action: "add-player", name: "  Alice  " }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
     expect(addPlayer).toHaveBeenCalledWith({ userId: 123, name: "Alice" });
   });
@@ -180,6 +187,7 @@ describe("add-player action", () => {
       request: makeRequest({ action: "add-player", name: "Eric" }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "player name already exists" });
     expect(addPlayer).not.toHaveBeenCalled();
@@ -190,6 +198,7 @@ describe("add-player action", () => {
       request: makeRequest({ action: "add-player", name: "eric" }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "player name already exists" });
     expect(addPlayer).not.toHaveBeenCalled();
@@ -200,6 +209,7 @@ describe("add-player action", () => {
       request: makeRequest({ action: "add-player", name: "Bob" }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "" });
   });
@@ -215,6 +225,7 @@ describe("add-game-type action", () => {
       request: makeRequest({ action: "add-game-type", gameTypeName: "" }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "empty game type name" });
     expect(addGameType).not.toHaveBeenCalled();
@@ -225,6 +236,7 @@ describe("add-game-type action", () => {
       request: makeRequest({ action: "add-game-type", gameTypeName: "   " }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "empty game type name" });
     expect(addGameType).not.toHaveBeenCalled();
@@ -238,6 +250,7 @@ describe("add-game-type action", () => {
       }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
     expect(addGameType).toHaveBeenCalledWith({ userId: 123, name: "Words" });
   });
@@ -250,6 +263,7 @@ describe("add-game-type action", () => {
       }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "game type name already exists" });
     expect(addGameType).not.toHaveBeenCalled();
@@ -263,6 +277,7 @@ describe("add-game-type action", () => {
       }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "game type name already exists" });
     expect(addGameType).not.toHaveBeenCalled();
@@ -273,6 +288,7 @@ describe("add-game-type action", () => {
       request: makeRequest({ action: "add-game-type", gameTypeName: "Words" }),
       params: {},
       context: {},
+      unstable_pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "" });
   });

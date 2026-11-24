@@ -53,6 +53,7 @@ describe("loader function for completed game", () => {
       request: new Request("https://url"),
       params: { gameId: "1" },
       context: {},
+      unstable_pattern: "/games/:gameId",
     });
   });
 
@@ -91,6 +92,7 @@ describe("loader function for in-progress game", () => {
       request: new Request("https://url"),
       params: { gameId: "1" },
       context: {},
+      unstable_pattern: "/games/:gameId",
     })) as Response;
 
     expect(response.status).toEqual(302);
@@ -112,6 +114,7 @@ describe("action function for reopen game", () => {
       }),
       params: { gameId: "123" },
       context: {},
+      unstable_pattern: "/games/:gameId",
     });
   });
 
@@ -143,6 +146,7 @@ describe("action function for rematch game", () => {
       }),
       params: { gameId: "123" },
       context: {},
+      unstable_pattern: "/games/:gameId",
     });
   });
 
@@ -178,6 +182,7 @@ describe("action function for delete game", () => {
       }),
       params: { gameId: "123" },
       context: {},
+      unstable_pattern: "/games/:gameId",
     });
   });
 
