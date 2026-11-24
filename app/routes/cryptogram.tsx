@@ -1,5 +1,5 @@
 import { Form, useNavigate, useSearchParams } from "react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactElement } from "react";
 
 // =============================================================================
 // HELPER FUNCTIONS (T008)
@@ -187,8 +187,8 @@ function PuzzleDisplay({
 
   const renderPuzzleText = () => {
     const chars = puzzleText.split("");
-    const elements: JSX.Element[] = [];
-    let currentWord: JSX.Element[] = [];
+    const elements: ReactElement[] = [];
+    let currentWord: ReactElement[] = [];
     let wordKey = 0;
 
     const flushWord = () => {

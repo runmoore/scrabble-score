@@ -1,7 +1,7 @@
 # React 19 Upgrade Roadmap
 
 Date: 2026-11-17
-Status: Approved design. PRs 1 to 7b merged. PR 8 (React Router 7.11.0) is implemented on `chore/react-router-7` and awaiting review.
+Status: Approved design. PRs 1 to 7b merged. PR 8 (React Router 7.11.0) is merged. PR 9 (React 19) is implemented on `chore/react-19` and awaiting review.
 Last re-ordered 2026-11-17 (see "Ordering change").
 
 ## Progress tracker
@@ -38,10 +38,9 @@ versions, not only the targets.
 
 ## Handoff (read this first in a new session)
 
-- **State:** `main` has PRs 1 to 7b (Remix 2.17.5 on the Vite plugin with every `v3_*` flag on;
-  Vite 6.4.6, Vitest 5, ESLint 9). PR 8 (React Router 7.11.0) is on `chore/react-router-7`,
-  awaiting push and review.
-- **Next:** PR 9 (React 18 -> 19), then the 7.11.0 -> 7.18.6 follow-up. The user runs the installs.
+- **State:** `main` has PRs 1 to 8 (React Router 7.11.0 on the Vite plugin, React 18; Vite 6.4.6,
+  Vitest 5, ESLint 9). PR 9 (React 19) is on `chore/react-19`, awaiting push and review.
+- **Next:** the 7.11.0 -> 7.18.6 follow-up, then the optional flat-routes PR. The user runs the installs.
 - **Test data in the dev database:** user `future-flags-check@example.com`, players
   Alice and Bob, game type Boggle and two completed games.
 - **How we work:** see "Working agreements" below (the user runs installs and pushes;
@@ -595,6 +594,42 @@ Implemented as designed, with these details beyond it:
   clicked "+ Add player" and "+ Add game type" before React had hydrated, which the dev server
   is slow enough to drop. They now wait for the `data-hydrated` marker.
 - Not verifiable here: the Docker image build (no Docker daemon).
+
+## PR 9 result: React 18.3.1 -> 19.3.1
+
+`react` and `react-dom` ^19.3.1, `@types/react` and `@types/react-dom` ^19.3.0, and
+`@testing-library/react` ^16.3.3 (16.0.1 peers React 18 only, so the bump was required). The
+only code change is `JSX.Element` -> `ReactElement` in `cryptogram.tsx`, the one thing the new
+types rejected. The installed `react-router` 7.11.0, `recharts` 3.10 and `@vitejs/plugin-react`
+5.2 already accepted React 19. The npm ERESOLVE "overriding peer dependency" warnings printed
+by the first install command are expected: `@testing-library/react@16.0.1` was still in the tree
+(peers `react ^18`) until the second command; the final tree has no invalid peers.
+
+Verification: 156 Vitest tests, lint, typecheck and Cypress 38/38 pass; `smoke`,
+`negative-score`, `assign-game-type` and `school-league-table` also pass against `npm run dev`.
+The server-rendered HTML of `/school-league-table` is the same size before and after, and differs
+only in the order of the head `<link>` elements (React 19 puts the stylesheet link after the
+module preloads). The before/after screenshots at 375, 768 and 1920px of 12 screens differ only in
+the sidebar game timestamp, and the school league table is pixel-identical. In Chrome on the dev
+server (a fresh user), adding players, starting a game, the "select at least 2 players" error
+and submitting a score all worked, and the chart rendered after favouriting a school, with no
+React or hydration errors in the console.
+
+Known issues, deliberately not worked around:
+
+- **`react-is` is 17.0.2.** `recharts` imports `isFragment` from `react-is` (a peer), and the copy
+  in the tree is 17.0.2, hoisted from testing-library's `pretty-format`. A probe confirms that
+  `isFragment(<></>)` is `false` for a React 19 element (its marker is
+  `react.transitional.element`), so a fragment placed directly inside a chart would not be
+  flattened. Our chart uses no fragments and renders correctly. A direct `react-is` dependency
+  matching React would fix it, but nothing imports it, so it would look unused; the decision was
+  to leave it. If a chart ever misbehaves around fragments, this is the first place to look.
+- **Dev-server first visit.** `npm run dev` re-optimises dependencies the first time a page that
+  imports a new one is visited (`date-fns`, `recharts`, ...) and reloads. A page already open
+  during that can error with "more than one copy of React" / `useContext` of null until it is
+  reloaded. It is a dev-only Vite behaviour that also made the hydration-flaky Cypress runs in PR 8;
+  it was not compared against React 18 here.
+- `react-dom` 19 and `react` must stay in step; both use `^19.3.1`.
 
 ## Out of scope
 
