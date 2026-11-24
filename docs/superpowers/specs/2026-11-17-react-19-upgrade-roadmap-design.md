@@ -1,7 +1,7 @@
 # React 19 Upgrade Roadmap
 
 Date: 2026-11-17
-Status: Approved design. PRs 1 to 7 merged (PR 7 moved the build to the Remix Vite plugin); `v3_routeConfig` is deferred to PR 7b.
+Status: Approved design. PRs 1 to 7b merged. PR 8 (React Router 7.11.0) is designed below.
 Last re-ordered 2026-11-17 (see "Ordering change").
 
 ## Progress tracker
@@ -9,21 +9,21 @@ Last re-ordered 2026-11-17 (see "Ordering change").
 Update this table when each PR is opened and merged. A new session should read
 this first to see where things stand.
 
-| #   | PR                                    | Status      | Branch                     | PR link | Merged commit |
-| --- | ------------------------------------- | ----------- | -------------------------- | ------- | ------------- |
-| 1   | happy-dom 2.55 -> 21                  | Merged      | `deps/happy-dom-21`        | #86     | `fb09398`     |
-| 2   | Remix 2.12 -> 2.17.5                  | Merged      | `deps/remix-2.17`          | #87     | `4f9a596`     |
-| 3   | ESLint 8 -> 9 flat config             | Merged      | `deps/eslint-9`            | #88     | `0e26e25`     |
-| 3b  | ESLint config on plugin presets       | Merged      | `chore/eslint-presets`     | #92     | `dd3c1f4`     |
-| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged      | `deps/vite-vitest`         | #93     | `e53149f`     |
-| 5   | Low-risk Remix future flags           | Merged      | `chore/remix-future-flags` | #94     | `b5294f5`     |
-| 6   | `v3_singleFetch` (flag only)          | Merged      | `chore/single-fetch`       | #95     | `3d00d64`     |
-| 6b  | Remove `json()`, native `Date`s       | Merged      | `chore/remove-json`        | #96     | `2dd90e0`     |
-| 7   | Classic compiler -> Remix Vite plugin | Merged      | `chore/remix-vite`         | #97     | `c03bdec`     |
-| 7b  | `v3_routeConfig` and `app/routes.ts`  | In review   | `chore/route-config`       |         |               |
-| 8   | Remix 2 -> React Router 7             | Not started |                            |         |               |
-| 9   | React 18 -> 19                        | Not started |                            |         |               |
-| 10  | Flat routes (follow-up)               | Not started |                            |         |               |
+| #   | PR                                    | Status                | Branch                     | PR link | Merged commit |
+| --- | ------------------------------------- | --------------------- | -------------------------- | ------- | ------------- |
+| 1   | happy-dom 2.55 -> 21                  | Merged                | `deps/happy-dom-21`        | #86     | `fb09398`     |
+| 2   | Remix 2.12 -> 2.17.5                  | Merged                | `deps/remix-2.17`          | #87     | `4f9a596`     |
+| 3   | ESLint 8 -> 9 flat config             | Merged                | `deps/eslint-9`            | #88     | `0e26e25`     |
+| 3b  | ESLint config on plugin presets       | Merged                | `chore/eslint-presets`     | #92     | `dd3c1f4`     |
+| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged                | `deps/vite-vitest`         | #93     | `e53149f`     |
+| 5   | Low-risk Remix future flags           | Merged                | `chore/remix-future-flags` | #94     | `b5294f5`     |
+| 6   | `v3_singleFetch` (flag only)          | Merged                | `chore/single-fetch`       | #95     | `3d00d64`     |
+| 6b  | Remove `json()`, native `Date`s       | Merged                | `chore/remove-json`        | #96     | `2dd90e0`     |
+| 7   | Classic compiler -> Remix Vite plugin | Merged                | `chore/remix-vite`         | #97     | `c03bdec`     |
+| 7b  | `v3_routeConfig` and `app/routes.ts`  | Merged                | `chore/route-config`       | #98     | `53c99a9`     |
+| 8   | Remix 2 -> React Router 7             | Designed, not started | `chore/react-router-7`     |         |               |
+| 9   | React 18 -> 19                        | Not started           |                            |         |               |
+| 10  | Flat routes (optional follow-up)      | Not started           |                            |         |               |
 
 ## Ordering change
 
@@ -38,9 +38,9 @@ versions, not only the targets.
 
 ## Handoff (read this first in a new session)
 
-- **State:** `main` has PRs 1 to 7. The app builds with the Remix Vite plugin. Remix is 2.17.5 with every `v3_*` flag on except
-  `v3_routeConfig` (PR 7b, in review); Vite 6.4.6, Vitest 5, ESLint 9 (flat config on presets).
-- **Next:** PR 7b (`v3_routeConfig`), then PR 8.
+- **State:** `main` has PRs 1 to 7b. The app builds with the Remix Vite plugin. Remix is 2.17.5 with every `v3_*` flag on except
+  `v3_routeConfig` (PR 7b); Vite 6.4.6, Vitest 5, ESLint 9 (flat config on presets).
+- **Next:** PR 8 (React Router 7.11.0), designed below. The user runs the installs.
 - **Test data in the dev database:** user `future-flags-check@example.com`, players
   Alice and Bob, game type Boggle and two completed games.
 - **How we work:** see "Working agreements" below (the user runs installs and pushes;
@@ -501,6 +501,72 @@ same ids, parents and paths). Built CSS has the same hash, so there is nothing t
 visually and no screenshots were taken. In `npm run dev`, adding and deleting a route file
 is picked up without a restart. `npm run validate` passes (155 Vitest, lint, typecheck,
 Cypress 38/38).
+
+## PR 8 design: Remix 2 -> React Router 7.11.0
+
+Why: the app is on Remix 2.17 with every future flag on and the Vite plugin, so this is
+the framework swap the earlier steps prepared. Target is **7.11.0** (the only 7.11 release;
+7.18.6 is the latest 7.x, and moving to it is a follow-up, see below). 7.11.0 accepts
+React 18 or 19, Vite 5 to 7, TypeScript 5 and Node 20+. `react-router`, `@react-router/node`
+and `@react-router/serve` pin each other to the exact same version, so all four packages
+are pinned exactly.
+
+Decisions made with the user:
+
+- **Explicit route config instead of the v1 adapter.** `@remix-run/v1-route-convention`
+  requires `@remix-run/dev/dist/config/routes` at runtime (`createRouteId`), so it cannot
+  survive removing `@remix-run/dev`, and an npm `overrides` entry cannot fix that. The
+  app has 18 routes in one flat list (only `games.tsx` has children), so `app/routes.ts`
+  lists them with `route`, `index` and `layout`. **No route file is moved or renamed.**
+- **Flat routes stay a separate, optional PR** (see PR 10), not bundled into this one.
+- **Start at 7.11.0**, not 7.18.6.
+
+Changes:
+
+1. **Packages (the user runs the installs).** Remove the eight `@remix-run/*` packages
+   (`dev`, `node`, `react`, `serve`, `server-runtime`, `route-config`, `routes-option-adapter`,
+   `v1-route-convention`). Add `react-router`, `@react-router/node` and `@react-router/serve`
+   as dependencies and `@react-router/dev` as a dev dependency, all `7.11.0`. The remix-routes
+   adapter is not needed.
+2. **`app/routes.ts`** becomes the explicit list. A small Vitest test asserts that every
+   non-test file under `app/routes/` is registered, because a forgotten route would
+   otherwise only show up as a 404.
+3. **Config.** `react-router.config.ts` is `{ ssr: true }`; the five `v3_*` flags go (all on
+   by default). `vite.config.ts` uses `reactRouter()` and keeps port 3000.
+4. **Scripts.** `dev` is `react-router dev` under `binode --require ./mocks/index.cjs`,
+   `build` is `react-router build`, `start` and `start:mocks` use
+   `react-router-serve ./build/server/index.js` (same output paths, so the Dockerfile and CI
+   stay unchanged), and `typecheck` is `react-router typegen && tsc -b && tsc -b cypress`.
+   `.react-router/` goes in `.gitignore` and `.prettierignore`. `tsconfig.json` gets the
+   `.react-router/types/**/*` include, `rootDirs`, and `@react-router/node` in `types`. The
+   generated `Route.*` types are not adopted here.
+5. **Code.** Imports from `@remix-run/node`, `react` and `server-runtime` become
+   `react-router` (a scripted rewrite, not the codemod); `createReadableStreamFromReadable`
+   comes from `@react-router/node`; `RemixBrowser` becomes `HydratedRouter` (from
+   `react-router/dom`) and `RemixServer` becomes `ServerRouter`. `entry.server.tsx` drops the
+   removed `abortDelay` prop and exports `streamTimeout = 5_000`, aborting at
+   `streamTimeout + 1000`, as the React Router template does. `SerializeFrom` in `games.tsx`
+   becomes `Awaited<ReturnType<typeof loader>>["games"]`. `app/single-fetch.d.ts` is deleted.
+6. **Docs.** `CLAUDE.md` and this spec.
+
+Verification: the built route table matches today's (ids, parents, paths; ids matter for
+`useRouteLoaderData`); a type probe shows `createdAt` still infers `Date`; `npm run validate`;
+`smoke` and `negative-score` against `npm run dev` on port 3000; the before/after screenshot
+pixel diff from PR 7; a session cookie made by the old build is accepted by the new one
+(the cookie code is the same implementation). Not verifiable locally: the Docker image build.
+
+Risks, in order: a route id or path differs; `react-router dev` does not load the MSW
+preload; streaming and abort timing differ; the deploy. Rollback is one revert.
+
+Follow-ups this creates:
+
+- **Upgrade React Router 7.11.0 -> 7.18.6** (latest 7.x; accepts Vite 5 to 8 and TypeScript 5
+  or 6). A separate PR after PR 9.
+- **PR 10 is reworded:** move from the explicit route config to flat routes
+  (`@react-router/fs-routes`), optional and standalone. Dotted flat-route names nest
+  differently from the v1 convention (for example `$gameId.play.$playerId` needs a
+  trailing `_` so it does not nest under `$gameId`), so it needs its own design.
+- Adopt the generated `Route.*` types (optional).
 
 ## Out of scope
 
