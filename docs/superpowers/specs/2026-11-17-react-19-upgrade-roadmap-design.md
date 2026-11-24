@@ -21,8 +21,8 @@ this first to see where things stand.
 | 6b  | Remove `json()`, native `Date`s       | Merged      | `chore/remove-json`        | #96     | `2dd90e0`     |
 | 7   | Classic compiler -> Remix Vite plugin | Merged      | `chore/remix-vite`         | #97     | `c03bdec`     |
 | 7b  | `v3_routeConfig` and `app/routes.ts`  | Merged      | `chore/route-config`       | #98     | `53c99a9`     |
-| 8   | Remix 2 -> React Router 7             | In review   | `chore/react-router-7`     |         |               |
-| 9   | React 18 -> 19                        | Not started |                            |         |               |
+| 8   | Remix 2 -> React Router 7             | Merged      | `chore/react-router-7`     | #99     | `d6b2a77`     |
+| 9   | React 18 -> 19                        | In review   | `chore/react-19`           |         |               |
 | 10  | Flat routes (optional follow-up)      | Not started |                            |         |               |
 
 ## Ordering change
