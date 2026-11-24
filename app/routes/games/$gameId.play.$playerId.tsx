@@ -1,9 +1,11 @@
-import { Form, useLoaderData, Link, useNavigation } from "@remix-run/react";
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-} from "@remix-run/server-runtime";
-import { redirect } from "@remix-run/server-runtime";
+import {
+  Form,
+  useLoaderData,
+  Link,
+  useNavigation,
+  redirect,
+} from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import {
   addScore,
   getAllGameTypes,

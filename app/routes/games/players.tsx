@@ -1,5 +1,5 @@
-import { Link, useLoaderData } from "@remix-run/react";
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import { Link, useLoaderData } from "react-router";
+import type { LoaderFunctionArgs } from "react-router";
 
 import { getAllPlayersWithGameCount } from "~/models/game.server";
 import { requireUserId } from "~/session.server";

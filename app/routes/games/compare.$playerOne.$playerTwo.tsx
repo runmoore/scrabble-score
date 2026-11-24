@@ -1,5 +1,5 @@
-import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
-import { type LoaderFunctionArgs } from "@remix-run/server-runtime";
+import { Link, useLoaderData, useSearchParams } from "react-router";
+import { type LoaderFunctionArgs } from "react-router";
 import { format } from "date-fns";
 import invariant from "tiny-invariant";
 import { Card } from "~/components/Card";

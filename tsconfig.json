@@ -1,9 +1,10 @@
 {
   "exclude": ["./cypress", "./cypress.config.ts"],
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", ".react-router/types/**/*"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2023"],
-    "types": ["@remix-run/node", "vite/client", "vitest/globals"],
+    "types": ["@react-router/node", "vite/client", "vitest/globals"],
+    "rootDirs": [".", "./.react-router/types"],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
@@ -20,7 +21,7 @@
     },
     "skipLibCheck": true,
 
-    // Vite takes care of building everything in `remix vite:build`.
+    // Vite takes care of building everything in `react-router build`.
     "noEmit": true
   }
 }

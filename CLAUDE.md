@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Scrabble score tracking application built with the Remix Indie Stack. It allows users to create games, track multiple players, and record scores throughout the game with turn-by-turn play.
+This is a Scrabble score tracking application built on React Router 7 in framework mode (the app began as a Remix Indie Stack project). It allows users to create games, track multiple players, and record scores throughout the game with turn-by-turn play.
 
 **Target Platform**: Progressive Web App (PWA) optimized for mobile browsers, specifically iPhone devices. The app is designed to be installed on the iPhone home screen and used as a native-like experience.
 
@@ -33,7 +33,7 @@ npm run validate         # Run all tests, lint, typecheck, and e2e
 
 ```bash
 npm run lint             # Run ESLint 9 (flat config in eslint.config.mjs)
-npm run typecheck        # Run TypeScript type checking
+npm run typecheck        # Generate route types (react-router typegen), then run TypeScript type checking
 npm run format           # Format code with Prettier
 ```
 
@@ -66,7 +66,7 @@ npx prisma studio        # Open Prisma Studio UI
 - **date-fns** (`^4.1.0`): Date formatting, manipulation, and parsing
   - Use `format()` for date formatting instead of custom logic
   - Example: `format(date, "do MMM yyyy")` → "16th Feb 2026"
-- **Remix utilities**: Forms, navigation, data loading
+- **React Router** (`react-router`): Forms, navigation, data loading
 - **React**: Component patterns, hooks
 - **Tailwind CSS**: Styling (prefer utility classes over custom CSS)
 
@@ -150,7 +150,7 @@ The `EnhancedGame` type augments Prisma's Game model with:
 
 ### Routes & User Flow
 
-**File-based routing** (Remix v1 convention via `@remix-run/v1-route-convention`, wired up in `app/routes.ts` through `remixRoutesOptionAdapter`, with the `v3_routeConfig` flag in `vite.config.ts`):
+**Explicit route config** in `app/routes.ts` (route files live in `app/routes/`, but are not picked up automatically: **a new route file needs a line in `app/routes.ts`**, and `app/routes.test.ts` fails if one is missing):
 
 - **app/routes/games/new.tsx**: Create game by selecting existing players or adding new ones
 - **app/routes/games/$gameId.tsx**: Game summary showing final scores and winner
@@ -256,7 +256,7 @@ The `EnhancedGame` type augments Prisma's Game model with:
 
 ### Styling
 
-- **Tailwind CSS** for all styling. The app is built by Vite with the Remix plugin (`vite.config.ts`); Tailwind and autoprefixer run through `postcss.config.js`, and `tailwind.config.cjs` stays CommonJS. `root.tsx` imports the stylesheet as `~/tailwind.css?url`
+- **Tailwind CSS** for all styling. The app is built by Vite with the React Router plugin (`vite.config.ts`, `react-router.config.ts`); Tailwind and autoprefixer run through `postcss.config.js`, and `tailwind.config.cjs` stays CommonJS. `root.tsx` imports the stylesheet as `~/tailwind.css?url`
 - **Avoid inline `style` attributes**: Use Tailwind utility classes instead of inline styles wherever possible. Only use inline styles when absolutely necessary (e.g., dynamic values that can't be predetermined)
 - Custom colors: `blue-primary`, `green-primary/secondary`, `purple-primary/secondary`, `red-primary/secondary`
 - Mobile-first responsive design (primary target: iPhone)
@@ -270,7 +270,7 @@ The `EnhancedGame` type augments Prisma's Game model with:
 
 1. **Server-side data models**: Files ending in `.server.ts` contain Prisma queries and business logic that only runs on the server
 2. **Type safety**: Prisma types (`Game`, `Player`, `Score`) are re-exported from `game.server.ts` for use throughout the app
-3. **Progressive enhancement**: Forms work without JavaScript, use Remix's `Form` component and `action` functions
+3. **Progressive enhancement**: Forms work without JavaScript, use React Router's `Form` component and `action` functions
 4. **Optimistic UI**: Score input clears immediately on submit before server response
 5. **iOS considerations**: Uses `inputMode="numeric"` with +/- buttons instead of negative number input (iOS doesn't show minus key on number pad)
 6. **Authorization**: All database queries include userId filtering to ensure users can only access their own data

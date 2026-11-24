@@ -23,6 +23,7 @@ describe("players loader", () => {
       request: new Request("http://localhost/games/players"),
       params: {},
       context: {},
+      unstable_pattern: "/games/players",
     });
 
     expect(getAllPlayersWithGameCount).toHaveBeenCalledWith({
@@ -42,6 +43,7 @@ describe("players loader", () => {
       request: new Request("http://localhost/games/players"),
       params: {},
       context: {},
+      unstable_pattern: "/games/players",
     });
     expect(data.players).toEqual([]);
   });

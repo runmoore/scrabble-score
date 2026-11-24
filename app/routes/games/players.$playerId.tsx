@@ -3,8 +3,8 @@ import {
   useLoaderData,
   useNavigation,
   useSearchParams,
-} from "@remix-run/react";
-import type { LoaderFunctionArgs } from "@remix-run/node";
+} from "react-router";
+import type { LoaderFunctionArgs } from "react-router";
 
 import { format } from "date-fns";
 import invariant from "tiny-invariant";

@@ -34,6 +34,7 @@ describe("play loader function", () => {
       request: new Request("https://url"),
       params: { gameId: "123", playerId: "987" },
       context: {},
+      unstable_pattern: "/games/:gameId/play/:playerId",
     });
   });
 
