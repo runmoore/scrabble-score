@@ -199,8 +199,11 @@ function createGameWithPlayers(players: string[] | number, gameType?: string) {
   cy.visit("/games");
   cy.findByRole("link", { name: /\+ new game/i }).click();
 
-  // Wait for the new game form to be fully loaded
+  // Wait for the new game form to be fully loaded. The "+ Add" buttons only
+  // work once React has hydrated, and the dev server hydrates slowly enough
+  // for a click to be dropped, so wait for app/root.tsx's marker too.
   cy.findByRole("heading", { name: /players/i }).should("be.visible");
+  cy.get("body").should("have.attr", "data-hydrated", "true");
 
   if (gameType) {
     // Reveal the add game type form
@@ -277,6 +280,9 @@ function completeGame() {
 function createGameType(name: string) {
   cy.visit("/games");
   cy.findByRole("link", { name: /\+ new game/i }).click();
+
+  // The "+ Add" buttons only work once React has hydrated (see above).
+  cy.get("body").should("have.attr", "data-hydrated", "true");
 
   // Reveal the add game type form
   cy.findByRole("button", { name: /\+ add game type/i }).click();
