@@ -1,7 +1,7 @@
 # React 19 Upgrade Roadmap
 
 Date: 2026-11-17
-Status: Approved design. PRs 1 to 9 merged (the app is on React 19). The React Router 7.11.0 -> 7.18.6 follow-up (9b) is in review; flat routes (PR 10) is optional and not started.
+Status: Approved design. PRs 1 to 9b merged (the app is on React 19 and React Router 7.18.6). PR 9c (`allowedActionOrigins`, the fix for the origin check below) is in review; flat routes (PR 10) is optional and not started.
 Last re-ordered 2026-11-17 (see "Ordering change").
 
 ## Progress tracker
@@ -9,22 +9,23 @@ Last re-ordered 2026-11-17 (see "Ordering change").
 Update this table when each PR is opened and merged. A new session should read
 this first to see where things stand.
 
-| #   | PR                                    | Status      | Branch                     | PR link | Merged commit |
-| --- | ------------------------------------- | ----------- | -------------------------- | ------- | ------------- |
-| 1   | happy-dom 2.55 -> 21                  | Merged      | `deps/happy-dom-21`        | #86     | `fb09398`     |
-| 2   | Remix 2.12 -> 2.17.5                  | Merged      | `deps/remix-2.17`          | #87     | `4f9a596`     |
-| 3   | ESLint 8 -> 9 flat config             | Merged      | `deps/eslint-9`            | #88     | `0e26e25`     |
-| 3b  | ESLint config on plugin presets       | Merged      | `chore/eslint-presets`     | #92     | `dd3c1f4`     |
-| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged      | `deps/vite-vitest`         | #93     | `e53149f`     |
-| 5   | Low-risk Remix future flags           | Merged      | `chore/remix-future-flags` | #94     | `b5294f5`     |
-| 6   | `v3_singleFetch` (flag only)          | Merged      | `chore/single-fetch`       | #95     | `3d00d64`     |
-| 6b  | Remove `json()`, native `Date`s       | Merged      | `chore/remove-json`        | #96     | `2dd90e0`     |
-| 7   | Classic compiler -> Remix Vite plugin | Merged      | `chore/remix-vite`         | #97     | `c03bdec`     |
-| 7b  | `v3_routeConfig` and `app/routes.ts`  | Merged      | `chore/route-config`       | #98     | `53c99a9`     |
-| 8   | Remix 2 -> React Router 7             | Merged      | `chore/react-router-7`     | #99     | `d6b2a77`     |
-| 9   | React 18 -> 19                        | Merged      | `chore/react-19`           | #100    | `6dcba48`     |
-| 9b  | React Router 7.11.0 -> 7.18.6         | In review   | `deps/react-router-7.18`   |         |               |
-| 10  | Flat routes (optional follow-up)      | Not started |                            |         |               |
+| #   | PR                                    | Status      | Branch                       | PR link | Merged commit |
+| --- | ------------------------------------- | ----------- | ---------------------------- | ------- | ------------- |
+| 1   | happy-dom 2.55 -> 21                  | Merged      | `deps/happy-dom-21`          | #86     | `fb09398`     |
+| 2   | Remix 2.12 -> 2.17.5                  | Merged      | `deps/remix-2.17`            | #87     | `4f9a596`     |
+| 3   | ESLint 8 -> 9 flat config             | Merged      | `deps/eslint-9`              | #88     | `0e26e25`     |
+| 3b  | ESLint config on plugin presets       | Merged      | `chore/eslint-presets`       | #92     | `dd3c1f4`     |
+| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged      | `deps/vite-vitest`           | #93     | `e53149f`     |
+| 5   | Low-risk Remix future flags           | Merged      | `chore/remix-future-flags`   | #94     | `b5294f5`     |
+| 6   | `v3_singleFetch` (flag only)          | Merged      | `chore/single-fetch`         | #95     | `3d00d64`     |
+| 6b  | Remove `json()`, native `Date`s       | Merged      | `chore/remove-json`          | #96     | `2dd90e0`     |
+| 7   | Classic compiler -> Remix Vite plugin | Merged      | `chore/remix-vite`           | #97     | `c03bdec`     |
+| 7b  | `v3_routeConfig` and `app/routes.ts`  | Merged      | `chore/route-config`         | #98     | `53c99a9`     |
+| 8   | Remix 2 -> React Router 7             | Merged      | `chore/react-router-7`       | #99     | `d6b2a77`     |
+| 9   | React 18 -> 19                        | Merged      | `chore/react-19`             | #100    | `6dcba48`     |
+| 9b  | React Router 7.11.0 -> 7.18.6         | Merged      | `deps/react-router-7.18`     | #101    | `a07fe84`     |
+| 9c  | `allowedActionOrigins` for Fly        | In review   | `fix/allowed-action-origins` |         |               |
+| 10  | Flat routes (optional follow-up)      | Not started |                              |         |               |
 
 ## Ordering change
 
@@ -39,9 +40,9 @@ versions, not only the targets.
 
 ## Handoff (read this first in a new session)
 
-- **State:** `main` has PRs 1 to 9 (React 19.3.1 and React Router 7.11.0 on the Vite plugin; Vite 6.4.6,
-  Vitest 5, ESLint 9). PR 9b (React Router 7.18.6) is on `deps/react-router-7.18`, awaiting push and review.
-- **Next:** merge 9b, then the optional flat-routes PR (10). If form posts fail on Fly after 9b, add
+- **State:** `main` has PRs 1 to 9b (React 19.3.1 and React Router 7.18.6 on the Vite plugin; Vite 6.4.6,
+  Vitest 5, ESLint 9). PR 9c (`allowedActionOrigins`) is on `fix/allowed-action-origins`, awaiting push and review.
+- **Next:** merge 9c, then the optional flat-routes PR (10).
   `allowedActionOrigins` to `react-router.config.ts` (see "PR 9b").
 - **Test data in the dev database:** user `future-flags-check@example.com`, players
   Alice and Bob, game type Boggle and two completed games.
@@ -665,14 +666,19 @@ proxy. Fly ends TLS and forwards HTTP to port 8080, while browsers send
 "Bad Request"; the same request with an `http://` origin, and same-origin `localhost` requests,
 reached the app; a foreign origin was blocked. This is inferred from the code and a local
 simulation, not observed on Fly. The user chose to merge without the fix to confirm the problem
-in production. **If login or any form post fails on Fly, add this to `react-router.config.ts`:**
+in production. **Result:** after the 9b merge the user reported
+`[{"_1":2},"error",["SanitizedError",3,4,-7],"Error","Unexpected Server Error"]`, which is exactly the
+blocked response from the local simulation of a single-fetch `.data` POST, so PR 9c adds this to
+`react-router.config.ts`:
 
 ```ts
 allowedActionOrigins: ["scrabble-score-e630.fly.dev"],
 ```
 
 (matched on the host alone, so the scheme mismatch is covered; foreign origins stay blocked).
-Rolling back is one revert of the 9b merge commit.
+Local check of the fix: a `fly.dev` host and HTTPS origin now reaches the app on both `/login` and
+`/login.data`, while a foreign origin and a lookalike host (`not-scrabble-score-e630.fly.dev`) are still
+blocked; Cypress passes 38/38. Rolling back 9b alone would drop the security fixes, so prefer 9c.
 
 ## Out of scope
 
