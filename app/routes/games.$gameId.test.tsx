@@ -1,4 +1,4 @@
-import { loader, action } from "./$gameId";
+import { loader, action } from "./games.$gameId";
 import {
   getGame,
   reopenGame,

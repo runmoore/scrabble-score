@@ -1,4 +1,4 @@
-import { loader, isOutrightWinner } from "./players.$playerId";
+import { loader, isOutrightWinner } from "./games.players_.$playerId";
 import type { getPlayerGames } from "~/models/game.server";
 
 vi.mock("~/session.server", () => ({

@@ -1,4 +1,4 @@
-import { loader } from "./compare";
+import { loader } from "./games.compare";
 
 const p1 = { id: "p1", name: "Alice" };
 const p2 = { id: "p2", name: "Bob" };
