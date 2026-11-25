@@ -1,6 +1,6 @@
 import { data } from "react-router";
-import { loader, action } from "./new";
-import type { LoaderData } from "./new";
+import { loader, action } from "./games.new";
+import type { LoaderData } from "./games.new";
 
 import {
   getAllPlayers,

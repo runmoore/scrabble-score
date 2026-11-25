@@ -150,17 +150,22 @@ The `EnhancedGame` type augments Prisma's Game model with:
 
 ### Routes & User Flow
 
-**Explicit route config** in `app/routes.ts` (route files live in `app/routes/`, but are not picked up automatically: **a new route file needs a line in `app/routes.ts`**, and `app/routes.test.ts` fails if one is missing):
+**File-based routing** with React Router's flat route convention (`flatRoutes()` from `@react-router/fs-routes`, in `app/routes.ts`). Every non-test file in `app/routes/` is a route, named for its URL: a `.` is a `/`, `$` is a param, `_index` is the index route. Rules that matter here:
 
-- **app/routes/games/new.tsx**: Create game by selecting existing players or adding new ones
-- **app/routes/games/$gameId.tsx**: Game summary showing final scores and winner
-- **app/routes/games/$gameId.play.$playerId.tsx**: Active play screen where:
+- A route nests inside the route whose name is its prefix, so `games.new.tsx` renders inside `games.tsx`.
+- A **trailing underscore** on a segment stops that nesting while keeping the URL: `games.players_.$playerId.tsx` is `/games/players/:playerId` inside `games.tsx`, not inside `games.players.tsx`. The same is why `compare_` and `$gameId_` are written that way. A missing underscore nests the page in the wrong layout and it renders blank.
+- Tests sit beside their routes (`*.test.tsx`) and are ignored as routes by the glob in `app/routes.ts`.
+- To check a change, run `npx react-router routes --json` before and after and compare URLs and nesting.
+
+- **app/routes/games.new.tsx**: Create game by selecting existing players or adding new ones
+- **app/routes/games.$gameId.tsx**: Game summary showing final scores and winner
+- **app/routes/games.$gameId_.play.$playerId.tsx**: Active play screen where:
   - Current player's turn is shown
   - Score input with +/- buttons for negative scores (iOS-friendly)
   - Displays all players' scores in columns
   - Highlights leading player with yellow background
   - Allows switching turns manually or completing the game
-- **app/routes/games/compare.$playerOne.$playerTwo.tsx**: Head-to-head player comparison
+- **app/routes/games.compare\_.$playerOne.$playerTwo.tsx**: Head-to-head player comparison
 - **app/routes/anagram.tsx**: Utility for finding anagrams (unrelated to scoring)
 
 ### Session Management
@@ -177,7 +182,7 @@ The `EnhancedGame` type augments Prisma's Game model with:
 
 - app/game-utils.test.ts
 - app/models/game.server.test.ts
-- app/routes/games/\*.test.tsx
+- app/routes/games.\*.test.tsx
 
 **Writing tests:** assert behaviour inline, and keep each test readable at a glance. Do not assert transport details (such as "returns a Response" or "status is 200"); assert the data or outcome that matters. Avoid helpers that wrap or unwrap results or depend on framework internals, since they hide what is being checked. Share a helper only when the same non-trivial setup repeats across several files.
 

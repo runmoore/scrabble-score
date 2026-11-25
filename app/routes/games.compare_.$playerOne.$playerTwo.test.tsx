@@ -1,4 +1,4 @@
-import { loader } from "./compare.$playerOne.$playerTwo";
+import { loader } from "./games.compare_.$playerOne.$playerTwo";
 import { getAllGames } from "~/models/game.server";
 
 vi.mock("~/session.server", () => {

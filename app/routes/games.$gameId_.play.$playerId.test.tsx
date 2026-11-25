@@ -1,4 +1,4 @@
-import { loader } from "./$gameId.play.$playerId";
+import { loader } from "./games.$gameId_.play.$playerId";
 
 vi.mock("~/session.server", () => {
   return {

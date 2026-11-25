@@ -1,4 +1,4 @@
-import { loader } from "./index";
+import { loader } from "./games._index";
 
 vi.mock("~/session.server", () => ({
   requireUserId: vi.fn().mockResolvedValue("user-1"),
