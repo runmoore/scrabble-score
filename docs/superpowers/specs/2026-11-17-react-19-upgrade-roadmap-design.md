@@ -1,7 +1,7 @@
 # React 19 Upgrade Roadmap
 
 Date: 2026-11-17
-Status: Approved design. PRs 1 to 9b merged (the app is on React 19 and React Router 7.18.6). PR 9c (`allowedActionOrigins`, the fix for the origin check below) is in review; flat routes (PR 10) is optional and not started.
+Status: Approved design. PRs 1 to 9c merged (the app is on React 19 and React Router 7.18.6). PR 10 (flat routes) is in review.
 Last re-ordered 2026-11-17 (see "Ordering change").
 
 ## Progress tracker
@@ -9,23 +9,23 @@ Last re-ordered 2026-11-17 (see "Ordering change").
 Update this table when each PR is opened and merged. A new session should read
 this first to see where things stand.
 
-| #   | PR                                    | Status      | Branch                       | PR link | Merged commit |
-| --- | ------------------------------------- | ----------- | ---------------------------- | ------- | ------------- |
-| 1   | happy-dom 2.55 -> 21                  | Merged      | `deps/happy-dom-21`          | #86     | `fb09398`     |
-| 2   | Remix 2.12 -> 2.17.5                  | Merged      | `deps/remix-2.17`            | #87     | `4f9a596`     |
-| 3   | ESLint 8 -> 9 flat config             | Merged      | `deps/eslint-9`              | #88     | `0e26e25`     |
-| 3b  | ESLint config on plugin presets       | Merged      | `chore/eslint-presets`       | #92     | `dd3c1f4`     |
-| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged      | `deps/vite-vitest`           | #93     | `e53149f`     |
-| 5   | Low-risk Remix future flags           | Merged      | `chore/remix-future-flags`   | #94     | `b5294f5`     |
-| 6   | `v3_singleFetch` (flag only)          | Merged      | `chore/single-fetch`         | #95     | `3d00d64`     |
-| 6b  | Remove `json()`, native `Date`s       | Merged      | `chore/remove-json`          | #96     | `2dd90e0`     |
-| 7   | Classic compiler -> Remix Vite plugin | Merged      | `chore/remix-vite`           | #97     | `c03bdec`     |
-| 7b  | `v3_routeConfig` and `app/routes.ts`  | Merged      | `chore/route-config`         | #98     | `53c99a9`     |
-| 8   | Remix 2 -> React Router 7             | Merged      | `chore/react-router-7`       | #99     | `d6b2a77`     |
-| 9   | React 18 -> 19                        | Merged      | `chore/react-19`             | #100    | `6dcba48`     |
-| 9b  | React Router 7.11.0 -> 7.18.6         | Merged      | `deps/react-router-7.18`     | #101    | `a07fe84`     |
-| 9c  | `allowedActionOrigins` for Fly        | In review   | `fix/allowed-action-origins` |         |               |
-| 10  | Flat routes (optional follow-up)      | Not started |                              |         |               |
+| #   | PR                                    | Status    | Branch                       | PR link | Merged commit |
+| --- | ------------------------------------- | --------- | ---------------------------- | ------- | ------------- |
+| 1   | happy-dom 2.55 -> 21                  | Merged    | `deps/happy-dom-21`          | #86     | `fb09398`     |
+| 2   | Remix 2.12 -> 2.17.5                  | Merged    | `deps/remix-2.17`            | #87     | `4f9a596`     |
+| 3   | ESLint 8 -> 9 flat config             | Merged    | `deps/eslint-9`              | #88     | `0e26e25`     |
+| 3b  | ESLint config on plugin presets       | Merged    | `chore/eslint-presets`       | #92     | `dd3c1f4`     |
+| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged    | `deps/vite-vitest`           | #93     | `e53149f`     |
+| 5   | Low-risk Remix future flags           | Merged    | `chore/remix-future-flags`   | #94     | `b5294f5`     |
+| 6   | `v3_singleFetch` (flag only)          | Merged    | `chore/single-fetch`         | #95     | `3d00d64`     |
+| 6b  | Remove `json()`, native `Date`s       | Merged    | `chore/remove-json`          | #96     | `2dd90e0`     |
+| 7   | Classic compiler -> Remix Vite plugin | Merged    | `chore/remix-vite`           | #97     | `c03bdec`     |
+| 7b  | `v3_routeConfig` and `app/routes.ts`  | Merged    | `chore/route-config`         | #98     | `53c99a9`     |
+| 8   | Remix 2 -> React Router 7             | Merged    | `chore/react-router-7`       | #99     | `d6b2a77`     |
+| 9   | React 18 -> 19                        | Merged    | `chore/react-19`             | #100    | `6dcba48`     |
+| 9b  | React Router 7.11.0 -> 7.18.6         | Merged    | `deps/react-router-7.18`     | #101    | `a07fe84`     |
+| 9c  | `allowedActionOrigins` for Fly        | Merged    | `fix/allowed-action-origins` | #102    | `63eedc9`     |
+| 10  | Flat routes                           | In review | `chore/flat-routes`          |         |               |
 
 ## Ordering change
 
@@ -40,10 +40,10 @@ versions, not only the targets.
 
 ## Handoff (read this first in a new session)
 
-- **State:** `main` has PRs 1 to 9b (React 19.3.1 and React Router 7.18.6 on the Vite plugin; Vite 6.4.6,
-  Vitest 5, ESLint 9). PR 9c (`allowedActionOrigins`) is on `fix/allowed-action-origins`, awaiting push and review.
-- **Next:** merge 9c, then the optional flat-routes PR (10).
-  `allowedActionOrigins` to `react-router.config.ts` (see "PR 9b").
+- **State:** `main` has PRs 1 to 9c (React 19.3.1 and React Router 7.18.6 on the Vite plugin; Vite 6.4.6,
+  Vitest 5, ESLint 9). PR 10 (flat routes) is on `chore/flat-routes`, awaiting push and review.
+- **Next:** merge PR 10. The roadmap's React 19 goal is already met; what remains is optional tidying
+  (the v8 future-flag warnings in the build, and the known flaky Cypress tests).
 - **Test data in the dev database:** user `future-flags-check@example.com`, players
   Alice and Bob, game type Boggle and two completed games.
 - **How we work:** see "Working agreements" below (the user runs installs and pushes;
@@ -679,6 +679,30 @@ allowedActionOrigins: ["scrabble-score-e630.fly.dev"],
 Local check of the fix: a `fly.dev` host and HTTPS origin now reaches the app on both `/login` and
 `/login.data`, while a foreign origin and a lookalike host (`not-scrabble-score-e630.fly.dev`) are still
 blocked; Cypress passes 38/38. Rolling back 9b alone would drop the security fixes, so prefer 9c.
+
+## PR 10: flat routes
+
+Why: the explicit `app/routes.ts` needed a line (and a test) for every new route. React Router's own
+convention, `flatRoutes()` from `@react-router/fs-routes`, discovers routes from file names. The package
+exports only `flatRoutes`; there is no folder-nesting convention, so the `routes/games/` folder could not
+be kept and the files were renamed. The old v1 folder convention is not an option (its adapter needs
+`@remix-run/dev` at runtime). Decision made with the user: plain flat files, not folder-per-route.
+
+Changes: `@react-router/fs-routes` 7.18.6 (dev dependency, exact pin); `app/routes.ts` is one
+`flatRoutes({ ignoredRouteFiles: ["**/*.test.{ts,tsx}"] })` call; 9 route files and 8 test files were
+renamed with `git mv` (`routes/index.tsx` -> `_index.tsx`, `routes/games/new.tsx` -> `games.new.tsx`, and so
+on); 9 test import lines updated; `app/routes.test.ts` deleted (it only checked that every file was listed).
+`players_`, `compare_` and `$gameId_` carry a trailing underscore so those pages keep rendering inside
+`games.tsx` and not inside their namesake route; without it they would nest in the wrong layout and render
+blank. `CLAUDE.md` documents the rules. The older plan documents under `docs/plans` and `docs/solutions`
+still name the old paths; they are historical and were left alone.
+
+Verification: `react-router routes --json` before and after, normalised to drop route IDs and file names,
+is identical: 17 URLs, the same two layouts, the same nesting and index flags. That covers the trailing
+underscore on the dynamic `$gameId_` segment. The IDs the code uses (`root` and `routes/games`) are
+unchanged; only child IDs changed and nothing reads them. Typecheck, lint, Prettier, 155 Vitest tests (one
+fewer than before: the deleted test) and Cypress 38/38 pass, with no 4xx or 5xx in the server log. URLs are
+unchanged, so no visual comparison was done. Not verifiable here: the Docker image build.
 
 ## Out of scope
 
