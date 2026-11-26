@@ -1,3 +1,4 @@
+import { RouterContextProvider } from "react-router";
 import { loader } from "./games._index";
 
 vi.mock("~/session.server", () => ({
@@ -20,7 +21,7 @@ const callLoader = () =>
     request: new Request("http://localhost/games"),
     url: new URL("http://localhost/games"),
     params: {},
-    context: {},
+    context: new RouterContextProvider(),
     pattern: "/games",
   });
 

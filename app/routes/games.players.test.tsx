@@ -1,3 +1,4 @@
+import { RouterContextProvider } from "react-router";
 import { loader } from "./games.players";
 
 vi.mock("~/session.server", () => ({
@@ -23,7 +24,7 @@ describe("players loader", () => {
       request: new Request("http://localhost/games/players"),
       url: new URL("http://localhost/games/players"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/players",
     });
 
@@ -44,7 +45,7 @@ describe("players loader", () => {
       request: new Request("http://localhost/games/players"),
       url: new URL("http://localhost/games/players"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/players",
     });
     expect(data.players).toEqual([]);

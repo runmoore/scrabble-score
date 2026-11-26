@@ -1,3 +1,4 @@
+import { RouterContextProvider } from "react-router";
 import { loader, isOutrightWinner } from "./games.players_.$playerId";
 import type { getPlayerGames } from "~/models/game.server";
 
@@ -62,7 +63,7 @@ const callLoader = (
     request: new Request(url.toString()),
     url,
     params: { playerId },
-    context: {},
+    context: new RouterContextProvider(),
     pattern: "/games/players/:playerId",
   });
 };

@@ -1,4 +1,4 @@
-import { data } from "react-router";
+import { data, RouterContextProvider } from "react-router";
 import { loader, action } from "./games.new";
 import type { LoaderData } from "./games.new";
 
@@ -36,7 +36,7 @@ describe("new lodaer function", () => {
       request: new Request("https://url"),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
   });
@@ -77,7 +77,7 @@ describe("start new game function", () => {
       }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
   });
@@ -115,7 +115,7 @@ describe("start-new-game validation", () => {
       request: new Request("https://url", { method: "POST", body }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
 
@@ -136,7 +136,7 @@ describe("start-new-game validation", () => {
       request: new Request("https://url", { method: "POST", body }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
 
@@ -159,7 +159,7 @@ describe("add-player action", () => {
       request: makeRequest({ action: "add-player", name: "" }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "empty name" });
@@ -171,7 +171,7 @@ describe("add-player action", () => {
       request: makeRequest({ action: "add-player", name: "   " }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "empty name" });
@@ -183,7 +183,7 @@ describe("add-player action", () => {
       request: makeRequest({ action: "add-player", name: "  Alice  " }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
     expect(addPlayer).toHaveBeenCalledWith({ userId: 123, name: "Alice" });
@@ -194,7 +194,7 @@ describe("add-player action", () => {
       request: makeRequest({ action: "add-player", name: "Eric" }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "player name already exists" });
@@ -206,7 +206,7 @@ describe("add-player action", () => {
       request: makeRequest({ action: "add-player", name: "eric" }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "player name already exists" });
@@ -218,7 +218,7 @@ describe("add-player action", () => {
       request: makeRequest({ action: "add-player", name: "Bob" }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "" });
@@ -235,7 +235,7 @@ describe("add-game-type action", () => {
       request: makeRequest({ action: "add-game-type", gameTypeName: "" }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "empty game type name" });
@@ -247,7 +247,7 @@ describe("add-game-type action", () => {
       request: makeRequest({ action: "add-game-type", gameTypeName: "   " }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "empty game type name" });
@@ -262,7 +262,7 @@ describe("add-game-type action", () => {
       }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
     expect(addGameType).toHaveBeenCalledWith({ userId: 123, name: "Words" });
@@ -276,7 +276,7 @@ describe("add-game-type action", () => {
       }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "game type name already exists" });
@@ -291,7 +291,7 @@ describe("add-game-type action", () => {
       }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "game type name already exists" });
@@ -303,7 +303,7 @@ describe("add-game-type action", () => {
       request: makeRequest({ action: "add-game-type", gameTypeName: "Words" }),
       url: new URL("https://url"),
       params: {},
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/new",
     });
     expect(result).toEqual({ errors: "" });

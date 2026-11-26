@@ -1,3 +1,4 @@
+import { RouterContextProvider } from "react-router";
 import { loader, action } from "./games.$gameId";
 import {
   getGame,
@@ -53,7 +54,7 @@ describe("loader function for completed game", () => {
       request: new Request("https://url"),
       url: new URL("https://url"),
       params: { gameId: "1" },
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/:gameId",
     });
   });
@@ -93,7 +94,7 @@ describe("loader function for in-progress game", () => {
       request: new Request("https://url"),
       url: new URL("https://url"),
       params: { gameId: "1" },
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/:gameId",
     })) as Response;
 
@@ -116,7 +117,7 @@ describe("action function for reopen game", () => {
       }),
       url: new URL("https://url"),
       params: { gameId: "123" },
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/:gameId",
     });
   });
@@ -149,7 +150,7 @@ describe("action function for rematch game", () => {
       }),
       url: new URL("https://url"),
       params: { gameId: "123" },
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/:gameId",
     });
   });
@@ -186,7 +187,7 @@ describe("action function for delete game", () => {
       }),
       url: new URL("https://url"),
       params: { gameId: "123" },
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/:gameId",
     });
   });
