@@ -1,7 +1,7 @@
 # React Router 8 Upgrade Roadmap
 
 Date: 2026-11-26
-Status: **Complete (2026-11-26) once PR 4 is merged.** Four PRs (#106 to #108, plus PR 4) took the app from React Router 7.18.6 to 8.5.3.
+Status: **Complete (2026-11-26).** Four PRs (#106 to #109) took the app from React Router 7.18.6 to 8.5.3.
 Follows on from [`2026-11-17-react-19-upgrade-roadmap-design.md`](./2026-11-17-react-19-upgrade-roadmap-design.md), which
 listed React Router 8 as out of scope.
 
@@ -14,11 +14,11 @@ Update this table when each PR is opened and merged. A new session should read t
 | 1   | React Router 7.18.7 and Vite 7 (with this roadmap)                      | Merged | `deps/rr-7.18.7-vite-7`  | #106    | `a22f59e`     |
 | 2   | `v8_*` flags that need no code, and `useMatches().data` -> `loaderData` | Merged | `chore/rr8-flags`        | #107    | `33315e7`     |
 | 3   | `v8_passThroughRequests`                                                | Merged | `chore/rr8-pass-through` | #108    | `ef872b5`     |
-| 4   | React Router 7.18.7 -> 8.5.3, and close-out                             | Open   | `chore/react-router-8`   |         |               |
+| 4   | React Router 7.18.7 -> 8.5.3, and close-out                             | Merged | `chore/react-router-8`   | #109    | `c7b07f3`     |
 
 ## Outcome
 
-The aim was to stay on supported versions, not to adopt v8 features, and that is done once PR 4 merges.
+The aim was to stay on supported versions, not to adopt v8 features, and that is done.
 
 |               | At the start                                                        | At the end                       |
 | ------------- | ------------------------------------------------------------------- | -------------------------------- |

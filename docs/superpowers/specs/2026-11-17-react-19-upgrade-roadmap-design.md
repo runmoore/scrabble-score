@@ -71,8 +71,9 @@ versions, not only the targets.
 
 - **State:** the migration is complete and `main` has all of it (PRs #86 to #103). Nothing is in flight.
 - **Optional next steps,** in the order I would take them: (1) the flaky Cypress tests, which cost 7 failed CI
-  attempts between #96 and #101 (see "Known issues and follow-ups"); (2) the five React Router v8
-  future-flag warnings in the build; (3) the generated `Route.*` types. None blocks anything.
+  attempts between #96 and #101 (see "Known issues and follow-ups"); (2) the generated `Route.*` types. None blocks
+  anything. The React Router v8 future-flag warnings were cleared by the React Router 8 upgrade (#106 to #109, see
+  [`2026-11-26-react-router-8-upgrade-roadmap-design.md`](./2026-11-26-react-router-8-upgrade-roadmap-design.md)).
 - **How we work:** see "Working agreements" below. In short: the user runs installs and pushes; check
   `grep -c artifactory package-lock.json` is 0 before committing a lockfile; PR descriptions lead with why and say
   what was not tested; the agent does not change the dev database or delete data without asking first.
@@ -772,7 +773,8 @@ None of these blocks anything.
      `createGameType` and `goToGames` call `cy.visit("/games")` without waiting for `data-hydrated`. Leading
      theory: the click lands before hydration. Unproven.
 2. **Five React Router v8 future-flag warnings in the build** (middleware, route module splitting, Vite
-   Environment API, request handling, data request URLs). Informational; none is adopted.
+   Environment API, request handling, data request URLs). Done: all five were adopted in the React Router 8 upgrade
+   (#106 to #109).
 3. **Generated `Route.*` types** are not adopted (optional).
 4. **`react-is` is 17.0.2** under `recharts` (see PR 9), and **`npm run dev` re-optimises dependencies on the
    first visit to a page** that imports a new one, which can error until reloaded. Both are known and unworked.
