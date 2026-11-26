@@ -799,4 +799,5 @@ None of these blocks anything.
 
 Not on the React path, so separate efforts: prettier 3, Cypress 16, Prisma 7,
 Tailwind 4, msw 3, TypeScript 7, ESLint 10, `@faker-js/faker` 10, bcryptjs 3,
-React Router 8, and Vite or Vitest beyond what PR 4 needs.
+and Vite or Vitest beyond what PR 4 needs. React Router 8 was listed here and has since been done; see
+[`2026-11-26-react-router-8-upgrade-roadmap-design.md`](./2026-11-26-react-router-8-upgrade-roadmap-design.md).
