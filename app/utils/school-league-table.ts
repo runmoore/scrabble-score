@@ -72,8 +72,8 @@ export function parseTableState(searchParams: URLSearchParams): TableState {
       searchParams.get("dir") === "desc"
         ? "desc"
         : searchParams.get("dir") === "asc"
-          ? "asc"
-          : DEFAULT_TABLE_STATE.sortDir,
+        ? "asc"
+        : DEFAULT_TABLE_STATE.sortDir,
     rcOnly: searchParams.get("rc") === "1",
     favOnly: searchParams.get("favOnly") === "1",
     search: searchParams.get("q") ?? DEFAULT_TABLE_STATE.search,
@@ -115,8 +115,7 @@ export function filterRows(
   return rows.filter((row) => {
     if (state.rcOnly && !row.isRomanCatholic) return false;
     if (state.favOnly && !state.favouriteIds.has(row.id)) return false;
-    if (search && !row.school_name.toLowerCase().includes(search))
-      return false;
+    if (search && !row.school_name.toLowerCase().includes(search)) return false;
     return true;
   });
 }

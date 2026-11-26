@@ -26,7 +26,7 @@ npm test                 # Run Vitest unit tests (watch mode)
 npm run test -- --run    # Run Vitest once without watch mode
 npm run test:e2e:dev     # Open Cypress for interactive e2e testing
 npm run test:e2e:run     # Run Cypress e2e tests headlessly
-npm run validate         # Run all tests, lint, typecheck, and e2e
+npm run validate         # Run all tests, lint, format check, typecheck, and e2e
 ```
 
 ### Code Quality
@@ -35,6 +35,7 @@ npm run validate         # Run all tests, lint, typecheck, and e2e
 npm run lint             # Run ESLint 9 (flat config in eslint.config.mjs)
 npm run typecheck        # Generate route types (react-router typegen), then run TypeScript type checking
 npm run format           # Format code with Prettier
+npm run format:check     # Check formatting without changing files (CI runs this and fails on any unformatted file)
 ```
 
 Lint rule exceptions: prefer fixing the code. If a rule does not fit the project,

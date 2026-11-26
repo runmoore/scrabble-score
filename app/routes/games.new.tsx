@@ -288,7 +288,7 @@ export default function NewGamePage() {
           name="action"
           value="start-new-game"
           form="new-game-form"
-          className={`w-full rounded-lg py-3 px-4 text-sm font-semibold text-white transition-colors ${
+          className={`w-full rounded-lg px-4 py-3 text-sm font-semibold text-white transition-colors ${
             hydrated && selectedPlayers.length < 2
               ? "bg-green-primary opacity-50"
               : "bg-green-primary hover:bg-green-secondary"

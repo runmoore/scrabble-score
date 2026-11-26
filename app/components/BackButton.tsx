@@ -30,7 +30,7 @@ export default function BackButton() {
       aria-label="Go back"
       disabled={!canGoBack}
       onClick={() => navigate(-1)}
-      className="fixed bottom-6 left-4 z-10 rounded-full bg-blue-500 p-3 text-white shadow-lg hover:bg-blue-600 focus:bg-blue-400 active:bg-blue-600 disabled:bg-blue-100 dark:bg-blue-700 dark:hover:bg-blue-600 sm:hidden"
+      className="fixed bottom-6 left-4 z-10 rounded-full bg-blue-500 p-3 text-white shadow-lg hover:bg-blue-600 focus:bg-blue-400 active:bg-blue-600 disabled:bg-blue-100 sm:hidden dark:bg-blue-700 dark:hover:bg-blue-600"
     >
       <BackArrowIcon />
     </button>

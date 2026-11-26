@@ -155,7 +155,7 @@ function InlineMappingInput({
       }}
       disabled={disabled}
       aria-label={`Inline mapping for ${cipherLetter}`}
-      className={`min-h-8 min-w-8 md:min-h-6 md:min-w-6 h-8 w-8 rounded border text-center font-mono text-xs uppercase focus:outline-none focus:ring-1 disabled:bg-gray-100 disabled:opacity-50 md:h-6 md:w-6 ${
+      className={`h-8 min-h-8 w-8 min-w-8 rounded border text-center font-mono text-xs uppercase focus:outline-none focus:ring-1 disabled:bg-gray-100 disabled:opacity-50 md:h-6 md:min-h-6 md:w-6 md:min-w-6 ${
         hasConflict
           ? "border-red-primary ring-1 ring-red-primary"
           : "border-gray-300 focus:border-blue-primary focus:ring-blue-primary"
@@ -329,7 +329,7 @@ function MappingGrid({
                 }}
                 disabled={disabled}
                 aria-label={`Mapping for ${letter}`}
-                className={`min-h-10 min-w-10 h-10 w-10 rounded border text-center font-mono text-sm uppercase focus:outline-none focus:ring-1 disabled:bg-gray-100 disabled:opacity-50 ${
+                className={`h-10 min-h-10 w-10 min-w-10 rounded border text-center font-mono text-sm uppercase focus:outline-none focus:ring-1 disabled:bg-gray-100 disabled:opacity-50 ${
                   hasConflict
                     ? "border-red-primary ring-2 ring-red-primary"
                     : "border-gray-300 focus:border-blue-primary focus:ring-blue-primary"

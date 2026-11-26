@@ -84,7 +84,7 @@
 - [ ] All E2E tests passing (X/X)
 - [ ] Manual testing completed on mobile (375px)
 - [ ] Manual testing completed on desktop
-- [ ] Code quality checks: `npm run lint && npm run typecheck && npm run format`
+- [ ] Code quality checks: `npm run lint && npm run typecheck && npm run format:check`
 - [ ] Specific functionality verified (list below)
 
 <!--

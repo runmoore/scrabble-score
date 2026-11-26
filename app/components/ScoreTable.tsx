@@ -49,7 +49,7 @@ export function ScoreTable({
                 &nbsp;
               </span>
             ))}
-          <div className="border-t-4 border-b-4 px-1 font-bold dark:border-gray-600 dark:text-gray-100">
+          <div className="border-b-4 border-t-4 px-1 font-bold dark:border-gray-600 dark:text-gray-100">
             {player.totalScore}
           </div>
         </div>

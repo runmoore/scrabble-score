@@ -19,9 +19,27 @@ const baseState: TableState = {
 describe("sortRows", () => {
   it("places rows with a null value in the sorted column at the bottom, regardless of sort direction", () => {
     const rows = [
-      { id: 1, school_name: "A", isRomanCatholic: false, scores: {}, fiveYearAvg: 10 },
-      { id: 2, school_name: "B", isRomanCatholic: false, scores: {}, fiveYearAvg: null },
-      { id: 3, school_name: "C", isRomanCatholic: false, scores: {}, fiveYearAvg: 5 },
+      {
+        id: 1,
+        school_name: "A",
+        isRomanCatholic: false,
+        scores: {},
+        fiveYearAvg: 10,
+      },
+      {
+        id: 2,
+        school_name: "B",
+        isRomanCatholic: false,
+        scores: {},
+        fiveYearAvg: null,
+      },
+      {
+        id: 3,
+        school_name: "C",
+        isRomanCatholic: false,
+        scores: {},
+        fiveYearAvg: 5,
+      },
     ];
 
     const descending = sortRows(rows, baseState).map((r) => r.id);
@@ -75,9 +93,7 @@ describe("filterRows", () => {
 
 describe("parseTableState", () => {
   it("returns the default state for empty search params, and reads every param when present", () => {
-    expect(parseTableState(new URLSearchParams())).toEqual(
-      DEFAULT_TABLE_STATE
-    );
+    expect(parseTableState(new URLSearchParams())).toEqual(DEFAULT_TABLE_STATE);
 
     const params = new URLSearchParams(
       "sort=fiveYearAvg&dir=desc&rc=1&favOnly=1&q=mary&favs=2&favs=5&favs=44"
@@ -111,10 +127,6 @@ describe("serializeTableState", () => {
     // Favourite ids are repeated params (favs=2&favs=5&favs=44), not a
     // comma-joined value, to keep the URL explicit rather than packing a
     // list into one delimited value.
-    expect(serializeTableState(state).getAll("favs")).toEqual([
-      "2",
-      "5",
-      "44",
-    ]);
+    expect(serializeTableState(state).getAll("favs")).toEqual(["2", "5", "44"]);
   });
 });

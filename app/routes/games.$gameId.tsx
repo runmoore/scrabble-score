@@ -37,7 +37,7 @@ function CollapsibleScores({
       <button
         type="button"
         onClick={() => setShowScores((prev) => !prev)}
-        className="flex w-full items-center justify-center gap-2 rounded bg-gray-100 py-2 px-4 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+        className="flex w-full items-center justify-center gap-2 rounded bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
       >
         <svg
           className={`h-4 w-4 transition-transform ${
@@ -176,7 +176,7 @@ export default function GamePage() {
             <div className="m mt-4 flex flex-col lg:flex-row lg:justify-around">
               <button
                 type="submit"
-                className="mb-4 rounded bg-green-primary py-2 px-4 text-white hover:bg-green-secondary focus:bg-green-secondary"
+                className="mb-4 rounded bg-green-primary px-4 py-2 text-white hover:bg-green-secondary focus:bg-green-secondary"
                 name="action"
                 value="reopen"
               >
@@ -184,7 +184,7 @@ export default function GamePage() {
               </button>
               <button
                 type="submit"
-                className="mb-4 rounded bg-purple-primary py-2 px-4 text-white hover:bg-purple-secondary focus:bg-purple-secondary"
+                className="mb-4 rounded bg-purple-primary px-4 py-2 text-white hover:bg-purple-secondary focus:bg-purple-secondary"
                 name="action"
                 value="rematch"
               >
@@ -195,7 +195,7 @@ export default function GamePage() {
           <div className="mt-auto">
             <button
               type="button"
-              className="mt-4 w-full rounded bg-red-primary py-3 px-4 text-white"
+              className="mt-4 w-full rounded bg-red-primary px-4 py-3 text-white"
               onClick={() => dialogRef.current?.showModal()}
             >
               Delete game
@@ -222,7 +222,7 @@ export default function GamePage() {
               <div className="flex justify-end gap-3">
                 <button
                   type="button"
-                  className="rounded bg-gray-200 py-2 px-4 text-gray-800 hover:bg-gray-300 focus:bg-gray-300"
+                  className="rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300 focus:bg-gray-300"
                   onClick={() => dialogRef.current?.close()}
                 >
                   Cancel
@@ -230,7 +230,7 @@ export default function GamePage() {
                 <Form method="post">
                   <button
                     type="submit"
-                    className="rounded bg-red-primary py-2 px-4 text-white hover:bg-red-secondary focus:bg-red-secondary"
+                    className="rounded bg-red-primary px-4 py-2 text-white hover:bg-red-secondary focus:bg-red-secondary"
                     name="action"
                     value="delete"
                   >
