@@ -5,8 +5,8 @@ import { getAllPlayersWithGameCount } from "~/models/game.server";
 import { requireUserId } from "~/session.server";
 import { Card } from "~/components/Card";
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const userId = await requireUserId(request);
+export const loader = async ({ request, url }: LoaderFunctionArgs) => {
+  const userId = await requireUserId(request, url);
   const players = await getAllPlayersWithGameCount({ userId });
   return { players };
 };

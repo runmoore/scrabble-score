@@ -65,7 +65,7 @@ function CollapsibleScores({
   );
 }
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({ request, url, params }: LoaderFunctionArgs) => {
   invariant(params.gameId, "gameId not found");
   const game = await getGame({ id: params.gameId });
 
@@ -85,14 +85,14 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   let gameTypes: { id: string; name: string }[] = [];
   if (!game.gameType) {
-    const userId = await requireUserId(request);
+    const userId = await requireUserId(request, url);
     gameTypes = await getAllGameTypes({ userId });
   }
 
   return { game: { ...game, players }, winners, topScore, gameTypes };
 };
 
-export const action = async ({ request, params }: ActionFunctionArgs) => {
+export const action = async ({ request, url, params }: ActionFunctionArgs) => {
   invariant(params.gameId, "gameId not found");
   const { gameId } = params;
 
@@ -112,7 +112,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 
   if (formData.get("action") === "rematch") {
-    const userId = await requireUserId(request);
+    const userId = await requireUserId(request, url);
 
     const players = game.players.map((player) => player.id);
     const gameTypeId = game.gameType?.id ?? null;
@@ -123,7 +123,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 
   if (formData.get("action") === "set-game-type") {
-    const userId = await requireUserId(request);
+    const userId = await requireUserId(request, url);
     const gameTypeId = formData.get("gameTypeId") as string;
     if (gameTypeId) {
       await setGameType({ id: gameId, userId, gameTypeId });
@@ -132,7 +132,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 
   if (formData.get("action") === "delete") {
-    const userId = await requireUserId(request);
+    const userId = await requireUserId(request, url);
 
     await deleteGame({ id: gameId, userId });
 

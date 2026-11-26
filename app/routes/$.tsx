@@ -1,8 +1,6 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-export function loader({ request }: LoaderFunctionArgs) {
-  const url = new URL(request.url);
-
+export function loader({ url }: LoaderFunctionArgs) {
   // Silently handle Chrome DevTools requests
   if (
     url.pathname.includes(".well-known") &&

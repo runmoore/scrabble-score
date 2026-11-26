@@ -43,18 +43,18 @@ export async function getUser(request: Request): Promise<null | User> {
 
 export async function requireUserId(
   request: Request,
-  redirectTo: string = new URL(request.url).pathname
+  url: URL
 ): Promise<string> {
   const userId = await getUserId(request);
   if (!userId) {
-    const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
+    const searchParams = new URLSearchParams([["redirectTo", url.pathname]]);
     throw redirect(`/login?${searchParams}`);
   }
   return userId;
 }
 
-export async function requireUser(request: Request) {
-  const userId = await requireUserId(request);
+export async function requireUser(request: Request, url: URL) {
+  const userId = await requireUserId(request, url);
 
   const user = await getUserById(userId);
   if (user) return user;

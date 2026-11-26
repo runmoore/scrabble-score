@@ -186,10 +186,9 @@ function computeStats(
   };
 }
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({ request, url, params }: LoaderFunctionArgs) => {
   invariant(params.playerId, "playerId not found");
-  const userId = await requireUserId(request);
-  const url = new URL(request.url);
+  const userId = await requireUserId(request, url);
   const selectedTypeId = url.searchParams.get("type");
 
   const [player, allGames] = await Promise.all([

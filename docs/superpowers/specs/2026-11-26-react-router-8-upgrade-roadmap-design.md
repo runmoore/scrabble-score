@@ -1,7 +1,7 @@
 # React Router 8 Upgrade Roadmap
 
 Date: 2026-11-26
-Status: **In progress.** Four PRs take the app from React Router 7.18.6 to 8.5.3. PR 1 is merged and PR 2 is open.
+Status: **In progress.** Four PRs take the app from React Router 7.18.6 to 8.5.3. PR 1 and PR 2 are merged and PR 3 is open.
 Follows on from [`2026-11-17-react-19-upgrade-roadmap-design.md`](./2026-11-17-react-19-upgrade-roadmap-design.md), which
 listed React Router 8 as out of scope.
 
@@ -12,8 +12,8 @@ Update this table when each PR is opened and merged. A new session should read t
 | #   | PR                                                                      | Status  | Branch                   | PR link | Merged commit |
 | --- | ----------------------------------------------------------------------- | ------- | ------------------------ | ------- | ------------- |
 | 1   | React Router 7.18.7 and Vite 7 (with this roadmap)                      | Merged  | `deps/rr-7.18.7-vite-7`  | #106    | `a22f59e`     |
-| 2   | `v8_*` flags that need no code, and `useMatches().data` -> `loaderData` | Open    | `chore/rr8-flags`        |         |               |
-| 3   | `v8_passThroughRequests`                                                | Planned | `chore/rr8-pass-through` |         |               |
+| 2   | `v8_*` flags that need no code, and `useMatches().data` -> `loaderData` | Merged  | `chore/rr8-flags`        | #107    | `33315e7`     |
+| 3   | `v8_passThroughRequests`                                                | Open    | `chore/rr8-pass-through` |         |               |
 | 4   | React Router 7.18.7 -> 8.5.3, and close-out                             | Planned | `chore/react-router-8`   |         |               |
 
 ## Why
@@ -93,14 +93,21 @@ the pathname is `/games/123.data`. The redirect would be `redirectTo=/games/123.
 to a raw data response.
 
 The unit tests build requests with no `.data` suffix, and Cypress logs in from a document request, so neither catches this.
-Options for the fix, to be settled in the PR's own design:
+Options considered:
 
-- Pass `url.pathname` from each loader's `url` argument (26 call sites, mechanical, explicit). **Lean towards this.**
+- Pass `url.pathname` from each loader's `url` argument (14 call sites in 9 route files, mechanical, explicit).
 - Strip a `.data` or `_.data` suffix inside `requireUserId` (one place, but it duplicates React Router's URL rules, and
   `trailingSlashAwareDataRequests` makes the suffix format more than one shape).
 
-Whichever is chosen, add a test that a `.data` URL yields the page path in `redirectTo`. This single test is the one addition
-to "rely on existing tests".
+**Decision: the first.** `requireUserId(request, url)` takes the `url` argument as a required parameter (the optional
+`redirectTo` had no callers), so a call site that forgets it is a type error and not a silent bug. `requireUser` (unused) got
+the same parameter. The three loaders that read `request.url` (`games.players_.$playerId`,
+`games.compare_.$playerOne.$playerTwo`, `$`) use `url` directly. The route tests mock `requireUserId` and needed no change.
+
+The one added test is `app/session.server.test.ts`: a request for `/games/123.data` with a `url` of `/games/123` redirects to
+`/login?redirectTo=%2Fgames%2F123`. It fails if `requireUserId` reads the raw request. Also checked by hand against the built
+server: logged-out `GET /games.data` and `/games/abc.data` answer with a single-fetch redirect to
+`/login?redirectTo=%2Fgames` and `%2Fgames%2Fabc`, and the document request `/games/abc` redirects the same way.
 
 ## Rules for every PR
 
