@@ -26,7 +26,7 @@ npm test                 # Run Vitest unit tests (watch mode)
 npm run test -- --run    # Run Vitest once without watch mode
 npm run test:e2e:dev     # Open Cypress for interactive e2e testing
 npm run test:e2e:run     # Run Cypress e2e tests headlessly
-npm run validate         # Run all tests, lint, typecheck, and e2e
+npm run validate         # Run all tests, lint, format check, typecheck, and e2e
 ```
 
 ### Code Quality
