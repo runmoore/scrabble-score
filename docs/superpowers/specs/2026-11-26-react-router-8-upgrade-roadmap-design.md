@@ -1,7 +1,7 @@
 # React Router 8 Upgrade Roadmap
 
 Date: 2026-11-26
-Status: **In progress.** Four PRs take the app from React Router 7.18.6 to 8.5.3. PR 1 and PR 2 are merged and PR 3 is open.
+Status: **Complete (2026-11-26) once PR 4 is merged.** Four PRs (#106 to #108, plus PR 4) took the app from React Router 7.18.6 to 8.5.3.
 Follows on from [`2026-11-17-react-19-upgrade-roadmap-design.md`](./2026-11-17-react-19-upgrade-roadmap-design.md), which
 listed React Router 8 as out of scope.
 
@@ -9,12 +9,50 @@ listed React Router 8 as out of scope.
 
 Update this table when each PR is opened and merged. A new session should read this first to see where things stand.
 
-| #   | PR                                                                      | Status  | Branch                   | PR link | Merged commit |
-| --- | ----------------------------------------------------------------------- | ------- | ------------------------ | ------- | ------------- |
-| 1   | React Router 7.18.7 and Vite 7 (with this roadmap)                      | Merged  | `deps/rr-7.18.7-vite-7`  | #106    | `a22f59e`     |
-| 2   | `v8_*` flags that need no code, and `useMatches().data` -> `loaderData` | Merged  | `chore/rr8-flags`        | #107    | `33315e7`     |
-| 3   | `v8_passThroughRequests`                                                | Open    | `chore/rr8-pass-through` |         |               |
-| 4   | React Router 7.18.7 -> 8.5.3, and close-out                             | Planned | `chore/react-router-8`   |         |               |
+| #   | PR                                                                      | Status | Branch                   | PR link | Merged commit |
+| --- | ----------------------------------------------------------------------- | ------ | ------------------------ | ------- | ------------- |
+| 1   | React Router 7.18.7 and Vite 7 (with this roadmap)                      | Merged | `deps/rr-7.18.7-vite-7`  | #106    | `a22f59e`     |
+| 2   | `v8_*` flags that need no code, and `useMatches().data` -> `loaderData` | Merged | `chore/rr8-flags`        | #107    | `33315e7`     |
+| 3   | `v8_passThroughRequests`                                                | Merged | `chore/rr8-pass-through` | #108    | `ef872b5`     |
+| 4   | React Router 7.18.7 -> 8.5.3, and close-out                             | Open   | `chore/react-router-8`   |         |               |
+
+## Outcome
+
+The aim was to stay on supported versions, not to adopt v8 features, and that is done once PR 4 merges.
+
+|               | At the start                                                        | At the end                       |
+| ------------- | ------------------------------------------------------------------- | -------------------------------- |
+| React Router  | 7.18.6 (`react-router`, `@react-router/{dev,node,serve,fs-routes}`) | 8.5.3, exact pins                |
+| Vite          | 6.4.6                                                               | 7.3.8                            |
+| `future.v8_*` | none (five build warnings)                                          | none (all adopted, then removed) |
+| Vitest tests  | 155                                                                 | 156 (one added in PR 3)          |
+
+What each PR needed beyond the plan:
+
+- **PR 1:** nothing. No code changed.
+- **PR 2:** `v8_middleware` makes the loader and action `context` argument a `RouterContextProvider`, so 28 hand-built
+  `context: {}` arguments in 8 route test files became `new RouterContextProvider()`. Typecheck found them. The build
+  printed no warnings afterwards, not the one expected.
+- **PR 3:** `requireUserId(request, url)` (14 call sites in 9 route files) and a unit test, as described above.
+- **PR 4:** remove the `future` block from `react-router.config.ts`, and `AppLoadContext` (removed in 8.0.1) became
+  `RouterContextProvider` in `entry.server.tsx`. `splitRouteModules` defaults to `true`, so it needed no replacement.
+  A v7-issued session cookie is read by v8 as the same user (and a tampered one is rejected), so existing logins survive.
+  `npm run validate` passes: 156 Vitest tests, lint, typecheck and Cypress 38/38.
+
+**Not verified (decided with the user, 2026-11-26):** whether `allowedActionOrigins` still fixes form posts behind Fly's
+proxy under v8. `@react-router/serve` now runs on Express 5 and cookie parsing moved to `cookie-es`. Production is the user's
+to test after the deploy, as in PR 9b of the React 19 roadmap. If form posts fail with "Unexpected Server Error" after the
+deploy, start there. The Docker image build was also not run locally.
+
+## Lessons
+
+- Enable a flag, then run typecheck before anything else: the type changes a flag brings (`RouterContextProvider`) show up
+  as errors in hand-built test arguments, not at runtime.
+- A leftover server on the e2e port (`EADDRINUSE` in the log, then every spec failing to hydrate) looks like a framework
+  regression. Check what holds port 8811 before debugging the upgrade. `pkill -f` on a name does not match the command
+  line of a server started through `binode`; identify the process by port and check its command line before stopping it.
+- Prove a redirect or URL change with the real server (`curl` on `.data` URLs), not only with unit tests that build their
+  own requests.
 
 ## Why
 

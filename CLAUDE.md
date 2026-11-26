@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Scrabble score tracking application built on React Router 7 in framework mode (the app began as a Remix Indie Stack project). It allows users to create games, track multiple players, and record scores throughout the game with turn-by-turn play.
+This is a Scrabble score tracking application built on React Router 8 in framework mode (the app began as a Remix Indie Stack project). It allows users to create games, track multiple players, and record scores throughout the game with turn-by-turn play.
 
 **Target Platform**: Progressive Web App (PWA) optimized for mobile browsers, specifically iPhone devices. The app is designed to be installed on the iPhone home screen and used as a native-like experience.
 
