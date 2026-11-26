@@ -1,31 +1,60 @@
 # React 19 Upgrade Roadmap
 
 Date: 2026-11-17
-Status: Approved design. PRs 1 to 9c merged (the app is on React 19 and React Router 7.18.6). PR 10 (flat routes) is in review.
+Status: **Complete (2026-11-25).** 15 PRs (#86 to #103) took the app from Remix 2.12.1 on React 18 to React Router 7.18.6 on React 19.3.1. What is left is optional; see "Known issues and follow-ups".
 Last re-ordered 2026-11-17 (see "Ordering change").
+
+## Outcome
+
+The aim was to stay on supported versions, not to adopt React 19 features, and that is done. Merged between
+2026-11-17 and 2026-11-25.
+
+|                | At the start                                         | At the end                                                                                 |
+| -------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Framework      | Remix 2.12.1 (classic compiler)                      | React Router 7.18.6 (`@react-router/dev`, `node`, `serve`, `fs-routes`) on Vite            |
+| React          | 18.3.1                                               | 19.3.1 (`@types/react` and `@types/react-dom` 19.3.0)                                      |
+| Build          | Remix classic compiler; Vite 5 only used by Vitest   | Vite 6.4.6 builds the app and runs Vitest                                                  |
+| Unit tests     | Vitest 1.6, happy-dom 2.55 (159 tests)               | Vitest 5.1.1, happy-dom 21.0.4 (155 tests)                                                 |
+| Lint           | ESLint 8, `.eslintrc.js`, `@remix-run/eslint-config` | ESLint 9.39, flat config on plugin presets                                                 |
+| Routes         | `remix.config.js`, v1 folder convention              | flat route files, `flatRoutes()` in `app/routes.ts`                                        |
+| Remix packages | `@remix-run/*` throughout                            | none (only `@remix-run/node-fetch-server`, a transitive dependency of `@react-router/dev`) |
+
+End to end checks: Cypress 38/38. After PR 9c deployed, the user confirmed on Fly that the form-post errors were gone. **Never verified:**
+the Docker image build (no Docker daemon was available), so the Dockerfile has only been exercised by CI deploys.
+
+How the plan changed along the way:
+
+- PRs 2 and 4 swapped (a peer-dependency constraint, see "Ordering change").
+- Five PRs were added: 3b (ESLint presets), 6b (remove `json()`), 7b (`v3_routeConfig`, split from 7),
+  9b (React Router 7.18.6) and 9c (the Fly origin-check fix).
+- The routing plan changed twice. The v1 folder convention could not be kept through the swap, because
+  `@remix-run/v1-route-convention` imports `@remix-run/dev` at runtime. PR 8 used an explicit `app/routes.ts`
+  and PR 10 moved to flat routes.
+- Type changes in the hand-built loader and action arguments of the route tests were not predicted in PR 8
+  (`unstable_pattern`) or in PR 9b (its rename to `pattern`, and a new required `url`). Typecheck found both.
 
 ## Progress tracker
 
 Update this table when each PR is opened and merged. A new session should read
 this first to see where things stand.
 
-| #   | PR                                    | Status    | Branch                       | PR link | Merged commit |
-| --- | ------------------------------------- | --------- | ---------------------------- | ------- | ------------- |
-| 1   | happy-dom 2.55 -> 21                  | Merged    | `deps/happy-dom-21`          | #86     | `fb09398`     |
-| 2   | Remix 2.12 -> 2.17.5                  | Merged    | `deps/remix-2.17`            | #87     | `4f9a596`     |
-| 3   | ESLint 8 -> 9 flat config             | Merged    | `deps/eslint-9`              | #88     | `0e26e25`     |
-| 3b  | ESLint config on plugin presets       | Merged    | `chore/eslint-presets`       | #92     | `dd3c1f4`     |
-| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged    | `deps/vite-vitest`           | #93     | `e53149f`     |
-| 5   | Low-risk Remix future flags           | Merged    | `chore/remix-future-flags`   | #94     | `b5294f5`     |
-| 6   | `v3_singleFetch` (flag only)          | Merged    | `chore/single-fetch`         | #95     | `3d00d64`     |
-| 6b  | Remove `json()`, native `Date`s       | Merged    | `chore/remove-json`          | #96     | `2dd90e0`     |
-| 7   | Classic compiler -> Remix Vite plugin | Merged    | `chore/remix-vite`           | #97     | `c03bdec`     |
-| 7b  | `v3_routeConfig` and `app/routes.ts`  | Merged    | `chore/route-config`         | #98     | `53c99a9`     |
-| 8   | Remix 2 -> React Router 7             | Merged    | `chore/react-router-7`       | #99     | `d6b2a77`     |
-| 9   | React 18 -> 19                        | Merged    | `chore/react-19`             | #100    | `6dcba48`     |
-| 9b  | React Router 7.11.0 -> 7.18.6         | Merged    | `deps/react-router-7.18`     | #101    | `a07fe84`     |
-| 9c  | `allowedActionOrigins` for Fly        | Merged    | `fix/allowed-action-origins` | #102    | `63eedc9`     |
-| 10  | Flat routes                           | In review | `chore/flat-routes`          |         |               |
+| #   | PR                                    | Status | Branch                       | PR link | Merged commit |
+| --- | ------------------------------------- | ------ | ---------------------------- | ------- | ------------- |
+| 1   | happy-dom 2.55 -> 21                  | Merged | `deps/happy-dom-21`          | #86     | `fb09398`     |
+| 2   | Remix 2.12 -> 2.17.5                  | Merged | `deps/remix-2.17`            | #87     | `4f9a596`     |
+| 3   | ESLint 8 -> 9 flat config             | Merged | `deps/eslint-9`              | #88     | `0e26e25`     |
+| 3b  | ESLint config on plugin presets       | Merged | `chore/eslint-presets`       | #92     | `dd3c1f4`     |
+| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Merged | `deps/vite-vitest`           | #93     | `e53149f`     |
+| 5   | Low-risk Remix future flags           | Merged | `chore/remix-future-flags`   | #94     | `b5294f5`     |
+| 6   | `v3_singleFetch` (flag only)          | Merged | `chore/single-fetch`         | #95     | `3d00d64`     |
+| 6b  | Remove `json()`, native `Date`s       | Merged | `chore/remove-json`          | #96     | `2dd90e0`     |
+| 7   | Classic compiler -> Remix Vite plugin | Merged | `chore/remix-vite`           | #97     | `c03bdec`     |
+| 7b  | `v3_routeConfig` and `app/routes.ts`  | Merged | `chore/route-config`         | #98     | `53c99a9`     |
+| 8   | Remix 2 -> React Router 7             | Merged | `chore/react-router-7`       | #99     | `d6b2a77`     |
+| 9   | React 18 -> 19                        | Merged | `chore/react-19`             | #100    | `6dcba48`     |
+| 9b  | React Router 7.11.0 -> 7.18.6         | Merged | `deps/react-router-7.18`     | #101    | `a07fe84`     |
+| 9c  | `allowedActionOrigins` for Fly        | Merged | `fix/allowed-action-origins` | #102    | `63eedc9`     |
+| 10  | Flat routes                           | Merged | `chore/flat-routes`          | #103    | `520a07b`     |
 
 ## Ordering change
 
@@ -40,15 +69,13 @@ versions, not only the targets.
 
 ## Handoff (read this first in a new session)
 
-- **State:** `main` has PRs 1 to 9c (React 19.3.1 and React Router 7.18.6 on the Vite plugin; Vite 6.4.6,
-  Vitest 5, ESLint 9). PR 10 (flat routes) is on `chore/flat-routes`, awaiting push and review.
-- **Next:** merge PR 10. The roadmap's React 19 goal is already met; what remains is optional tidying
-  (the v8 future-flag warnings in the build, and the known flaky Cypress tests).
-- **Test data in the dev database:** user `future-flags-check@example.com`, players
-  Alice and Bob, game type Boggle and two completed games.
-- **How we work:** see "Working agreements" below (the user runs installs and pushes;
-  check `grep -c artifactory package-lock.json` is 0 before committing a lockfile;
-  PR descriptions lead with why and say what was not tested).
+- **State:** the migration is complete and `main` has all of it (PRs #86 to #103). Nothing is in flight.
+- **Optional next steps,** in the order I would take them: (1) the flaky Cypress tests, which cost 7 failed CI
+  attempts between #96 and #101 (see "Known issues and follow-ups"); (2) the five React Router v8
+  future-flag warnings in the build; (3) the generated `Route.*` types. None blocks anything.
+- **How we work:** see "Working agreements" below. In short: the user runs installs and pushes; check
+  `grep -c artifactory package-lock.json` is 0 before committing a lockfile; PR descriptions lead with why and say
+  what was not tested; the agent does not change the dev database or delete data without asking first.
 
 ## Why
 
@@ -64,18 +91,20 @@ The aim is to stay on supported versions. It is not to adopt React 19 features.
 - **Delivery:** many small PRs, oldest dependency first. Each PR is
   independently deployable, so if the migration stops partway the repo is still
   better off.
-- **Target framework:** React Router 7 (7.11.x), not 8. v7 has the documented
-  migration path from Remix 2 and accepts React 18 or 19 and Vite 5, 6 or 7.
+- **Target framework:** React Router 7, not 8. The migration started on 7.11.0 (PR 8) and moved to 7.18.6
+  (PR 9b). v7 has the documented migration path from Remix 2 and accepts React 18 or 19 and Vite 5 to 8.
   A later v7 -> v8 move is out of scope.
-- **Routing:** keep the Remix v1 folder convention through the migration using
-  `@react-router/remix-routes-option-adapter` with `createRoutesFromFolders`.
-  Move to flat routes (`@react-router/fs-routes`) in PR 10.
+- **Routing:** the plan was to keep the Remix v1 folder convention through the migration using
+  `@react-router/remix-routes-option-adapter`. That was not possible, because
+  `@remix-run/v1-route-convention` imports `@remix-run/dev` at runtime. PR 7b put routes in `app/routes.ts` behind
+  the Remix adapter, PR 8 replaced that with an explicit list, and PR 10 moved to flat routes
+  (`@react-router/fs-routes`), the convention the React Router docs describe.
 - **Scope:** only dependencies on the path to React 19, or blocking it.
   Adjacent upgrades are not included (see Out of scope).
 - **Ordering:** oldest dependency first, unless a peer-dependency constraint
   forces another order (see Ordering change).
 
-## Version facts (checked 2026-11-17)
+## Version facts at the start (checked 2026-11-17)
 
 - Latest React is 19.3.1. Latest `@types/react` and `@types/react-dom` are 19.3.0.
 - Latest Remix 2.x is 2.17.5. `@remix-run/dev@2.17.5` peers Vite `^5.1.0 || ^6.0.0`.
@@ -96,17 +125,19 @@ The aim is to stay on supported versions. It is not to adopt React 19 features.
   (an earlier version of this spec said it did). Its blockers are the peers
   `eslint ^8` and `react ^18`, plus bundled typescript-eslint v5 and
   `eslint-plugin-node`.
-- `@remix-run/v1-route-convention@0.1.4` peers `@remix-run/dev`. This may need
-  an npm `overrides` entry after PR 8 until PR 10 removes the package.
+- `@remix-run/v1-route-convention@0.1.4` peers `@remix-run/dev` and also imports
+  `@remix-run/dev/dist/config/routes` at runtime, so an npm `overrides` entry could not have kept it working.
+  PR 8 removed it.
+- At the end: the latest React Router 7.x is 7.18.6, and 8.5.2 needs React 19.2.7 or later and Vite 7 or 8.
 - `@testing-library/react@16.3.3` already supports React 18 and 19.
 - `recharts@3.10` already supports React 19.
 
-## Code facts that shape the work
+## Code facts at the start (before the migration)
 
 - React code is already compatible with React 19. The only fix is the global
   `JSX.Element` namespace in `app/routes/cryptogram.tsx:190-191`.
 - Entry files already use `hydrateRoot` and `renderToPipeableStream`.
-- 24 `json()` calls across routes, and about 46 `await res.json()` reads in
+- 27 `json()` calls across routes (an early count said 24), and about 46 `await res.json()` reads in
   route tests that call loaders and actions directly. These are the main cost
   of `v3_singleFetch` (PR 6).
 - `test/setup-test-env.ts` calls `installGlobals()` (removed in React Router 7)
@@ -120,25 +151,27 @@ The aim is to stay on supported versions. It is not to adopt React 19 features.
 - `Dockerfile` copies `build/`, and `npm start` runs
   `remix-serve ./build/index.js`.
 
-## Roadmap
+## Roadmap (as planned, corrected to what happened)
 
-| #   | PR                                    | Why here                                                                                                                                                                                 | Main work                                                                                                                                                                                                                                                                                                                                                                                   |
-| --- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | happy-dom 2.55 -> 21                  | Oldest dependency (March 2022), and the biggest risk for React 19 DOM tests                                                                                                              | Bump. Delete the `globalThis.URL` workaround in `test/setup-test-env.ts`. Fix any component test failures. Keep `installGlobals()`.                                                                                                                                                                                                                                                         |
-| 2   | Remix 2.12 -> 2.17.5                  | Same major. `@remix-run/dev@2.12.1` peers Vite 5 only, so this unblocks Vite 6 (see Ordering change). Also moves to the latest 2.x.                                                      | Version bump of all `@remix-run/*` packages, including `@remix-run/eslint-config`. Check the peer ranges and the build and tests. No code changes expected.                                                                                                                                                                                                                                 |
-| 3   | ESLint 8 -> 9 flat config             | ESLint 8 is end of life. `@remix-run/eslint-config` peers `eslint ^8` and `react ^18`, so it blocks ESLint 9 now and React 19 in PR 9.                                                   | Replace `.eslintrc.js` with `eslint.config.js` using typescript-eslint, react, react-hooks, jsx-a11y, testing-library, jest-dom and prettier. Remove `@remix-run/eslint-config`. Update CLAUDE.md.                                                                                                                                                                                          |
-| 3b  | ESLint config on plugin presets       | Added after PR 3: the explicit rule lists are brittle across plugin upgrades (six rules had already been renamed or removed).                                                            | Replace ~165 hand-listed rules with each plugin's recommended preset plus a short kept-rules list, then triage the new findings (fix, disable in config with a reason, or inline-disable with a linked issue).                                                                                                                                                                              |
-| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Vitest 1 is four majors behind. Vite 6.4 is the version Remix 2.17, React Router 7 and Vitest 5 all accept. Needs PR 2 first.                                                            | Bump Vite to `^6.4.6`, Vitest and `@vitest/coverage-v8` to `^5.1.0`, `@vitejs/plugin-react` to `^5.2.0` (not 6.x, which needs Vite 8). Update `vitest.config.mts` and fix test API changes after reading the Vitest 2 to 5 migration guides. Vite is only used by Vitest at this stage, so the app build is untouched. Update CLAUDE.md.                                                    |
-| 5   | Low-risk future flags                 | Small behaviour changes, isolated.                                                                                                                                                       | `v3_fetcherPersist`, `v3_relativeSplatPath`, `v3_throwAbortReason`, `v3_lazyRouteDiscovery`.                                                                                                                                                                                                                                                                                                |
-| 6   | `v3_singleFetch` (flag only)          | Changes how data travels, so Cypress problems are easy to attribute.                                                                                                                     | Enable the flag, add the `Future` type augmentation, drop `installGlobals()` from the test setup, widen the Cypress redirect-status assertion. `json()` stays.                                                                                                                                                                                                                              |
-| 6b  | Remove `json()`, native `Date`s       | React Router 7 removes `json()` and `defer()` (7.0.0 changelog), so this must land before step 8. Kept separate from 6 so a regression can be attributed to the flag or to the refactor. | Replace the 24 `json()` calls with plain returns or `data()` (about 14 set a status). Update about 46 `await res.json()` test reads with a shared helper. Date cleanup, see the PR 6 section.                                                                                                                                                                                               |
-| 7   | Classic compiler -> Remix Vite plugin | Required before React Router 7.                                                                                                                                                          | `vite.config.ts`, `app/routes.ts` with the v1-convention adapter (`v3_routeConfig`), `postcss.config.js`, `?url` CSS import, ESM and `"type": "module"` (port `mocks/index.js` and other `require` users), `build/server` paths, Dockerfile and start scripts, dev on port 3000 with MSW, remove `<LiveReload />`. Update CLAUDE.md. Screenshots likely differ if the CSS pipeline changes. |
-| 8   | Remix 2 -> React Router 7             | The framework is now ready.                                                                                                                                                              | Official `remix/2/react-router/upgrade` codemod, `@react-router/*` packages, remove `installGlobals`, `remix-routes-option-adapter`, possible npm `overrides`. Update CLAUDE.md.                                                                                                                                                                                                            |
-| 9   | React 18 -> 19                        | The goal.                                                                                                                                                                                | `react`, `react-dom`, `@types/react`, `@types/react-dom`. Fix `JSX.Element` in `cryptogram.tsx`. Testing-library minor bumps.                                                                                                                                                                                                                                                               |
-| 10  | Flat routes (follow-up)               | Removes the legacy adapter.                                                                                                                                                              | Move to `@react-router/fs-routes`, rename route files and tests, drop `@remix-run/v1-route-convention`. Update CLAUDE.md.                                                                                                                                                                                                                                                                   |
+| #   | PR                                    | Why here                                                                                                                                                                                 | Main work                                                                                                                                                                                                                                                                                                                                                            |
+| --- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | happy-dom 2.55 -> 21                  | Oldest dependency (March 2022), and the biggest risk for React 19 DOM tests                                                                                                              | Bump. Delete the `globalThis.URL` workaround in `test/setup-test-env.ts`. Fix any component test failures. Keep `installGlobals()`.                                                                                                                                                                                                                                  |
+| 2   | Remix 2.12 -> 2.17.5                  | Same major. `@remix-run/dev@2.12.1` peers Vite 5 only, so this unblocks Vite 6 (see Ordering change). Also moves to the latest 2.x.                                                      | Version bump of all `@remix-run/*` packages, including `@remix-run/eslint-config`. Check the peer ranges and the build and tests. No code changes expected.                                                                                                                                                                                                          |
+| 3   | ESLint 8 -> 9 flat config             | ESLint 8 is end of life. `@remix-run/eslint-config` peers `eslint ^8` and `react ^18`, so it blocks ESLint 9 now and React 19 in PR 9.                                                   | Replace `.eslintrc.js` with `eslint.config.js` using typescript-eslint, react, react-hooks, jsx-a11y, testing-library, jest-dom and prettier. Remove `@remix-run/eslint-config`. Update CLAUDE.md.                                                                                                                                                                   |
+| 3b  | ESLint config on plugin presets       | Added after PR 3: the explicit rule lists are brittle across plugin upgrades (six rules had already been renamed or removed).                                                            | Replace ~165 hand-listed rules with each plugin's recommended preset plus a short kept-rules list, then triage the new findings (fix, disable in config with a reason, or inline-disable with a linked issue).                                                                                                                                                       |
+| 4   | Vite 5 -> 6.4+, Vitest 1 -> 5         | Vitest 1 is four majors behind. Vite 6.4 is the version Remix 2.17, React Router 7 and Vitest 5 all accept. Needs PR 2 first.                                                            | Bump Vite to `^6.4.6`, Vitest and `@vitest/coverage-v8` to `^5.1.0`, `@vitejs/plugin-react` to `^5.2.0` (not 6.x, which needs Vite 8). Update `vitest.config.mts` and fix test API changes after reading the Vitest 2 to 5 migration guides. Vite is only used by Vitest at this stage, so the app build is untouched. Update CLAUDE.md.                             |
+| 5   | Low-risk future flags                 | Small behaviour changes, isolated.                                                                                                                                                       | `v3_fetcherPersist`, `v3_relativeSplatPath`, `v3_throwAbortReason`, `v3_lazyRouteDiscovery`.                                                                                                                                                                                                                                                                         |
+| 6   | `v3_singleFetch` (flag only)          | Changes how data travels, so Cypress problems are easy to attribute.                                                                                                                     | Enable the flag, add the `Future` type augmentation, drop `installGlobals()` from the test setup, widen the Cypress redirect-status assertion. `json()` stays.                                                                                                                                                                                                       |
+| 6b  | Remove `json()`, native `Date`s       | React Router 7 removes `json()` and `defer()` (7.0.0 changelog), so this must land before step 8. Kept separate from 6 so a regression can be attributed to the flag or to the refactor. | 27 `json()` calls became plain returns or `data(..., { status: 400 })` (6 set a status). No shared test helper was needed. Date cleanup, see the PR 6b section.                                                                                                                                                                                                      |
+| 7   | Classic compiler -> Remix Vite plugin | Required before React Router 7.                                                                                                                                                          | `vite.config.ts` with the Remix plugin and the five future flags, `postcss.config.js`, `?url` CSS import, ESM (`"type": "module"`, `.cjs` for the Tailwind config and the MSW preload), `build/server` and `build/client`, dev on port 3000 with MSW, `<LiveReload />` removed, `tsconfig.json` for Vite. `v3_routeConfig` was split off into 7b. Updated CLAUDE.md. |
+| 7b  | `v3_routeConfig` and `app/routes.ts`  | Split from 7 so a build failure and a routing failure could not be confused.                                                                                                             | `app/routes.ts` using `remixRoutesOptionAdapter` around the v1 convention, with two build-time packages (`@remix-run/route-config`, `@remix-run/routes-option-adapter`). Updated CLAUDE.md.                                                                                                                                                                          |
+| 8   | Remix 2 -> React Router 7             | The framework is now ready.                                                                                                                                                              | `react-router` and `@react-router/{dev,node,serve}` 7.11.0 replace the `@remix-run/*` packages; an explicit `app/routes.ts` list (the v1 adapter cannot survive removing `@remix-run/dev`); `react-router.config.ts`; scripts and typegen; imports rewritten by script (not the codemod); `streamTimeout` in `entry.server.tsx`. Updated CLAUDE.md.                  |
+| 9   | React 18 -> 19                        | The goal.                                                                                                                                                                                | `react` and `react-dom` ^19.3.1, `@types/react` and `@types/react-dom` ^19.3.0, `@testing-library/react` ^16.3.3; `JSX.Element` -> `ReactElement` in `cryptogram.tsx`.                                                                                                                                                                                               |
+| 9b  | React Router 7.11.0 -> 7.18.6         | Security fixes in 7.12 to 7.18, and the follow-up planned in PR 8.                                                                                                                       | The four packages pinned at 7.18.6. Test-only type fixes: `unstable_pattern` -> `pattern`, and the new `url` argument.                                                                                                                                                                                                                                               |
+| 9c  | `allowedActionOrigins` for Fly        | 7.12's origin check rejects form posts behind Fly's TLS-terminating proxy.                                                                                                               | `allowedActionOrigins: ["scrabble-score-e630.fly.dev"]` in `react-router.config.ts`.                                                                                                                                                                                                                                                                                 |
+| 10  | Flat routes                           | The explicit list needed a line (and a test) per route.                                                                                                                                  | `@react-router/fs-routes` `flatRoutes()`; 17 files renamed, with trailing underscores to keep the same nesting; `app/routes.test.ts` deleted. Updated CLAUDE.md.                                                                                                                                                                                                     |
 
-Each PR gets its own short design and plan when it starts. PRs 6, 7 and 8 are
-the riskiest and each deserve a fuller design before work begins.
+Each PR got its own short design when it started. PRs 6, 7 and 8 were the riskiest and got fuller designs.
 
 ## Rules for every PR
 
@@ -155,8 +188,9 @@ the riskiest and each deserve a fuller design before work begins.
 - Only that PR's dependencies change. Unrelated version drift is left alone.
 - The PR description explains why, says which roadmap step it is, and what it
   unblocks.
-- `CLAUDE.md` is updated in PRs 3, 4, 7, 8 and 10, where commands or
-  architecture change.
+- `CLAUDE.md` is updated where commands or architecture change (it was, in PRs 3, 3b, 7, 7b, 8 and 10).
+- The pixel-diff screenshot comparison is recorded for PRs 7, 8 and 9. It was skipped, and each PR said so, where
+  rendering could not change: 7b, 9b, 9c and 10 changed routing, versions or config only.
 
 ## Working agreements (environment)
 
@@ -166,10 +200,9 @@ the riskiest and each deserve a fuller design before work begins.
   Actions and the Fly build get `403` on those. The agent gives the exact
   command, including `--registry=https://registry.npmjs.org`, and the user runs
   it.
-- **Exact pins for Remix packages.** `npm install pkg@x` writes `^x` ranges,
-  but `@remix-run/*` are pinned exactly (e.g. `2.17.5`) so they move in
-  lockstep. After installing, restore exact pins in `package.json` and in
-  `packages[""]` of `package-lock.json` (`npm ci` checks they agree).
+- **Exact pins for the framework packages.** `npm install pkg@x` writes `^x` ranges, but the `@remix-run/*`
+  packages (until PR 8) and the React Router packages (since) are pinned exactly so they move in lockstep.
+  After installing, check that `package.json` and `packages[""]` of `package-lock.json` agree (`npm ci` checks it).
 - **Before every commit that touches `package-lock.json`**, check
   `grep -c artifactory package-lock.json` is 0. This broke PR 1's first CI run.
 - **The agent cannot push** to this remote (guardrail
@@ -191,32 +224,34 @@ the riskiest and each deserve a fuller design before work begins.
   as `--include='*.ts'`. The agent's shell runs Node 22.22.2 while CI and the
   user run Node 24. `rm` is denied; `unlink` works. `gh issue create` and
   `gh pr edit` work.
+- **No live-site verification after merges** (decided 2026-11-24): watching Fly and calling the live site was
+  not worth it. CI is checked; production is the user's to test.
+- **The agent does not run `npm install`, including `--dry-run`, and does not change the dev database or delete
+  data without asking first.** Deleting two test users from the dev database without asking was a mistake.
 - Check `origin/main` before opening each PR, because the user also pushes to
   `main`, and rebase if it moved.
 
-## Risks
+## Risks and how they played out
 
-1. **(PR 1, done)** happy-dom 21 worked with Vitest 1.6 and the `URL`
-   workaround was removed with no test changes.
-2. **Single fetch (PR 6, 6b).** Action redirects answer 202 (confirmed; the Cypress
-   assertion was widened in PR 6). Type inference changes via the `Future`
-   augmentation (done in PR 6). PR 6b needed no shared test helper (see the
-   PR 6b section).
-3. **ESM switch (PR 7).** `mocks/index.js`, `remix.config.js` and other
-   `require` users must become `.cjs` or be ported. `binode --require ./mocks`
-   must keep working with `remix vite:dev`, and later `react-router dev`.
-4. **Production start path (PR 7).** The start command, the Dockerfile
-   `COPY build`, and `public/` assets must line up.
-5. **v1-convention adapter (PR 7, 8).** `@remix-run/v1-route-convention`
-   peers `@remix-run/dev`, which PR 8 removes. May need `overrides` until PR 10.
-6. **Rollback.** One revert per PR.
-7. **Dev server port.** Vite defaults to 5173. Cypress and `test:e2e:dev`
-   expect 3000, so set the port explicitly in PR 7.
-8. **Vitest 1 -> 5 (PR 4).** Four majors of breaking changes. Read the Vitest 2,
-   3, 4 and 5 migration guides first and fix only what breaks. CI runs
-   `npm run test -- --coverage`, so check coverage defaults too.
-9. **Artifactory URLs in the lockfile (every PR with installs).** See Working
-   agreements.
+1. **happy-dom 21 (PR 1).** Worked with Vitest 1.6, and the `URL` workaround was removed with no test changes.
+2. **Single fetch (PR 6, 6b).** Action redirects answer 202 (confirmed; the Cypress assertion was widened in
+   PR 6). The `Future` type augmentation worked and was deleted in PR 8. PR 6b needed no shared test helper.
+3. **ESM switch (PR 7).** `mocks/index.cjs` and `tailwind.config.cjs`. The MSW preload loads under
+   `vite:dev` and `react-router dev`.
+4. **Production start path (PR 7).** The Dockerfile, CI workflows and `fly.toml` never changed and every deploy
+   succeeded. The Docker image build was never run locally.
+5. **v1-convention adapter (PR 7b, 8).** Worse than expected: it imports `@remix-run/dev` at runtime, so
+   `overrides` could not help. Replaced by an explicit list in PR 8 and flat routes in PR 10.
+6. **Rollback.** One revert per PR; never needed. For 9b the fix was done forward (9c) instead.
+7. **Dev server port.** Set to 3000 in `vite.config.ts` (PR 7).
+8. **Vitest 1 -> 5 (PR 4).** Only one change was needed: the `@testing-library/jest-dom/vitest` import.
+9. **Artifactory URLs in the lockfile.** Broke PR 1's first CI run; the check in Working agreements held
+   afterwards.
+10. **Origin check behind Fly's proxy (7.12+).** Not on the original list. It was shipped knowingly in 9b, broke
+    form posts, and was fixed by 9c.
+11. **Install ordering.** Packages that pin each other exactly (Vitest and its coverage package, then the
+    React Router packages) fail with ERESOLVE unless uninstalled and reinstalled in order. See Working agreements.
+12. **Flaky Cypress tests.** Not on the original list; see "Known issues and follow-ups".
 
 ## PR 1 (done): happy-dom 2.55.0 -> 21.0.4
 
@@ -566,15 +601,13 @@ pixel diff from PR 7; a session cookie made by the old build is accepted by the 
 Risks, in order: a route id or path differs; `react-router dev` does not load the MSW
 preload; streaming and abort timing differ; the deploy. Rollback is one revert.
 
-Follow-ups this creates:
+Follow-ups this created:
 
-- **Upgrade React Router 7.11.0 -> 7.18.6** (latest 7.x; accepts Vite 5 to 8 and TypeScript 5
-  or 6). A separate PR after PR 9.
-- **PR 10 is reworded:** move from the explicit route config to flat routes
-  (`@react-router/fs-routes`), optional and standalone. Dotted flat-route names nest
-  differently from the v1 convention (for example `$gameId.play.$playerId` needs a
-  trailing `_` so it does not nest under `$gameId`), so it needs its own design.
-- Adopt the generated `Route.*` types (optional).
+- **Upgrade React Router 7.11.0 -> 7.18.6:** done as PR 9b.
+- **Flat routes** (`@react-router/fs-routes`): done as PR 10. Dotted flat-route names nest differently from the
+  v1 convention (for example `$gameId.play.$playerId` needs a trailing `_` so it does not nest under `$gameId`),
+  so it got its own design and a before-and-after route tree comparison.
+- Adopt the generated `Route.*` types: not done (optional).
 
 ### PR 8 result
 
@@ -649,13 +682,19 @@ packages and `@remix-run/node-fetch-server` (a transitive dependency of `@react-
 Code changes, all in tests: 7.15.0 stabilised `unstable_pattern` as `pattern`, and 7.18.6's
 `LoaderFunctionArgs` and `ActionFunctionArgs` require a `url: URL`. The 28 hand-built argument
 objects in 8 route test files got the rename and an inline `url: new URL(...)` matching their
-request (no helper, by decision). An earlier note in this spec said no code changes were
-expected; that was wrong, because the changelog rename was missed.
+request (no helper, by decision). The bump was expected to need no code changes; that was wrong, because the
+changelog rename was missed on the first read.
 
 Verification: typecheck, lint, prettier, 156 Vitest tests and Cypress 38/38 pass, with no 4xx or
 5xx in the server log. The build prints five React Router v8 future-flag warnings (middleware,
 route module splitting, Vite Environment API, request handling, data request URLs); none are
 adopted here. No visual comparison was done (a patch-level framework bump).
+
+The origin-check risk this introduced is described under PR 9c.
+
+## PR 9c: `allowedActionOrigins` for Fly
+
+Merged as `63eedc9` (#102), the follow-up to 9b, which was merged without it on purpose.
 
 **Known risk, shipped on purpose.** Since 7.12, React Router rejects a form POST whose `Origin`
 does not match the request URL's origin (scheme, host and port). `react-router-serve` builds the
@@ -664,7 +703,7 @@ proxy. Fly ends TLS and forwards HTTP to port 8080, while browsers send
 `Origin: https://scrabble-score-e630.fly.dev`, so the origins differ in scheme. Local POSTs to
 `/login` with matching `fly.dev` host and origin and `X-Forwarded-Proto: https` returned 400
 "Bad Request"; the same request with an `http://` origin, and same-origin `localhost` requests,
-reached the app; a foreign origin was blocked. This is inferred from the code and a local
+reached the app; a foreign origin was blocked. Before the 9b deploy this was inferred from the code and a local
 simulation, not observed on Fly. The user chose to merge without the fix to confirm the problem
 in production. **Result:** after the 9b merge the user reported
 `[{"_1":2},"error",["SanitizedError",3,4,-7],"Error","Unexpected Server Error"]`, which is exactly the
@@ -678,9 +717,11 @@ allowedActionOrigins: ["scrabble-score-e630.fly.dev"],
 (matched on the host alone, so the scheme mismatch is covered; foreign origins stay blocked).
 Local check of the fix: a `fly.dev` host and HTTPS origin now reaches the app on both `/login` and
 `/login.data`, while a foreign origin and a lookalike host (`not-scrabble-score-e630.fly.dev`) are still
-blocked; Cypress passes 38/38. Rolling back 9b alone would drop the security fixes, so prefer 9c.
+blocked; Cypress passes 38/38. Rolling back 9b alone would drop the security fixes, so prefer 9c. The user confirmed after the deploy that the errors were gone.
 
 ## PR 10: flat routes
+
+Merged as `520a07b` (#103). The user tested it locally before the PR was raised.
 
 Why: the explicit `app/routes.ts` needed a line (and a test) for every new route. React Router's own
 convention, `flatRoutes()` from `@react-router/fs-routes`, discovers routes from file names. The package
@@ -703,6 +744,56 @@ underscore on the dynamic `$gameId_` segment. The IDs the code uses (`root` and 
 unchanged; only child IDs changed and nothing reads them. Typecheck, lint, Prettier, 155 Vitest tests (one
 fewer than before: the deleted test) and Cypress 38/38 pass, with no 4xx or 5xx in the server log. URLs are
 unchanged, so no visual comparison was done. Not verifiable here: the Docker image build.
+
+## Known issues and follow-ups
+
+None of these blocks anything.
+
+1. **Flaky Cypress tests.** Between #96 and #101, 7 CI attempts failed across 5 runs (6b, 7, 7b on `main`,
+   8 on `main`, 9b), and a re-run fixed each one. All were in two specs and fall into three patterns. The first
+   two causes were confirmed by experiments on 2026-11-24. Nothing has been changed yet.
+   - **Typed score is wiped** (`negative-score`, "should integrate negative scores with complete game workflow",
+     `have.value` `'5'` times out; 4 runs). `app/routes/games.$gameId_.play.$playerId.tsx` resets the score in
+     `useEffect(() => setScore(""), [playerId])`. That effect runs after the next player's heading is already on
+     screen, so anything typed in the gap is erased. Typing from a `MutationObserver` the instant the heading
+     changed lost the input at 0 ms and kept it from 5 ms on an idle machine (a slow CI runner widens the gap).
+     Replacing the effect with a reset during render kept the value at every delay tried. Fix: reset during
+     render, or key the state to the player.
+   - **Button detaches on the summary page** (`assign-game-type`, "should assign an existing game type from the
+     game summary page", "page updated while this command was executing"; 2 attempts). `completeGame()` waits
+     for the POST only and returns while the URL is still the play page, which also renders "Set game type:" through
+     the shared `GameTypeSection`. With the summary data delayed by 1.5 s, that assertion passed on the play page and
+     the URL changed later. Fix: make `completeGame()` wait for something only the summary shows.
+   - **The "+ New Game" click does nothing** (`assign-game-type`, and a `negative-score` hook; 2 attempts, one of
+     them also hit the first pattern). Not reproduced: 50 of 50 clicks worked on an idle machine and 51 of 51 with
+     the CPU saturated. In the CI logs no `GET /__manifest`, `.data` or `/games/new` request followed the
+     `GET /games`, so the click had no effect. The wait after it, `findByRole("heading", { name: /players/i })`,
+     also matches "Most Active Players" on the games list, so it passes on the wrong page. `createGameWithPlayers`,
+     `createGameType` and `goToGames` call `cy.visit("/games")` without waiting for `data-hydrated`. Leading
+     theory: the click lands before hydration. Unproven.
+2. **Five React Router v8 future-flag warnings in the build** (middleware, route module splitting, Vite
+   Environment API, request handling, data request URLs). Informational; none is adopted.
+3. **Generated `Route.*` types** are not adopted (optional).
+4. **`react-is` is 17.0.2** under `recharts` (see PR 9), and **`npm run dev` re-optimises dependencies on the
+   first visit to a page** that imports a new one, which can error until reloaded. Both are known and unworked.
+5. **Open issues from PR 3b:** #89 (React Compiler hooks rules), #90 (autoFocus), #91 (anagram keyboard access).
+6. **Older plan notes** in `docs/plans` and `docs/solutions` still name the pre-flat-routes file paths. They are
+   records of past work and were left alone.
+
+## Lessons
+
+- Check peer ranges of the **currently installed** versions, not only the targets (the PR 2 / PR 4 swap).
+- Read the changelog between versions, not just the migration guide, and let typecheck confirm the result. For PR 9b
+  "no code changes expected" was wrong: the 7.15 rename `unstable_pattern` -> `pattern` was missed on the first read
+  and typecheck found it, along with the new required `url`.
+- A security default can break a deployment that CI cannot see: the origin check only fails behind a TLS-terminating
+  proxy, and Cypress only talks to `localhost`. A local simulation with `Host`, `Origin` and `X-Forwarded-Proto`
+  predicted it exactly.
+- Packages that pin each other exactly need uninstall, then install in dependency order (Vitest, React Router).
+- Hand-built loader and action arguments in tests break whenever the router's types change (28 sites, twice). A
+  shared helper was rejected in PR 6b and again in PR 9b, and inline fixes were chosen.
+- Prove a refactor is a no-op with a before-and-after dump of the thing that must not change (the built route
+  table, the built CSS, `react-router routes --json`), not by reading file names.
 
 ## Out of scope
 
