@@ -22,14 +22,14 @@ export default function GamesPage() {
 
   return (
     <div className="flex h-full min-h-screen flex-col">
-      <header className="dark:bg-slate-950 flex items-center justify-between bg-slate-800 p-4 text-white">
+      <header className="flex items-center justify-between bg-slate-800 p-4 text-white dark:bg-slate-950">
         <h1 className="text-3xl font-bold">
           <Link to=".">Games</Link>
         </h1>
         <p>{user.email}</p>
         <button
           type="button"
-          className={`rounded  py-2 px-4 text-blue-100 sm:hidden ${
+          className={`rounded  px-4 py-2 text-blue-100 sm:hidden ${
             showMobileMenu
               ? "bg-slate-500 dark:bg-slate-700"
               : "bg-slate-600 dark:bg-slate-800"
@@ -43,22 +43,22 @@ export default function GamesPage() {
         <Form action="/logout" method="post" className="hidden sm:block">
           <button
             type="submit"
-            className="rounded bg-slate-600 py-2 px-4 text-gray-100 hover:bg-blue-primary active:bg-blue-secondary dark:bg-slate-800 dark:hover:bg-blue-600"
+            className="rounded bg-slate-600 px-4 py-2 text-gray-100 hover:bg-blue-primary active:bg-blue-secondary dark:bg-slate-800 dark:hover:bg-blue-600"
           >
             Logout
           </button>
         </Form>
       </header>
-      <main className="flex h-full flex-col bg-white dark:bg-gray-900 sm:flex-row">
+      <main className="flex h-full flex-col bg-white sm:flex-row dark:bg-gray-900">
         {showMobileMenu && (
           <GamesMenu
             games={games}
-            className="bg-gray-50 dark:bg-gray-800 sm:hidden"
+            className="bg-gray-50 sm:hidden dark:bg-gray-800"
             onLinkClick={() => setShowMobileMenu(false)}
           />
         )}
         <GamesMenu
-          className="hidden h-full w-80 border-r bg-gray-50 dark:border-gray-700 dark:bg-gray-800 sm:block"
+          className="hidden h-full w-80 border-r bg-gray-50 sm:block dark:border-gray-700 dark:bg-gray-800"
           games={games}
         />
         <div className="flex flex-1 flex-col px-2 py-6 sm:p-6">

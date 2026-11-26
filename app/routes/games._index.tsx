@@ -36,7 +36,7 @@ export default function Games() {
     <div>
       <Link
         to="new"
-        className="mb-6 hidden rounded bg-blue-500 py-2 px-4 text-center text-white hover:bg-blue-600 focus:bg-blue-400 dark:bg-blue-700 dark:hover:bg-blue-600 sm:block"
+        className="mb-6 hidden rounded bg-blue-500 px-4 py-2 text-center text-white hover:bg-blue-600 focus:bg-blue-400 sm:block dark:bg-blue-700 dark:hover:bg-blue-600"
       >
         New Game
       </Link>
@@ -174,7 +174,7 @@ export default function Games() {
 
       <Link
         to="new"
-        className="fixed bottom-6 right-4 z-10 rounded-full bg-blue-500 px-5 py-3 text-lg font-semibold text-white shadow-lg hover:bg-blue-600 focus:bg-blue-400 dark:bg-blue-700 dark:hover:bg-blue-600 sm:hidden"
+        className="fixed bottom-6 right-4 z-10 rounded-full bg-blue-500 px-5 py-3 text-lg font-semibold text-white shadow-lg hover:bg-blue-600 focus:bg-blue-400 sm:hidden dark:bg-blue-700 dark:hover:bg-blue-600"
       >
         + New Game
       </Link>

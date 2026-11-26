@@ -18,10 +18,15 @@ describe("school league table smoke test", () => {
 
     // Favourite a row — the chart should appear with a matching legend entry
     cy.findByTestId("chart-empty-state").should("exist");
-    cy.findByRole("button", { name: /Favourite Holy Cross RC Primary/i }).click();
+    cy.findByRole("button", {
+      name: /Favourite Holy Cross RC Primary/i,
+    }).click();
     cy.url().should("include", "favs=44");
     cy.findByTestId("chart-empty-state").should("not.exist");
-    cy.findByTestId("chart-legend").should("contain.text", "Holy Cross RC Primary");
+    cy.findByTestId("chart-legend").should(
+      "contain.text",
+      "Holy Cross RC Primary"
+    );
 
     // Reload the exact resulting URL and confirm every piece of state is restored
     cy.reload();
@@ -33,6 +38,9 @@ describe("school league table smoke test", () => {
     cy.findByRole("button", {
       name: /Unfavourite Holy Cross RC Primary/i,
     }).should("exist");
-    cy.findByTestId("chart-legend").should("contain.text", "Holy Cross RC Primary");
+    cy.findByTestId("chart-legend").should(
+      "contain.text",
+      "Holy Cross RC Primary"
+    );
   });
 });

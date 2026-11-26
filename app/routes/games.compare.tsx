@@ -169,7 +169,7 @@ export default function ComparePage() {
           type="submit"
           name="action"
           value="start-new-game"
-          className="my-4 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200 dark:bg-blue-700 dark:hover:bg-blue-600 dark:disabled:bg-gray-700"
+          className="my-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-200 dark:bg-blue-700 dark:hover:bg-blue-600 dark:disabled:bg-gray-700"
           disabled={playerOne === playerTwo}
         >
           Compare players

@@ -386,7 +386,7 @@ export default function Anagram() {
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- see https://github.com/runmoore/scrabble-score/issues/91
             <div
               key={i}
-              className={`m-2 flex h-4 w-4 cursor-pointer items-center justify-center border-b-2 pl-2 pr-2 pb-2 leading-normal dark:text-gray-100 ${
+              className={`m-2 flex h-4 w-4 cursor-pointer items-center justify-center border-b-2 pb-2 pl-2 pr-2 leading-normal dark:text-gray-100 ${
                 indexOfNewWord === i
                   ? "border-b-red-500 dark:border-b-red-400"
                   : "border-b-gray-500 dark:border-b-gray-400"

@@ -31,6 +31,7 @@ _Rationale_: Matches the repo's `.server.ts` model convention (e.g. `game.server
 _Rationale_: Cheap either way for 93 rows, but computing it once alongside the data load keeps the component focused on display/interaction logic, and gives a single, directly unit-testable function (`computeFiveYearAverage`).
 
 **URL state**: A single pure module, `app/utils/school-league-table.ts`, owns:
+
 - `parseTableState(searchParams)` → `{ sortKey, sortDir, rcOnly, favOnly, search, favouriteIds }`, applying defaults (`sortKey: "school_name"`, `sortDir: "asc"`, all filters off, empty search, empty favourite set) when params are absent
 - `serializeTableState(state)` → a `URLSearchParams`, omitting any field that equals its default, so the default state serializes to no params at all
 - `sortRows(rows, state)` — comparator with null-sorts-to-bottom regardless of direction
@@ -51,6 +52,7 @@ _Rationale_: Centralizing parse/serialize/sort/filter in one pure module makes t
 _Rationale_: Keeps a given school's line color stable regardless of how the table is currently sorted/filtered (the chart is explicitly independent of table filters per source spec §3.3) and avoids colors visibly reshuffling as the user sorts the table.
 
 **Chart (Recharts)**:
+
 - `<LineChart>` with one `<Line dataKey="{year}" connectNulls={false}>` per favourited row — `connectNulls={false}` gives the required visual gap across missing years for free
 - Y-axis `domain` computed as `[max(0, min - padding), min(100, max + padding)]` over all plotted (non-null) values, where `padding = max(5, (max - min) * 0.1)`; if `max === min` (all favourited values identical), padding still applies so the single value isn't flush against both edges
 - Custom `<Legend>` listing favourited school names; `onMouseEnter`/`onMouseLeave` on each legend item sets/clears a `hoveredId` state value
