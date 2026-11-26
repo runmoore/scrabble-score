@@ -1,3 +1,4 @@
+import { RouterContextProvider } from "react-router";
 import { loader } from "./games.compare";
 
 const p1 = { id: "p1", name: "Alice" };
@@ -24,7 +25,7 @@ const callLoader = () =>
     request: new Request("http://localhost/games/compare"),
     url: new URL("http://localhost/games/compare"),
     params: {},
-    context: {},
+    context: new RouterContextProvider(),
     pattern: "/games/compare",
   });
 

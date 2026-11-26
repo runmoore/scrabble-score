@@ -1,3 +1,4 @@
+import { RouterContextProvider } from "react-router";
 import { loader } from "./games.$gameId_.play.$playerId";
 
 vi.mock("~/session.server", () => {
@@ -34,7 +35,7 @@ describe("play loader function", () => {
       request: new Request("https://url"),
       url: new URL("https://url"),
       params: { gameId: "123", playerId: "987" },
-      context: {},
+      context: new RouterContextProvider(),
       pattern: "/games/:gameId/play/:playerId",
     });
   });
