@@ -9,6 +9,7 @@
     "build": "react-router build",
     "dev": "cross-env NODE_ENV=development binode --require ./mocks/index.cjs -- @react-router/dev:react-router dev",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "setup": "prisma migrate dev && prisma db seed",
     "start": "react-router-serve ./build/server/index.js",
