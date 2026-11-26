@@ -10,12 +10,11 @@ import { getAllGames, getPlayer } from "~/models/game.server";
 import { enrichPlayerScores, type PlayerWithScores } from "~/game-utils";
 import { requireUserId } from "~/session.server";
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({ request, url, params }: LoaderFunctionArgs) => {
   invariant(params.playerOne, "playerOne not found");
   invariant(params.playerTwo, "playerTwo not found");
 
-  const userId = await requireUserId(request);
-  const url = new URL(request.url);
+  const userId = await requireUserId(request, url);
   const selectedTypeId = url.searchParams.get("type");
 
   const [playerOneName, playerTwoName, allGames] = await Promise.all([

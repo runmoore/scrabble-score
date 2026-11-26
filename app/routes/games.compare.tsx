@@ -18,8 +18,8 @@ type Matchup = {
   inProgressCount: number;
 };
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const userId = await requireUserId(request);
+export const loader = async ({ request, url }: LoaderFunctionArgs) => {
+  const userId = await requireUserId(request, url);
   const [players, games] = await Promise.all([
     getAllPlayers({ userId }),
     getAllGames({ userId }),

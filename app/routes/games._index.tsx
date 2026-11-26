@@ -14,8 +14,8 @@ import { Card } from "~/components/Card";
 import { Leaderboard } from "~/components/Leaderboard";
 import type { loader as gamesLoader } from "~/routes/games";
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const userId = await requireUserId(request);
+export const loader = async ({ request, url }: LoaderFunctionArgs) => {
+  const userId = await requireUserId(request, url);
   const [lastCompletedGame, topGameTypes, topPlayers] = await Promise.all([
     getLastCompletedGame({ userId }),
     getTopGameTypes({ userId, limit: 3 }),

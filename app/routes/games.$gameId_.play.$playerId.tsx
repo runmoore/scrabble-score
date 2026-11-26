@@ -27,7 +27,7 @@ import { ScoreTable } from "~/components/ScoreTable";
 
 export type LoaderData = typeof loader;
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({ request, url, params }: LoaderFunctionArgs) => {
   invariant(params.gameId, "gameId not found");
   invariant(params.playerId, "playerId not found");
 
@@ -44,14 +44,14 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   let gameTypes: { id: string; name: string }[] = [];
   if (!game.gameType) {
-    const userId = await requireUserId(request);
+    const userId = await requireUserId(request, url);
     gameTypes = await getAllGameTypes({ userId });
   }
 
   return { game, playerId: params.playerId, topScore, gameTypes };
 };
 
-export const action = async ({ request, params }: ActionFunctionArgs) => {
+export const action = async ({ request, url, params }: ActionFunctionArgs) => {
   invariant(params.gameId, "gameId not found");
   invariant(params.playerId, "playerId not found");
   const { gameId, playerId } = params;
@@ -85,7 +85,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 
   if (formData.get("action") === "set-game-type") {
-    const userId = await requireUserId(request);
+    const userId = await requireUserId(request, url);
     const gameTypeId = formData.get("gameTypeId") as string;
     if (gameTypeId) {
       await setGameType({ id: gameId, userId, gameTypeId });

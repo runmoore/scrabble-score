@@ -8,8 +8,8 @@ import { useState } from "react";
 import type { LoaderFunctionArgs } from "react-router";
 
 import MenuIcon from "../icons/menu";
-export async function loader({ request }: LoaderFunctionArgs) {
-  const userId = await requireUserId(request);
+export async function loader({ request, url }: LoaderFunctionArgs) {
+  const userId = await requireUserId(request, url);
   const games = await getAllGames({ userId });
 
   return { games };

@@ -26,8 +26,8 @@ export type LoaderData = {
   gameTypes: { id: GameType["id"]; name: GameType["name"] }[];
 };
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const userId = await requireUserId(request);
+export const loader = async ({ request, url }: LoaderFunctionArgs) => {
+  const userId = await requireUserId(request, url);
   const [players, gameTypes] = await Promise.all([
     getAllPlayers({ userId }),
     getAllGameTypes({ userId }),
@@ -36,8 +36,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return { players, gameTypes };
 };
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const userId = await requireUserId(request);
+export const action = async ({ request, url }: ActionFunctionArgs) => {
+  const userId = await requireUserId(request, url);
   const formData = await request.formData();
   const action = formData.get("action");
 
