@@ -115,19 +115,14 @@ declare global {
 }
 
 function login({
-  email = faker.internet.email(undefined, undefined, "example.com"),
+  email = faker.internet.email({ provider: "example.com" }),
 }: {
   email?: string;
 } = {}) {
   cy.then(() => ({ email })).as("user");
-  cy.exec(`npx tsx ./cypress/support/create-user.ts "${email}"`).then(
-    ({ stdout }) => {
-      const cookieValue = stdout
-        .replace(/.*<cookie>(?<cookieValue>.*)<\/cookie>.*/s, "$<cookieValue>")
-        .trim();
-      cy.setCookie("__session", cookieValue);
-    }
-  );
+  cy.task<string>("createUser", email).then((cookieValue) => {
+    cy.setCookie("__session", cookieValue);
+  });
   return cy.get("@user");
 }
 
@@ -146,14 +141,17 @@ function cleanupUser({ email }: { email?: string } = {}) {
 }
 
 function deleteUserByEmail(email: string) {
-  cy.exec(`npx tsx ./cypress/support/delete-user.ts "${email}"`);
+  cy.task("deleteUser", email);
   cy.clearCookie("__session");
 }
 
 // Interacting with a page before hydration can drop input or detach
 // elements mid-command. Waits for app/root.tsx's data-hydrated marker
 // rather than a fixed sleep, which is unreliable under varying load.
-function visitAndCheck(url: string, timeout = Cypress.config("defaultCommandTimeout")) {
+function visitAndCheck(
+  url: string,
+  timeout = Cypress.config("defaultCommandTimeout")
+) {
   cy.visit(url);
   cy.location("pathname").should("contain", url);
   cy.get("body", { timeout }).should("have.attr", "data-hydrated", "true");

@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
-    "@faker-js/faker": "^8.2.0",
+    "@faker-js/faker": "^10.6.0",
     "@react-router/dev": "8.5.3",
     "@react-router/fs-routes": "8.5.3",
     "@testing-library/cypress": "^10.0.2",
@@ -56,7 +56,7 @@
     "c8": "^7.11.0",
     "cookie": "^1.1.1",
     "cross-env": "^7.0.3",
-    "cypress": "^13.7.2",
+    "cypress": "^16.4.0",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-node": "^0.3.10",
